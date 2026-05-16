@@ -74,6 +74,14 @@ export interface CrewLeaderboardEntry {
   last_flag_at: string | null;
 }
 
+export interface RecentFlag {
+  id: string;
+  planted_at: string;
+  expires_at: string;
+  is_active: boolean;
+  summit: { id: string; name_ko: string; elevation_m: number } | null;
+}
+
 // Map marker with flag info
 export interface SummitWithFlag extends Summit {
   active_flag?: Flag & {

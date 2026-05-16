@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Modal, FlatList, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Modal, FlatList, TextInput, ScrollView } from 'react-native';
 import { Colors } from '../../src/constants';
 import { supabase } from '../../src/services/supabase';
 import { fetchUserProfile, fetchCrews, joinCrew, leaveCrew, createCrew, UserProfile } from '../../src/services/crews';
 import { Crew } from '../../src/types';
+import RecentHikesList from '../../src/components/RecentHikesList';
 
 const CREW_COLORS = [
   { hex: '#4A7C59' }, { hex: '#C0704A' }, { hex: '#5B7FA6' },
@@ -105,12 +106,14 @@ function CrewPickerModal({ visible, onClose, onJoined }: {
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [showCrewPicker, setShowCrewPicker] = useState(false);
 
   const loadProfile = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+    setUserId(user.id);
     try {
       const p = await fetchUserProfile(user.id);
       setProfile(p);
@@ -140,32 +143,34 @@ export default function ProfileScreen() {
         <Text style={styles.flagCount}>🚩 {profile?.flag_count ?? 0}개 깃발</Text>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>내 크루</Text>
-        {profile?.crew_id ? (
-          <View style={styles.crewCard}>
-            <View style={[styles.crewDot, { backgroundColor: profile.crew_color_hex ?? Colors.green }]} />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.crewName}>{profile.crew_name_ko ?? profile.crew_name}</Text>
-              <Text style={styles.crewSub}>{profile.crew_name}</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>내 크루</Text>
+          {profile?.crew_id ? (
+            <View style={styles.crewCard}>
+              <View style={[styles.crewDot, { backgroundColor: profile.crew_color_hex ?? Colors.green }]} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.crewName}>{profile.crew_name_ko ?? profile.crew_name}</Text>
+                <Text style={styles.crewSub}>{profile.crew_name}</Text>
+              </View>
+              <TouchableOpacity onPress={handleLeave}>
+                <Text style={styles.leaveText}>탈퇴</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={handleLeave}>
-              <Text style={styles.leaveText}>탈퇴</Text>
+          ) : (
+            <TouchableOpacity style={styles.joinBanner} onPress={() => setShowCrewPicker(true)}>
+              <Text style={styles.joinBannerText}>크루에 참여하거나 만들기</Text>
+              <Text style={styles.joinArrow}>→</Text>
             </TouchableOpacity>
-          </View>
-        ) : (
-          <TouchableOpacity style={styles.joinBanner} onPress={() => setShowCrewPicker(true)}>
-            <Text style={styles.joinBannerText}>크루에 참여하거나 만들기</Text>
-            <Text style={styles.joinArrow}>→</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+          )}
+        </View>
 
-      <View style={{ flex: 1 }} />
+        {userId && <RecentHikesList userId={userId} />}
 
-      <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
-        <Text style={styles.signOutText}>로그아웃</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
+          <Text style={styles.signOutText}>로그아웃</Text>
+        </TouchableOpacity>
+      </ScrollView>
 
       <CrewPickerModal visible={showCrewPicker} onClose={() => setShowCrewPicker(false)} onJoined={loadProfile} />
     </View>
@@ -175,6 +180,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.cream },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  scrollContent: { paddingBottom: 32 },
   header: { backgroundColor: Colors.green, paddingTop: 64, paddingBottom: 28, paddingHorizontal: 24 },
   displayName: { fontSize: 24, fontWeight: '700', color: Colors.white },
   flagCount: { fontSize: 15, color: Colors.white, opacity: 0.85, marginTop: 4 },
@@ -188,7 +194,7 @@ const styles = StyleSheet.create({
   joinBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.zinc100, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14 },
   joinBannerText: { flex: 1, fontSize: 15, color: Colors.zinc800, fontWeight: '500' },
   joinArrow: { fontSize: 18, color: Colors.zinc500 },
-  signOutBtn: { marginHorizontal: 20, marginBottom: 40, paddingVertical: 14, backgroundColor: Colors.zinc100, borderRadius: 12, alignItems: 'center' },
+  signOutBtn: { marginHorizontal: 20, marginTop: 24, paddingVertical: 14, backgroundColor: Colors.zinc100, borderRadius: 12, alignItems: 'center' },
   signOutText: { fontSize: 15, color: Colors.zinc800, fontWeight: '600' },
 });
 
