@@ -6,6 +6,7 @@ import { Colors, MAP, GPS } from '../../src/constants';
 import { SummitWithFlag } from '../../src/types';
 import { fetchSummitsNear, summitsToGeoJSON } from '../../src/services/summits';
 import { plantFlag, getUserCrewId } from '../../src/services/flags';
+import { saveHike } from '../../src/services/hikes';
 import { useHikeStore, stayProgressPct } from '../../src/stores/hikeStore';
 import { useHiking } from '../../src/hooks/useHiking';
 import { requestLocationPermission, distanceMeters } from '../../src/services/gps';
@@ -82,9 +83,19 @@ export default function MapScreen() {
     try {
       const crewId = await getUserCrewId();
       await plantFlag(nearestSummit.id, crewId);
-      useHikeStore.getState().markPlanted();
-      // Refresh summits so map shows new crew color immediately
+
       const state = useHikeStore.getState();
+      // Save GPS hike record to Supabase in background — don't block UI
+      saveHike({
+        summitId: nearestSummit.id,
+        track: state.track,
+        startedAt: state.track[0]?.ts ?? null,
+        summitVerifiedAt: state.verifiedAt
+          ? new Date(state.verifiedAt).toISOString()
+          : null,
+      }).catch((e) => console.error('[saveHike]', e));
+
+      useHikeStore.getState().markPlanted();
       if (state.currentLat && state.currentLng) {
         refreshSummits(state.currentLat, state.currentLng);
       }
