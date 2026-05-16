@@ -157,7 +157,7 @@ export default function MapScreen() {
               </View>
             ) : (
               <View style={styles.crewBadge}>
-                <Text style={styles.crewBadgeText}>무주공산</Text>
+                <Text style={[styles.crewBadgeText, { color: Colors.zinc500 }]}>무주공산</Text>
               </View>
             )}
           </View>
