@@ -1,32 +1,49 @@
 import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { Session } from '@supabase/supabase-js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../src/services/supabase';
 
+type AppState = 'loading' | 'onboarding' | 'auth' | 'app';
+
 export default function RootLayout() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [appState, setAppState] = useState<AppState>('loading');
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-    });
+    async function init() {
+      const done = await AsyncStorage.getItem('onboarding_done');
+      if (!done) {
+        setAppState('onboarding');
+        return;
+      }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+      const { data: { session } } = await supabase.auth.getSession();
+      setAppState(session ? 'app' : 'auth');
+    }
+
+    init();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session: Session | null) => {
+      setAppState((prev) => {
+        if (prev === 'onboarding') return prev;
+        return session ? 'app' : 'auth';
+      });
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  if (loading) return null;
+  if (appState === 'loading') return null;
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      {session ? (
+      {appState === 'onboarding' && (
+        <Stack.Screen name="onboarding" />
+      )}
+      {appState === 'app' && (
         <Stack.Screen name="(tabs)" />
-      ) : (
+      )}
+      {appState === 'auth' && (
         <Stack.Screen name="(auth)" />
       )}
     </Stack>
