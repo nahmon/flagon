@@ -21,6 +21,9 @@
         "NSLocationWhenInUseUsageDescription": "정상 GPS 인증을 위해 위치 정보를 사용합니다.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "등산 중 GPS 트래킹을 위해 백그라운드 위치 접근이 필요합니다.",
         "ITSAppUsesNonExemptEncryption": false
+      },
+      "entitlements": {
+        "aps-environment": "production"
       }
     },
     "android": {
