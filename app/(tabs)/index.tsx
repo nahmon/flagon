@@ -8,7 +8,7 @@ import { fetchSummitsNear, summitsToGeoJSON } from '../../src/services/summits';
 import { plantFlag, getUserCrewId } from '../../src/services/flags';
 import { useHikeStore, stayProgressPct } from '../../src/stores/hikeStore';
 import { useHiking } from '../../src/hooks/useHiking';
-import { requestLocationPermission } from '../../src/services/gps';
+import { requestLocationPermission, distanceMeters } from '../../src/services/gps';
 
 const CARTO_POSITRON = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 const SEOUL: [number, number] = [MAP.DEFAULT_CENTER.lng, MAP.DEFAULT_CENTER.lat];
@@ -19,6 +19,7 @@ export default function MapScreen() {
   const [summits, setSummits] = useState<SummitWithFlag[]>([]);
   const [geojson, setGeojson] = useState<GeoJSON.FeatureCollection>({ type: 'FeatureCollection', features: [] });
   const [planting, setPlanting] = useState(false);
+  const [selectedSummit, setSelectedSummit] = useState<SummitWithFlag | null>(null);
   const plantAnim = useRef(new Animated.Value(0)).current;
 
   const hike = useHiking(summits);
@@ -80,12 +81,27 @@ export default function MapScreen() {
     }
   }, [nearestSummit, planting]);
 
+  const handleMapPress = useCallback((e: any) => {
+    const [lng, lat] = e.geometry?.coordinates ?? [];
+    if (lat == null || lng == null) return;
+    let best: { summit: SummitWithFlag; dist: number } | null = null;
+    for (const s of summits) {
+      const dist = distanceMeters(lat, lng, s.location.coordinates[1], s.location.coordinates[0]);
+      if (!best || dist < best.dist) best = { summit: s, dist };
+    }
+    if (best && best.dist < 1000) {
+      setSelectedSummit(best.summit);
+    } else {
+      setSelectedSummit(null);
+    }
+  }, [summits]);
+
   const stayPct = stayProgressPct(stayElapsedMs, stayStartedAt);
   const remainingMin = Math.ceil((1 - stayPct) * GPS.MIN_STAY_MINUTES);
 
   return (
     <View style={styles.container}>
-      <Map style={styles.map} mapStyle={CARTO_POSITRON}>
+      <Map style={styles.map} mapStyle={CARTO_POSITRON} onPress={handleMapPress}>
         <Camera
           ref={cameraRef}
           initialViewState={{ center: SEOUL, zoom: MAP.DEFAULT_ZOOM }}
@@ -126,6 +142,30 @@ export default function MapScreen() {
           />
         </GeoJSONSource>
       </Map>
+
+      {/* 정상 탭 정보 카드 */}
+      {selectedSummit && (phase === 'idle' || phase === 'hiking') ? (
+        <View style={styles.summitCard}>
+          <View style={styles.summitCardRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.summitCardName}>{selectedSummit.name_ko}</Text>
+              <Text style={styles.summitCardSub}>{selectedSummit.elevation_m}m</Text>
+            </View>
+            {selectedSummit.active_flag?.crew ? (
+              <View style={[styles.crewBadge, { backgroundColor: selectedSummit.active_flag.crew.color_hex }]}>
+                <Text style={styles.crewBadgeText}>{selectedSummit.active_flag.crew.name_ko ?? selectedSummit.active_flag.crew.name}</Text>
+              </View>
+            ) : (
+              <View style={styles.crewBadge}>
+                <Text style={styles.crewBadgeText}>무주공산</Text>
+              </View>
+            )}
+          </View>
+          <TouchableOpacity style={styles.cardClose} onPress={() => setSelectedSummit(null)}>
+            <Text style={styles.cardCloseText}>✕</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
 
       {/* 정상 인증 오버레이 */}
       {phase === 'near_summit' && nearestSummit && (
@@ -261,4 +301,31 @@ const styles = StyleSheet.create({
     color: Colors.white,
     opacity: 0.85,
   },
+
+  summitCard: {
+    position: 'absolute',
+    bottom: 32,
+    left: 16,
+    right: 16,
+    backgroundColor: Colors.white,
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  summitCardRow: { flexDirection: 'row', alignItems: 'center' },
+  summitCardName: { fontSize: 18, fontWeight: '700', color: Colors.zinc950 },
+  summitCardSub: { fontSize: 13, color: Colors.zinc500, marginTop: 2 },
+  crewBadge: {
+    backgroundColor: Colors.zinc200,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  crewBadgeText: { fontSize: 12, fontWeight: '600', color: Colors.white },
+  cardClose: { position: 'absolute', top: -8, right: -8, width: 24, height: 24, borderRadius: 12, backgroundColor: Colors.zinc200, alignItems: 'center', justifyContent: 'center' },
+  cardCloseText: { fontSize: 10, color: Colors.zinc800, fontWeight: '700' },
 });
