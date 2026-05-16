@@ -1,0 +1,209 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1778926163747,
+  "projectRoot": "/Users/mh/Documents/flagon",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "react",
+        "version": "19.1.0",
+        "category": "frontend"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": "npm run start",
+    "scripts": {
+      "start": "expo start",
+      "android": "expo start --android",
+      "ios": "expo start --ios",
+      "web": "expo start --web"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": "type-based"
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "app",
+      "assets",
+      "src"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "app": {
+      "path": "app",
+      "purpose": "Application code",
+      "fileCount": 1,
+      "lastAccessed": 1778926163736,
+      "keyFiles": [
+        "_layout.tsx"
+      ]
+    },
+    "assets": {
+      "path": "assets",
+      "purpose": "Static assets",
+      "fileCount": 4,
+      "lastAccessed": 1778926163736,
+      "keyFiles": [
+        "adaptive-icon.png",
+        "favicon.png",
+        "icon.png",
+        "splash-icon.png"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 0,
+      "lastAccessed": 1778926163738,
+      "keyFiles": []
+    },
+    "supabase": {
+      "path": "supabase",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1778926163739,
+      "keyFiles": []
+    },
+    "src/components": {
+      "path": "src/components",
+      "purpose": "UI components",
+      "fileCount": 0,
+      "lastAccessed": 1778926163739,
+      "keyFiles": []
+    },
+    "src/services": {
+      "path": "src/services",
+      "purpose": "Business logic services",
+      "fileCount": 1,
+      "lastAccessed": 1778926163739,
+      "keyFiles": [
+        "supabase.ts"
+      ]
+    },
+    "src/types": {
+      "path": "src/types",
+      "purpose": "Type definitions",
+      "fileCount": 1,
+      "lastAccessed": 1778926163739,
+      "keyFiles": [
+        "index.ts"
+      ]
+    },
+    "supabase/migrations": {
+      "path": "supabase/migrations",
+      "purpose": "Database migrations",
+      "fileCount": 1,
+      "lastAccessed": 1778926163740,
+      "keyFiles": [
+        "001_initial.sql"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "app.json",
+      "accessCount": 7,
+      "lastAccessed": 1778933655671,
+      "type": "file"
+    },
+    {
+      "path": "app/(tabs)/index.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1778927009512,
+      "type": "file"
+    },
+    {
+      "path": "app/(auth)/login.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1778926316853,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 2,
+      "lastAccessed": 1778926403715,
+      "type": "file"
+    },
+    {
+      "path": "eas.json",
+      "accessCount": 2,
+      "lastAccessed": 1778928452690,
+      "type": "file"
+    },
+    {
+      "path": "app/_layout.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1778926251257,
+      "type": "file"
+    },
+    {
+      "path": "app/(auth)/_layout.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1778926348233,
+      "type": "file"
+    },
+    {
+      "path": "app/(auth)/callback.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1778926351704,
+      "type": "file"
+    },
+    {
+      "path": "tsconfig.json",
+      "accessCount": 1,
+      "lastAccessed": 1778926376234,
+      "type": "file"
+    },
+    {
+      "path": "src/types/index.ts",
+      "accessCount": 1,
+      "lastAccessed": 1778926851207,
+      "type": "file"
+    },
+    {
+      "path": "src/services/summits.ts",
+      "accessCount": 1,
+      "lastAccessed": 1778926901883,
+      "type": "file"
+    },
+    {
+      "path": ".npmrc",
+      "accessCount": 1,
+      "lastAccessed": 1778933477759,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"npx tsc --noEmit 2>&1\",\"description\":\"TypeScript check after MapLibre implementation\"}",
+  "error": "Exit code 2\napp/(tabs)/index.tsx(35,9): error TS2322: Type 'number' is not assignable to type '37.5665'.\napp/(tabs)/index.tsx(36,9): error TS2322: Type 'number' is not assignable to type '126.978'.\napp/(tabs)/index.tsx(59,43): error TS2322: Type '{ visible: true; animated: true; }' is not assignable to type 'IntrinsicAttributes & UserLocationProps'.\n  Property 'visible' does not exist on type 'IntrinsicAttributes & UserLocationProps'.",
+  "timestamp": "2026-05-16T10:23:11.757Z",
+  "retry_count": 1
+}
