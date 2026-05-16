@@ -1,6 +1,25 @@
 import { supabase } from './supabase';
 import { SummitWithFlag } from '../types';
 
+type SummitsNearRow = {
+  id: string;
+  name_ko: string;
+  name_en: string | null;
+  name_ja: string | null;
+  location: { type: 'Point'; coordinates: [number, number] };
+  elevation_m: number;
+  country: string;
+  mountain_group: string | null;
+  is_featured: boolean;
+  created_at: string;
+  flag_id: string | null;
+  crew_id: string | null;
+  crew_color_hex: string | null;
+  crew_name: string | null;
+  crew_name_ko: string | null;
+  crew_icon_type: string | null;
+};
+
 export async function fetchSummitsNear(
   lat: number,
   lng: number,
@@ -12,7 +31,42 @@ export async function fetchSummitsNear(
     radius_m: radiusM,
   });
   if (error) throw error;
-  return data as SummitWithFlag[];
+
+  return (data as SummitsNearRow[]).map((row) => ({
+    id: row.id,
+    name_ko: row.name_ko,
+    name_en: row.name_en,
+    name_ja: row.name_ja,
+    location: row.location,
+    elevation_m: row.elevation_m,
+    country: row.country,
+    mountain_group: row.mountain_group,
+    is_featured: row.is_featured,
+    created_at: row.created_at,
+    active_flag: row.flag_id
+      ? {
+          id: row.flag_id,
+          summit_id: row.id,
+          user_id: '',
+          crew_id: row.crew_id,
+          planted_at: '',
+          expires_at: '',
+          is_active: true,
+          crew: row.crew_id
+            ? {
+                id: row.crew_id,
+                name: row.crew_name ?? '',
+                name_ko: row.crew_name_ko,
+                color_hex: row.crew_color_hex ?? '#71717A',
+                icon_type: (row.crew_icon_type ?? 'SA') as 'ME' | 'SA' | 'NK',
+                description: null,
+                created_by: null,
+                created_at: '',
+              }
+            : undefined,
+        }
+      : undefined,
+  }));
 }
 
 export function summitsToGeoJSON(
