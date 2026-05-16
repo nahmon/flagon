@@ -57,7 +57,8 @@
           "color": "#2D6A4F",
           "sounds": []
         }
-      ]
+      ],
+      "expo-font"
     ],
     "extra": {
       "eas": {
