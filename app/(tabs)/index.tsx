@@ -229,6 +229,12 @@ export default function MapScreen() {
           <Text style={styles.successEmoji}>🏔️</Text>
           <Text style={styles.successTitle}>{nearestSummit.name_ko} 정복!</Text>
           <Text style={styles.successSub}>크루를 위해 깃발을 꽂았습니다</Text>
+          <TouchableOpacity
+            style={styles.successDismiss}
+            onPress={() => useHikeStore.getState().reset()}
+          >
+            <Text style={styles.successDismissText}>확인</Text>
+          </TouchableOpacity>
         </Animated.View>
       )}
     </View>
@@ -315,6 +321,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.white,
     opacity: 0.85,
+  },
+  successDismiss: {
+    marginTop: 8,
+    paddingHorizontal: 32,
+    paddingVertical: 10,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    borderRadius: 20,
+  },
+  successDismissText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: Colors.white,
   },
 
   summitCard: {
