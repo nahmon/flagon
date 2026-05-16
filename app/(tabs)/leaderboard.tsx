@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
 import { Colors } from '../../src/constants';
 import { fetchLeaderboard } from '../../src/services/crews';
+import { supabase } from '../../src/services/supabase';
 import { CrewLeaderboardEntry } from '../../src/types';
 
 function RankBadge({ rank }: { rank: number }) {
@@ -55,6 +56,14 @@ export default function LeaderboardScreen() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('leaderboard-flags')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'flags' }, () => { load(); })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [load]);
 
   if (loading) {
     return <View style={styles.center}><ActivityIndicator color={Colors.green} /></View>;
