@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { AppState } from 'react-native';
 import { useHikeStore } from '../stores/hikeStore';
 import { startTracking, nearestSummit, isAtSummit } from '../services/gps';
+import { requestNotificationPermission, notifySummitNear, notifySummitVerified } from '../services/notifications';
 import { SummitWithFlag } from '../types';
 import { GPS } from '../constants';
 
@@ -9,6 +10,22 @@ export function useHiking(summits: SummitWithFlag[]) {
   const store = useHikeStore();
   const summitsRef = useRef(summits);
   summitsRef.current = summits;
+
+  // Request notification permission on mount
+  useEffect(() => { requestNotificationPermission(); }, []);
+
+  // Notify when verified
+  const phase = useHikeStore((s) => s.phase);
+  const nearestSummitRef = useRef(useHikeStore.getState().nearestSummit);
+  useEffect(() => {
+    nearestSummitRef.current = useHikeStore.getState().nearestSummit;
+  });
+  useEffect(() => {
+    if (phase === 'verified') {
+      const summit = useHikeStore.getState().nearestSummit;
+      if (summit) notifySummitVerified(summit.name_ko).catch(() => {});
+    }
+  }, [phase]);
 
   // Tick stay timer every 5 seconds
   useEffect(() => {
@@ -33,6 +50,7 @@ export function useHiking(summits: SummitWithFlag[]) {
       if (isAtSummit(result.distanceM)) {
         if (state.phase === 'hiking' || state.phase === 'idle') {
           store.enterSummitRadius(result.summit);
+          notifySummitNear(result.summit.name_ko).catch(() => {});
         }
       } else {
         if (state.phase === 'near_summit') {
