@@ -66,6 +66,16 @@ export default function MapScreen() {
     }
   }, [phase]);
 
+  const refreshSummits = useCallback(async (lat: number, lng: number) => {
+    try {
+      const data = await fetchSummitsNear(lat, lng);
+      setSummits(data);
+      setGeojson(summitsToGeoJSON(data));
+    } catch (e) {
+      console.error('[summits refresh]', e);
+    }
+  }, []);
+
   const handlePlantFlag = useCallback(async () => {
     if (!nearestSummit || planting) return;
     setPlanting(true);
@@ -73,13 +83,18 @@ export default function MapScreen() {
       const crewId = await getUserCrewId();
       await plantFlag(nearestSummit.id, crewId);
       useHikeStore.getState().markPlanted();
+      // Refresh summits so map shows new crew color immediately
+      const state = useHikeStore.getState();
+      if (state.currentLat && state.currentLng) {
+        refreshSummits(state.currentLat, state.currentLng);
+      }
     } catch (e) {
       Alert.alert('오류', '깃발 꽂기에 실패했습니다. 다시 시도해주세요.');
       console.error('[plantFlag]', e);
     } finally {
       setPlanting(false);
     }
-  }, [nearestSummit, planting]);
+  }, [nearestSummit, planting, refreshSummits]);
 
   const handleMapPress = useCallback((e: any) => {
     const [lng, lat] = e.geometry?.coordinates ?? [];
