@@ -1,5 +1,14 @@
 import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../src/constants';
+
+type IconName = React.ComponentProps<typeof Ionicons>['name'];
+
+function icon(focused: boolean, active: IconName, inactive: IconName) {
+  return ({ color, size }: { color: string; size: number }) => (
+    <Ionicons name={focused ? active : inactive} size={size} color={color} />
+  );
+}
 
 export default function TabLayout() {
   return (
@@ -17,15 +26,27 @@ export default function TabLayout() {
     >
       <Tabs.Screen
         name="index"
-        options={{ title: 'Map', tabBarIcon: () => null }}
+        options={{
+          title: '지도',
+          tabBarIcon: ({ color, size, focused }) =>
+            icon(focused, 'map', 'map-outline')({ color, size }),
+        }}
       />
       <Tabs.Screen
         name="leaderboard"
-        options={{ title: 'Leaderboard', tabBarIcon: () => null }}
+        options={{
+          title: '랭킹',
+          tabBarIcon: ({ color, size, focused }) =>
+            icon(focused, 'trophy', 'trophy-outline')({ color, size }),
+        }}
       />
       <Tabs.Screen
         name="profile"
-        options={{ title: 'Profile', tabBarIcon: () => null }}
+        options={{
+          title: '내 정보',
+          tabBarIcon: ({ color, size, focused }) =>
+            icon(focused, 'person', 'person-outline')({ color, size }),
+        }}
       />
     </Tabs>
   );
