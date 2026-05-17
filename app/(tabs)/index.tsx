@@ -111,6 +111,17 @@ export default function MapScreen() {
   const handleMapPress = useCallback((e: any) => {
     const [lng, lat] = e.geometry?.coordinates ?? [];
     if (lat == null || lng == null) return;
+
+    // Cluster tap: zoom in to expand
+    const clusterFeature = (e.features ?? []).find(
+      (f: any) => f.properties?.cluster === true || f.properties?.point_count != null
+    );
+    if (clusterFeature) {
+      const [clusterLng, clusterLat] = clusterFeature.geometry?.coordinates ?? [lng, lat];
+      cameraRef.current?.flyTo({ center: [clusterLng, clusterLat], zoom: 13, duration: 500 });
+      return;
+    }
+
     let best: { summit: SummitWithFlag; dist: number } | null = null;
     for (const s of summits) {
       const dist = distanceMeters(lat, lng, s.location.coordinates[1], s.location.coordinates[0]);
@@ -141,10 +152,54 @@ export default function MapScreen() {
         />
         {locationGranted && <UserLocation animated />}
 
-        <GeoJSONSource id="summits" data={geojson}>
+        <GeoJSONSource
+          id="summits"
+          data={geojson}
+          cluster
+          clusterRadius={50}
+          clusterMaxZoom={13}
+        >
+          {/* Cluster bubble */}
+          <Layer
+            id="cluster-circle"
+            type="circle"
+            filter={['has', 'point_count']}
+            paint={{
+              'circle-color': [
+                'step', ['get', 'point_count'],
+                Colors.greenLight, 5,
+                Colors.green, 15,
+                Colors.greenDark,
+              ],
+              'circle-radius': [
+                'step', ['get', 'point_count'],
+                18, 5,
+                24, 15,
+                30,
+              ],
+              'circle-stroke-width': 3,
+              'circle-stroke-color': Colors.white,
+            }}
+          />
+          {/* Cluster count label */}
+          <Layer
+            id="cluster-count"
+            type="symbol"
+            filter={['has', 'point_count']}
+            layout={{
+              'text-field': ['get', 'point_count_abbreviated'],
+              'text-size': 13,
+              'text-font': ['Noto Sans Regular', 'Arial Unicode MS Regular'],
+            }}
+            paint={{
+              'text-color': Colors.white,
+            }}
+          />
+          {/* Individual summit dots (unclustered) */}
           <Layer
             id="summit-dots"
             type="circle"
+            filter={['!', ['has', 'point_count']]}
             paint={{
               'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 6, 14, 10],
               'circle-color': [
@@ -160,6 +215,7 @@ export default function MapScreen() {
             id="summit-labels"
             type="symbol"
             minzoom={11}
+            filter={['!', ['has', 'point_count']]}
             layout={{
               'text-field': ['get', 'name'],
               'text-size': 11,
