@@ -79,7 +79,7 @@ export interface RecentFlag {
   planted_at: string;
   expires_at: string;
   is_active: boolean;
-  summit: { id: string; name_ko: string; elevation_m: number } | null;
+  summit: { id: string; name_ko: string; name_en: string | null; elevation_m: number } | null;
 }
 
 // Map marker with flag info

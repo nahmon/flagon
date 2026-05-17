@@ -32,15 +32,15 @@ function CrewPickerModal({ visible, onClose, onJoined }: {
   const handleJoin = async (crewId: string) => {
     setBusy(true);
     try { await joinCrew(crewId); onJoined(); onClose(); }
-    catch (e: any) { Alert.alert('오류', e.message ?? '크루 참여 실패'); }
+    catch (e: any) { Alert.alert('Error', e.message ?? 'Failed to join crew'); }
     finally { setBusy(false); }
   };
 
   const handleCreate = async () => {
-    if (!newName.trim()) { Alert.alert('이름을 입력하세요'); return; }
+    if (!newName.trim()) { Alert.alert('Please enter a name'); return; }
     setBusy(true);
     try { await createCrew(newName.trim(), newNameKo.trim() || newName.trim(), selectedColor, 'SA'); onJoined(); onClose(); }
-    catch (e: any) { Alert.alert('오류', e.message ?? '크루 생성 실패'); }
+    catch (e: any) { Alert.alert('Error', e.message ?? 'Failed to create crew'); }
     finally { setBusy(false); }
   };
 
@@ -48,12 +48,12 @@ function CrewPickerModal({ visible, onClose, onJoined }: {
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
       <View style={modal.container}>
         <View style={modal.handle} />
-        <Text style={modal.title}>크루 선택</Text>
+        <Text style={modal.title}>Select Crew</Text>
         <View style={modal.tabs}>
           {(['join', 'create'] as const).map((t) => (
             <TouchableOpacity key={t} style={[modal.tab, tab === t && modal.tabActive]} onPress={() => setTab(t)}>
               <Text style={[modal.tabText, tab === t && modal.tabTextActive]}>
-                {t === 'join' ? '크루 참여' : '크루 만들기'}
+                {t === 'join' ? 'Join Crew' : 'Create Crew'}
               </Text>
             </TouchableOpacity>
           ))}
@@ -68,36 +68,36 @@ function CrewPickerModal({ visible, onClose, onJoined }: {
                 <TouchableOpacity style={modal.crewRow} onPress={() => handleJoin(item.id)} disabled={busy}>
                   <View style={[modal.crewDot, { backgroundColor: item.color_hex }]} />
                   <View style={{ flex: 1 }}>
-                    <Text style={modal.crewName}>{item.name_ko ?? item.name}</Text>
-                    <Text style={modal.crewSub}>{item.name}</Text>
+                    <Text style={modal.crewName}>{item.name ?? item.name_ko}</Text>
+                    <Text style={modal.crewSub}>{item.name_ko ?? item.name}</Text>
                   </View>
-                  <Text style={modal.joinBtn}>참여 →</Text>
+                  <Text style={modal.joinBtn}>Join →</Text>
                 </TouchableOpacity>
               )}
               ItemSeparatorComponent={() => <View style={{ height: 1, backgroundColor: Colors.zinc100 }} />}
-              ListEmptyComponent={<Text style={modal.empty}>등록된 크루가 없습니다</Text>}
+              ListEmptyComponent={<Text style={modal.empty}>No crews yet</Text>}
             />
           )
         ) : (
           <View style={modal.createForm}>
-            <Text style={modal.label}>크루 이름 (영문)</Text>
+            <Text style={modal.label}>Crew Name (English)</Text>
             <TextInput style={modal.input} value={newName} onChangeText={setNewName} placeholder="e.g. BukhanCrew" placeholderTextColor={Colors.zinc500} />
-            <Text style={modal.label}>크루 이름 (한글)</Text>
+            <Text style={modal.label}>Crew Name (Korean)</Text>
             <TextInput style={modal.input} value={newNameKo} onChangeText={setNewNameKo} placeholder="e.g. 북한산 크루" placeholderTextColor={Colors.zinc500} />
-            <Text style={modal.label}>크루 색상</Text>
+            <Text style={modal.label}>Crew Color</Text>
             <View style={modal.colorRow}>
               {CREW_COLORS.map((c) => (
                 <TouchableOpacity key={c.hex} style={[modal.colorDot, { backgroundColor: c.hex }, selectedColor === c.hex && modal.colorSelected]} onPress={() => setSelectedColor(c.hex)} />
               ))}
             </View>
             <TouchableOpacity style={[modal.createBtn, busy && { opacity: 0.6 }]} onPress={handleCreate} disabled={busy}>
-              <Text style={modal.createBtnText}>{busy ? '생성 중...' : '크루 만들기'}</Text>
+              <Text style={modal.createBtnText}>{busy ? 'Creating...' : 'Create Crew'}</Text>
             </TouchableOpacity>
           </View>
         )}
 
         <TouchableOpacity style={modal.closeBtn} onPress={onClose}>
-          <Text style={modal.closeBtnText}>닫기</Text>
+          <Text style={modal.closeBtnText}>Close</Text>
         </TouchableOpacity>
       </View>
     </Modal>
@@ -128,9 +128,9 @@ export default function ProfileScreen() {
 
   const handleLeave = () => {
     if (!profile?.crew_id) return;
-    Alert.alert('크루 탈퇴', '정말 탈퇴하시겠습니까?', [
-      { text: '취소', style: 'cancel' },
-      { text: '탈퇴', style: 'destructive', onPress: async () => { await leaveCrew(profile.crew_id!); loadProfile(); } },
+    Alert.alert('Leave Crew', 'Are you sure you want to leave this crew?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Leave', style: 'destructive', onPress: async () => { await leaveCrew(profile.crew_id!); loadProfile(); } },
     ]);
   };
 
@@ -139,27 +139,34 @@ export default function ProfileScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.displayName}>{profile?.display_name ?? '사용자'}</Text>
-        <Text style={styles.flagCount}>🚩 {profile?.flag_count ?? 0}개 깃발</Text>
+        <View style={[styles.avatar, { backgroundColor: profile?.crew_color_hex ?? 'rgba(255,255,255,0.22)' }]}>
+          <Text style={styles.avatarText}>{(profile?.display_name ?? 'U').charAt(0).toUpperCase()}</Text>
+        </View>
+        <View style={styles.headerMeta}>
+          <Text style={styles.displayName}>{profile?.display_name ?? 'User'}</Text>
+          <View style={styles.statChip}>
+            <Text style={styles.statChipText}>{profile?.flag_count ?? 0} flags planted</Text>
+          </View>
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>내 크루</Text>
+          <Text style={styles.sectionTitle}>My Crew</Text>
           {profile?.crew_id ? (
             <View style={styles.crewCard}>
               <View style={[styles.crewDot, { backgroundColor: profile.crew_color_hex ?? Colors.green }]} />
               <View style={{ flex: 1 }}>
-                <Text style={styles.crewName}>{profile.crew_name_ko ?? profile.crew_name}</Text>
-                <Text style={styles.crewSub}>{profile.crew_name}</Text>
+                <Text style={styles.crewName}>{profile.crew_name ?? profile.crew_name_ko}</Text>
+                <Text style={styles.crewSub}>{profile.crew_name_ko ?? profile.crew_name}</Text>
               </View>
               <TouchableOpacity onPress={handleLeave}>
-                <Text style={styles.leaveText}>탈퇴</Text>
+                <Text style={styles.leaveText}>Leave</Text>
               </TouchableOpacity>
             </View>
           ) : (
             <TouchableOpacity style={styles.joinBanner} onPress={() => setShowCrewPicker(true)}>
-              <Text style={styles.joinBannerText}>크루에 참여하거나 만들기</Text>
+              <Text style={styles.joinBannerText}>Join or create a crew</Text>
               <Text style={styles.joinArrow}>→</Text>
             </TouchableOpacity>
           )}
@@ -168,7 +175,7 @@ export default function ProfileScreen() {
         {userId && <RecentHikesList userId={userId} />}
 
         <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
-          <Text style={styles.signOutText}>로그아웃</Text>
+          <Text style={styles.signOutText}>Sign Out</Text>
         </TouchableOpacity>
       </ScrollView>
 
@@ -181,9 +188,34 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.cream },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   scrollContent: { paddingBottom: 32 },
-  header: { backgroundColor: Colors.green, paddingTop: 64, paddingBottom: 28, paddingHorizontal: 24 },
-  displayName: { fontSize: 24, fontWeight: '700', color: Colors.white },
-  flagCount: { fontSize: 15, color: Colors.white, opacity: 0.85, marginTop: 4 },
+  header: {
+    backgroundColor: Colors.green,
+    paddingTop: 64,
+    paddingBottom: 24,
+    paddingHorizontal: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  avatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: { fontSize: 24, fontWeight: '800', color: Colors.white },
+  headerMeta: { flex: 1 },
+  displayName: { fontSize: 22, fontWeight: '800', color: Colors.white, letterSpacing: -0.5 },
+  statChip: {
+    marginTop: 6,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    alignSelf: 'flex-start',
+  },
+  statChipText: { fontSize: 13, color: Colors.white, fontWeight: '600' },
   section: { backgroundColor: Colors.white, marginTop: 16, paddingHorizontal: 20, paddingVertical: 16 },
   sectionTitle: { fontSize: 12, fontWeight: '700', color: Colors.zinc500, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.8 },
   crewCard: { flexDirection: 'row', alignItems: 'center', gap: 12 },

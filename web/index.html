@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlagOn — 정상을 점령하라</title>
+  <meta name="description" content="GPS로 정상을 인증하고 크루 깃발을 꽂는 등산 경쟁 앱. App Store 출시 예정.">
+  <meta property="og:title" content="FlagOn — Plant Your Flag">
+  <meta property="og:description" content="GPS-verified peak conquests for hiking crews. Coming to App Store.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:      #2D6A4F;
+      --green-dark: #1A3D2B;
+      --green-mid:  #3A7A55;
+      --cream:      #F8F5F0;
+      --ink:        #0E1A14;
+      --zinc:       #71717A;
+      --zinc-100:   #F4F4F5;
+      --white:      #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', system-ui, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* ── Nav ─────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 22px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none;
+    }
+
+    .nav-logo-text {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.5px;
+    }
+
+    .nav-langs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .lang-pill {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 20px;
+      padding: 4px 11px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Hero ────────────────────────────────── */
+    .hero {
+      min-height: 100dvh;
+      background: var(--green);
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      padding: 0 48px 0 72px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: -160px; right: -80px;
+      width: 560px; height: 560px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.025);
+      pointer-events: none;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 0 80px;
+      max-width: 640px;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.1s both;
+    }
+
+    .hero-h1 {
+      font-size: clamp(56px, 7.5vw, 96px);
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: -3.5px;
+      line-height: 0.93;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.18s both;
+    }
+
+    .hero-h1 em {
+      font-style: normal;
+      color: rgba(255,255,255,0.28);
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.7;
+      max-width: 44ch;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.26s both;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      opacity: 0;
+      animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.34s both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--white);
+      color: var(--green-dark);
+      padding: 14px 22px;
+      border-radius: 13px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.22);
+    }
+
+    .btn-primary:active { transform: scale(0.98); }
+
+    .hero-note {
+      font-size: 13px;
+      color: rgba(255,255,255,0.38);
+      font-weight: 500;
+    }
+
+    /* ── Phone mockup ────────────────────────── */
+    .hero-right {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 0;
+      opacity: 0;
+      animation: fadeRight 0.7s cubic-bezier(0.16,1,0.3,1) 0.45s both;
+    }
+
+    .phone {
+      width: 272px;
+      height: 572px;
+      background: var(--green-dark);
+      border-radius: 44px;
+      border: 2px solid rgba(255,255,255,0.09);
+      box-shadow:
+        0 48px 96px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.07);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone-notch {
+      width: 88px; height: 24px;
+      background: var(--green-dark);
+      border-radius: 0 0 18px 18px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .phone-screen { flex: 1; position: relative; }
+
+    .map-base {
+      position: absolute; inset: 0;
+      background: linear-gradient(148deg, #1C3828 0%, #2A5438 55%, #366846 100%);
+    }
+
+    .map-lines {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+
+    .dot {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.9);
+    }
+
+    .dot-claimed { width: 13px; height: 13px; background: #C0704A; }
+    .dot-neutral { width: 9px;  height: 9px;  background: #71717A; border-color: rgba(255,255,255,0.5); }
+    .dot-active  { width: 15px; height: 15px; background: #4A7C59; animation: pulseMap 2s ease-in-out infinite; }
+
+    .phone-overlay {
+      position: absolute;
+      bottom: 18px; left: 12px; right: 12px;
+      background: rgba(10, 22, 16, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.09);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+      border-radius: 20px;
+      padding: 16px;
+    }
+
+    .ov-title { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+    .ov-sub   { font-size: 10px; color: rgba(255,255,255,0.45); margin-bottom: 11px; }
+
+    .ov-bar {
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .ov-fill {
+      height: 100%;
+      background: #4A7C59;
+      border-radius: 2px;
+      width: 62%;
+      animation: barPulse 3s ease-in-out infinite alternate;
+    }
+
+    /* ── Features ────────────────────────────── */
+    .features {
+      background: var(--cream);
+      padding: 120px 72px;
+    }
+
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--zinc);
+      margin-bottom: 14px;
+    }
+
+    .section-h2 {
+      font-size: clamp(38px, 4vw, 58px);
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -2.2px;
+      line-height: 1.04;
+      max-width: 520px;
+      margin-bottom: 72px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 3px;
+    }
+
+    .feat {
+      padding: 44px;
+      background: var(--white);
+    }
+
+    .feat:nth-child(1) {
+      grid-row: span 2;
+      background: var(--green);
+      padding: 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-height: 420px;
+    }
+
+    .feat-icon {
+      width: 42px; height: 42px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .feat-icon-light { background: rgba(255,255,255,0.12); }
+    .feat-icon-dark  { background: var(--zinc-100); }
+
+    .feat-title {
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    .feat-title-light { color: var(--white); }
+    .feat-title-dark  { color: var(--ink); }
+
+    .feat-desc {
+      font-size: 14px;
+      line-height: 1.65;
+      max-width: 36ch;
+    }
+
+    .feat-desc-light { color: rgba(255,255,255,0.55); }
+    .feat-desc-dark  { color: var(--zinc); }
+
+    /* ── Stats strip ─────────────────────────── */
+    .stats {
+      background: var(--green-dark);
+      padding: 64px 72px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .stat {
+      border-left: 1px solid rgba(255,255,255,0.08);
+      padding-left: 28px;
+    }
+
+    .stat-num {
+      font-size: 46px;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+      font-weight: 500;
+    }
+
+    /* ── CTA ─────────────────────────────────── */
+    .cta {
+      background: var(--cream);
+      padding: 120px 72px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .cta-h2 {
+      font-size: clamp(44px, 5vw, 72px);
+      font-weight: 900;
+      color: var(--ink);
+      letter-spacing: -2.5px;
+      line-height: 0.97;
+    }
+
+    .cta-h2 mark {
+      background: none;
+      color: var(--green);
+    }
+
+    .cta-right {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .cta-desc {
+      font-size: 16px;
+      color: var(--zinc);
+      line-height: 1.7;
+    }
+
+    .cta-badges { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .badge-store {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--ink);
+      color: var(--white);
+      padding: 13px 20px;
+      border-radius: 13px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), opacity 0.2s;
+    }
+
+    .badge-store:hover { transform: translateY(-2px); }
+    .badge-store:active { transform: scale(0.98); }
+    .badge-store.soon { opacity: 0.38; pointer-events: none; }
+
+    .cta-social {
+      font-size: 13px;
+      color: var(--zinc);
+    }
+
+    /* ── Footer ──────────────────────────────── */
+    footer {
+      background: var(--ink);
+      padding: 36px 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-brand {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.4px;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* ── Animations ──────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeRight {
+      from { opacity: 0; transform: translateX(36px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes pulseMap {
+      0%,100% { box-shadow: 0 0 0 0 rgba(74,124,89,0.7); }
+      50%      { box-shadow: 0 0 0 9px rgba(74,124,89,0); }
+    }
+
+    @keyframes barPulse {
+      from { width: 44%; }
+      to   { width: 72%; }
+    }
+
+    /* ── Mobile ──────────────────────────────── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .lang-pill { display: none; }
+
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 0 20px;
+        min-height: auto;
+        padding-bottom: 48px;
+      }
+
+      .hero-left { padding: 96px 0 36px; }
+      .hero-h1 { letter-spacing: -2px; }
+
+      .hero-right {
+        justify-content: flex-start;
+        padding: 0 0 0 4px;
+      }
+
+      .phone { width: 210px; height: 440px; }
+
+      .features { padding: 80px 20px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .feat:nth-child(1) { min-height: 280px; }
+      .feat { padding: 32px 28px; }
+
+      .stats {
+        padding: 56px 20px;
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .cta {
+        padding: 80px 20px;
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+
+      footer {
+        padding: 28px 20px;
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <rect x="5.5" y="3" width="2.2" height="19" rx="1.1" fill="rgba(255,255,255,0.55)"/>
+      <path d="M7.7 4.8 L20 8.6 L7.7 13.4Z" fill="white"/>
+    </svg>
+    <span class="nav-logo-text">FlagOn</span>
+  </a>
+  <div class="nav-langs">
+    <span class="lang-pill">한국어</span>
+    <span class="lang-pill">日本語</span>
+    <span class="lang-pill">English</span>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">GPS 정상 인증 앱</p>
+    <h1 class="hero-h1">Plant<br>your flag.<br><em>Own the</em><br>summit.</h1>
+    <p class="hero-sub">
+      실제 정상에서만 깃발을 꽂을 수 있다.<br>
+      크루와 함께 한국의 명산을 점령하라.
+    </p>
+    <div class="hero-actions">
+      <a href="#cta" class="btn-primary">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+          <path d="M15 10.8c0-2.6 1.8-4.8 4.3-5.6-.9-2.1-2.9-3.2-5-3.2-2 0-3.4 1.15-4.3 1.15-.9 0-2.4-1.1-4.1-1.1C3.1 2.05.9 4.5.9 7.9c0 4.5 3.9 9.1 5.9 9.1 1 0 2-1.15 3.4-1.15 1.35 0 2.15 1.15 3.45 1.15.56 0 1.05-.26 1.5-.66A6.5 6.5 0 0115 10.8z" fill="currentColor"/>
+          <path d="M13.3 1.8c-.67.83-1.75 1.5-2.8 1.4-.13-1.06.38-2.17 1.02-2.86C12.18-.44 13.3-.16 13.3 1.8z" fill="currentColor"/>
+        </svg>
+        App Store
+      </a>
+      <span class="hero-note">Coming Soon</span>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="map-base"></div>
+        <div class="map-lines"></div>
+        <div class="dot dot-claimed" style="top:32%;left:48%"></div>
+        <div class="dot dot-claimed" style="top:18%;left:68%"></div>
+        <div class="dot dot-neutral" style="top:52%;left:22%"></div>
+        <div class="dot dot-neutral" style="top:62%;left:72%"></div>
+        <div class="dot dot-active"  style="top:44%;left:57%"></div>
+        <div class="phone-overlay">
+          <div class="ov-title">북한산 백운대</div>
+          <div class="ov-sub">836m &middot; 정상 체류 13분</div>
+          <div class="ov-bar"><div class="ov-fill"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features">
+  <p class="section-eyebrow">왜 FlagOn인가</p>
+  <h2 class="section-h2">등산이<br>경쟁이 된다</h2>
+
+  <div class="features-grid">
+    <div class="feat">
+      <div class="feat-icon feat-icon-light">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="3.5" fill="white"/>
+          <circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.4" stroke-dasharray="2.5 3"/>
+        </svg>
+      </div>
+      <h3 class="feat-title feat-title-light">GPS 정상 인증</h3>
+      <p class="feat-desc feat-desc-light">
+        정상 반경 150m 이내에서 20분 체류 시 자동 인증된다.
+        꼼수 없이, 실제로 올라야만 깃발을 꽂을 수 있다.
+      </p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon feat-icon-dark">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M10 2L12.5 7.5L19 8.2L14.5 12.5L15.8 19L10 15.9L4.2 19L5.5 12.5L1 8.2L7.5 7.5Z" fill="#2D6A4F"/>
+        </svg>
+      </div>
+      <h3 class="feat-title feat-title-dark">크루 리더보드</h3>
+      <p class="feat-desc feat-desc-dark">
+        크루별 점령 산 개수로 순위가 결정된다. 깃발은 7일 후 소멸 &mdash; 점유를 유지하려면 다시 올라야 한다.
+      </p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon feat-icon-dark">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="2"  y="12" width="4" height="6" rx="1" fill="#2D6A4F"/>
+          <rect x="8"  y="8"  width="4" height="10" rx="1" fill="#2D6A4F"/>
+          <rect x="14" y="4"  width="4" height="14" rx="1" fill="#2D6A4F"/>
+        </svg>
+      </div>
+      <h3 class="feat-title feat-title-dark">실시간 알림</h3>
+      <p class="feat-desc feat-desc-dark">
+        다른 크루가 우리 깃발을 빼앗는 순간 즉시 알림이 온다. 지도는 크루 색상을 실시간으로 반영한다.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">2,400+</div>
+    <div class="stat-label">등록 정상</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">7일</div>
+    <div class="stat-label">깃발 유효 기간</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">KR &middot; JP &middot; US</div>
+    <div class="stat-label">출시 예정 시장</div>
+  </div>
+</div>
+
+<section class="cta" id="cta">
+  <h2 class="cta-h2">첫 번째<br><mark>크루</mark>가<br>되어라.</h2>
+  <div class="cta-right">
+    <p class="cta-desc">
+      FlagOn은 곧 App Store에 출시됩니다.<br>
+      한국, 일본, 미국 등산 커뮤니티를 위한<br>GPS 깃발 경쟁 앱.
+    </p>
+    <div class="cta-badges">
+      <a href="#" class="badge-store soon">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <path d="M15 10.8c0-2.6 1.8-4.8 4.3-5.6-.9-2.1-2.9-3.2-5-3.2-2 0-3.4 1.15-4.3 1.15-.9 0-2.4-1.1-4.1-1.1C3.1 2.05.9 4.5.9 7.9c0 4.5 3.9 9.1 5.9 9.1 1 0 2-1.15 3.4-1.15 1.35 0 2.15 1.15 3.45 1.15.56 0 1.05-.26 1.5-.66A6.5 6.5 0 0115 10.8z" fill="currentColor"/>
+          <path d="M13.3 1.8c-.67.83-1.75 1.5-2.8 1.4-.13-1.06.38-2.17 1.02-2.86C12.18-.44 13.3-.16 13.3 1.8z" fill="currentColor"/>
+        </svg>
+        App Store &mdash; 출시 예정
+      </a>
+    </div>
+    <p class="cta-social">출시 소식: Instagram @flagon.app</p>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-brand">FlagOn</span>
+  <span class="footer-copy">&copy; 2026 FlagOn. All rights reserved.</span>
+</footer>
+
+</body>
+</html>

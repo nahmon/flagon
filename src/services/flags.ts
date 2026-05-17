@@ -30,7 +30,7 @@ export async function getUserCrewId(): Promise<string | null> {
 export async function fetchUserRecentFlags(userId: string, limit = 10): Promise<RecentFlag[]> {
   const { data, error } = await supabase
     .from('flags')
-    .select('id, planted_at, expires_at, is_active, summits(id, name_ko, elevation_m)')
+    .select('id, planted_at, expires_at, is_active, summits(id, name_ko, name_en, elevation_m)')
     .eq('user_id', userId)
     .order('planted_at', { ascending: false })
     .limit(limit);

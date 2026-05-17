@@ -1,7 +1,7 @@
 {
   "cli": {
     "version": ">= 14.0.0",
-    "appVersionSource": "remote"
+    "appVersionSource": "local"
   },
   "build": {
     "development": {
@@ -18,6 +18,11 @@
       }
     },
     "production": {
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://cuxkdnwptriocppkysdd.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1eGtkbndwdHJpb2NwcGt5c2RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5Mjc4NDAsImV4cCI6MjA5NDUwMzg0MH0.0MmfqX1QiVbYJaWDlTvStaYnklKdjI5Hii_QuKRwzuw",
+        "EXPO_PUBLIC_MAPBOX_TOKEN": "MAPBOX_PUBLIC_TOKEN_PLACEHOLDER"
+      },
       "ios": {
         "buildConfiguration": "Release"
       },

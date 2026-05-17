@@ -45,9 +45,10 @@ export const FLAG = {
   EXPIRY_DAYS: 7,
 } as const;
 
-// Map config (CARTO Positron)
+// Map config (Mapbox Outdoors via MapLibre)
+const MAPBOX_TOKEN = process.env.EXPO_PUBLIC_MAPBOX_TOKEN ?? '';
 export const MAP = {
-  TILE_URL: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+  STYLE_URL: `https://api.mapbox.com/styles/v1/mapbox/outdoors-v12?access_token=${MAPBOX_TOKEN}`,
   DEFAULT_CENTER: { lat: 37.5665, lng: 126.9780 }, // 서울
   DEFAULT_ZOOM: 11,
   SUMMIT_VISIBLE_ZOOM: 10,
