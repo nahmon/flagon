@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import { Session } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../src/services/supabase';
+import { registerForPushNotifications } from '../src/services/notifications';
 
 type AppState = 'loading' | 'onboarding' | 'auth' | 'app';
 
@@ -18,6 +19,9 @@ export default function RootLayout() {
       }
 
       const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        registerForPushNotifications().catch(() => {});
+      }
       setAppState(session ? 'app' : 'auth');
     }
 
@@ -26,7 +30,11 @@ export default function RootLayout() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session: Session | null) => {
       setAppState((prev) => {
         if (prev === 'onboarding') return prev;
-        return session ? 'app' : 'auth';
+        const next = session ? 'app' : 'auth';
+        if (next === 'app') {
+          registerForPushNotifications().catch(() => {});
+        }
+        return next;
       });
     });
 
