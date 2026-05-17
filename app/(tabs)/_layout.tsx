@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../src/constants';
+import { getUserCrewId } from '../../src/services/flags';
+import CrewSetupModal from '../../src/components/CrewSetupModal';
 
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -11,7 +14,19 @@ function icon(focused: boolean, active: IconName, inactive: IconName) {
 }
 
 export default function TabLayout() {
+  const [hasCrew, setHasCrew] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    getUserCrewId()
+      .then(id => setHasCrew(id !== null))
+      .catch(() => setHasCrew(false));
+  }, []);
+
   return (
+    <>
+      {hasCrew === false && (
+        <CrewSetupModal onComplete={() => setHasCrew(true)} />
+      )}
     <Tabs
       screenOptions={{
         headerShown: false,
@@ -19,15 +34,23 @@ export default function TabLayout() {
         tabBarInactiveTintColor: Colors.zinc500,
         tabBarStyle: {
           backgroundColor: Colors.white,
-          borderTopColor: Colors.zinc200,
+          borderTopColor: '#ECEAE5',
           borderTopWidth: 1,
+          height: 84,
+          paddingBottom: 28,
+          paddingTop: 10,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
+          letterSpacing: 0.1,
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: '지도',
+          title: 'Map',
           tabBarIcon: ({ color, size, focused }) =>
             icon(focused, 'map', 'map-outline')({ color, size }),
         }}
@@ -35,19 +58,20 @@ export default function TabLayout() {
       <Tabs.Screen
         name="leaderboard"
         options={{
-          title: '랭킹',
+          title: 'Leaderboard',
           tabBarIcon: ({ color, size, focused }) =>
-            icon(focused, 'trophy', 'trophy-outline')({ color, size }),
+            icon(focused, 'podium', 'podium-outline')({ color, size }),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: '내 정보',
+          title: 'You',
           tabBarIcon: ({ color, size, focused }) =>
             icon(focused, 'person', 'person-outline')({ color, size }),
         }}
       />
     </Tabs>
+    </>
   );
 }
