@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../src/constants';
+import { LangProvider } from '../../src/contexts/LangContext';
 
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -12,6 +13,7 @@ function icon(focused: boolean, active: IconName, inactive: IconName) {
 
 export default function TabLayout() {
   return (
+    <LangProvider>
     <Tabs
       screenOptions={{
         headerShown: false,
@@ -56,6 +58,15 @@ export default function TabLayout() {
             icon(focused, 'person', 'person-outline')({ color, size }),
         }}
       />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: '설정',
+          tabBarIcon: ({ color, size, focused }) =>
+            icon(focused, 'settings', 'settings-outline')({ color, size }),
+        }}
+      />
     </Tabs>
+    </LangProvider>
   );
 }
