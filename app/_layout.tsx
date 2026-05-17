@@ -11,6 +11,14 @@ export default function RootLayout() {
   const [appState, setAppState] = useState<AppState>('loading');
 
   useEffect(() => {
+    if (appState === 'app') {
+      registerForPushNotifications().catch((e) =>
+        console.warn('[pushToken]', e)
+      );
+    }
+  }, [appState]);
+
+  useEffect(() => {
     async function init() {
       const done = await AsyncStorage.getItem('onboarding_done');
       if (!done) {
@@ -19,9 +27,6 @@ export default function RootLayout() {
       }
 
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        registerForPushNotifications().catch(() => {});
-      }
       setAppState(session ? 'app' : 'auth');
     }
 
@@ -30,11 +35,7 @@ export default function RootLayout() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session: Session | null) => {
       setAppState((prev) => {
         if (prev === 'onboarding') return prev;
-        const next = session ? 'app' : 'auth';
-        if (next === 'app') {
-          registerForPushNotifications().catch(() => {});
-        }
-        return next;
+        return session ? 'app' : 'auth';
       });
     });
 

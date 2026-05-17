@@ -3,7 +3,7 @@ import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import { supabase } from './supabase';
 
-const ANDROID_CHANNEL_ID = 'flagon-hiking';
+const CHANNEL_ID = 'flagon-main';
 const SUMMARY_NOTIFICATION_ID = 'daily-hiking-summary';
 
 Notifications.setNotificationHandler({
@@ -18,8 +18,8 @@ Notifications.setNotificationHandler({
 
 async function setupAndroidChannel(): Promise<void> {
   if (Platform.OS !== 'android') return;
-  await Notifications.setNotificationChannelAsync(ANDROID_CHANNEL_ID, {
-    name: '하이킹 알림',
+  await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
+    name: 'FlagOn 알림',
     importance: Notifications.AndroidImportance.HIGH,
     vibrationPattern: [0, 250, 250, 250],
     lightColor: '#2D6A4F',
@@ -38,9 +38,11 @@ export async function registerForPushNotifications(): Promise<void> {
   }
   if (finalStatus !== 'granted') return;
 
-  const projectId =
-    Constants.expoConfig?.extra?.eas?.projectId ??
-    Constants.easConfig?.projectId;
+  // projectId required for Expo push token — sourced from eas.json or app config extra
+  const extra = Constants.expoConfig?.extra as { eas?: { projectId?: string } } | undefined;
+  const projectId: string | undefined =
+    extra?.eas?.projectId ??
+    (Constants.easConfig as unknown as { projectId?: string } | null)?.projectId;
   if (!projectId) return;
 
   let token: string;
@@ -77,6 +79,7 @@ export async function scheduleHikingSummaryNotification(
       body: `크루 랭킹 ${crewRank}위 · 내일도 정상을 정복하세요`,
       sound: 'default',
       data: { type: 'daily_summary' },
+      ...(Platform.OS === 'android' && { channelId: CHANNEL_ID }),
     },
     trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: trigger },
   });
@@ -92,6 +95,7 @@ export async function sendCrewRivalAlert(
       body: `${summitName}에 경쟁 크루 깃발이 꽂혔습니다. 탈환하러 가세요!`,
       sound: 'default',
       data: { type: 'rival_alert', summitName },
+      ...(Platform.OS === 'android' && { channelId: CHANNEL_ID }),
     },
     trigger: null,
   });
@@ -106,7 +110,8 @@ export async function notifySummitNear(summitName: string): Promise<void> {
   await Notifications.scheduleNotificationAsync({
     content: {
       title: `${summitName} 정상 근처!`,
-      body: `20분간 머물면 깃발을 꽂을 수 있습니다`,
+      body: '20분간 머물면 깃발을 꽂을 수 있습니다',
+      ...(Platform.OS === 'android' && { channelId: CHANNEL_ID }),
     },
     trigger: null,
   });
@@ -116,7 +121,8 @@ export async function notifySummitVerified(summitName: string): Promise<void> {
   await Notifications.scheduleNotificationAsync({
     content: {
       title: `${summitName} 인증 완료!`,
-      body: `앱을 열어 크루 깃발을 꽂으세요 🚩`,
+      body: '앱을 열어 크루 깃발을 꽂으세요 🚩',
+      ...(Platform.OS === 'android' && { channelId: CHANNEL_ID }),
     },
     trigger: null,
   });
