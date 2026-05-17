@@ -38,5 +38,11 @@ yarn-error.*
 *.tsbuildinfo
 
 # generated native folders
-/ios
 /android
+
+# iOS — Pods and build outputs are generated; source is committed
+ios/Pods/
+ios/build/
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcodeproj/xcuserdata/
+ios/.xcode.env.local
