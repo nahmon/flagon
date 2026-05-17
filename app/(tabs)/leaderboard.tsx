@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl, TouchableOpacity } from 'react-native';
 import { Colors } from '../../src/constants';
 import { fetchLeaderboard } from '../../src/services/crews';
 import { supabase } from '../../src/services/supabase';
 import { CrewLeaderboardEntry } from '../../src/types';
+import CrewDetailModal from '../../src/components/CrewDetailModal';
 
 function RankBadge({ rank }: { rank: number }) {
   if (rank === 1) return <Text style={styles.medal}>🥇</Text>;
@@ -12,13 +13,13 @@ function RankBadge({ rank }: { rank: number }) {
   return <Text style={styles.rankNum}>{rank}</Text>;
 }
 
-function CrewRow({ entry, rank }: { entry: CrewLeaderboardEntry; rank: number }) {
+function CrewRow({ entry, rank, onPress }: { entry: CrewLeaderboardEntry; rank: number; onPress: () => void }) {
   const ago = entry.last_flag_at
     ? Math.floor((Date.now() - new Date(entry.last_flag_at).getTime()) / 3_600_000)
     : null;
 
   return (
-    <View style={styles.row}>
+    <TouchableOpacity style={styles.row} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.rankCell}>
         <RankBadge rank={rank} />
       </View>
@@ -33,7 +34,8 @@ function CrewRow({ entry, rank }: { entry: CrewLeaderboardEntry; rank: number })
         <Text style={styles.flagCount}>{entry.flag_count}</Text>
         <Text style={styles.flagLabel}>깃발</Text>
       </View>
-    </View>
+      <Text style={styles.chevron}>›</Text>
+    </TouchableOpacity>
   );
 }
 
@@ -41,6 +43,7 @@ export default function LeaderboardScreen() {
   const [entries, setEntries] = useState<CrewLeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedCrew, setSelectedCrew] = useState<CrewLeaderboardEntry | null>(null);
 
   const load = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
@@ -78,7 +81,9 @@ export default function LeaderboardScreen() {
       <FlatList
         data={entries}
         keyExtractor={(e) => e.id}
-        renderItem={({ item, index }) => <CrewRow entry={item} rank={index + 1} />}
+        renderItem={({ item, index }) => (
+          <CrewRow entry={item} rank={index + 1} onPress={() => setSelectedCrew(item)} />
+        )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={Colors.green} />
@@ -88,6 +93,7 @@ export default function LeaderboardScreen() {
         }
         contentContainerStyle={entries.length === 0 ? { flex: 1 } : { paddingBottom: 32 }}
       />
+      <CrewDetailModal crew={selectedCrew} onClose={() => setSelectedCrew(null)} />
     </View>
   );
 }
@@ -124,4 +130,5 @@ const styles = StyleSheet.create({
   flagLabel: { fontSize: 11, color: Colors.zinc500 },
   separator: { height: 1, backgroundColor: Colors.zinc100 },
   empty: { fontSize: 15, color: Colors.zinc500 },
+  chevron: { fontSize: 20, color: Colors.zinc200, marginLeft: 8 },
 });
