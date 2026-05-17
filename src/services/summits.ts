@@ -13,6 +13,8 @@ type SummitsNearRow = {
   is_featured: boolean;
   created_at: string;
   flag_id: string | null;
+  flag_planted_at: string | null;
+  flag_expires_at: string | null;
   crew_id: string | null;
   crew_color_hex: string | null;
   crew_name: string | null;
@@ -49,8 +51,8 @@ export async function fetchSummitsNear(
           summit_id: row.id,
           user_id: '',
           crew_id: row.crew_id,
-          planted_at: '',
-          expires_at: '',
+          planted_at: row.flag_planted_at ?? '',
+          expires_at: row.flag_expires_at ?? '',
           is_active: true,
           crew: row.crew_id
             ? {

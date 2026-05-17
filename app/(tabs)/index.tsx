@@ -10,7 +10,6 @@ import { useHikeStore, stayProgressPct } from '../../src/stores/hikeStore';
 import { useHiking } from '../../src/hooks/useHiking';
 import { requestLocationPermission, distanceMeters } from '../../src/services/gps';
 
-const CARTO_POSITRON = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 const SEOUL: [number, number] = [MAP.DEFAULT_CENTER.lng, MAP.DEFAULT_CENTER.lat];
 
 export default function MapScreen() {
@@ -89,7 +88,7 @@ export default function MapScreen() {
         refreshSummits(state.currentLat, state.currentLng);
       }
     } catch (e) {
-      Alert.alert('오류', '깃발 꽂기에 실패했습니다. 다시 시도해주세요.');
+      Alert.alert('Error', 'Failed to plant flag. Please try again.');
       console.error('[plantFlag]', e);
     } finally {
       setPlanting(false);
@@ -116,7 +115,7 @@ export default function MapScreen() {
 
   return (
     <View style={styles.container}>
-      <Map style={styles.map} mapStyle={CARTO_POSITRON} onPress={handleMapPress}>
+      <Map style={styles.map} mapStyle={MAP.STYLE_URL} onPress={handleMapPress}>
         <Camera
           ref={cameraRef}
           initialViewState={{ center: SEOUL, zoom: MAP.DEFAULT_ZOOM }}
@@ -147,7 +146,7 @@ export default function MapScreen() {
               'text-size': 11,
               'text-offset': [0, 1.5],
               'text-anchor': 'top',
-              'text-font': ['Noto Sans Regular', 'Arial Unicode MS Regular'],
+              'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Regular'],
             }}
             paint={{
               'text-color': Colors.zinc800,
@@ -163,7 +162,7 @@ export default function MapScreen() {
         <View style={styles.summitCard}>
           <View style={styles.summitCardRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.summitCardName}>{selectedSummit.name_ko}</Text>
+              <Text style={styles.summitCardName}>{selectedSummit.name_en ?? selectedSummit.name_ko}</Text>
               <Text style={styles.summitCardSub}>{selectedSummit.elevation_m}m</Text>
             </View>
             {selectedSummit.active_flag?.crew ? (
@@ -176,6 +175,16 @@ export default function MapScreen() {
               </View>
             )}
           </View>
+          {selectedSummit.active_flag?.expires_at ? (() => {
+            const daysLeft = Math.ceil(
+              (new Date(selectedSummit.active_flag.expires_at).getTime() - Date.now()) / 86_400_000
+            );
+            return (
+              <Text style={styles.expiryText}>
+                {daysLeft > 1 ? `${daysLeft}일 후 만료` : daysLeft === 1 ? '내일 만료' : '오늘 만료'}
+              </Text>
+            );
+          })() : null}
           <TouchableOpacity style={styles.cardClose} onPress={() => setSelectedSummit(null)}>
             <Text style={styles.cardCloseText}>✕</Text>
           </TouchableOpacity>
@@ -185,17 +194,17 @@ export default function MapScreen() {
       {/* 정상 인증 오버레이 */}
       {phase === 'near_summit' && nearestSummit && (
         <View style={styles.overlay}>
-          <Text style={styles.overlayTitle}>{nearestSummit.name_ko} 정상 근처</Text>
+          <Text style={styles.overlayTitle}>Near {nearestSummit.name_en ?? nearestSummit.name_ko}</Text>
           <Text style={styles.overlaySubtitle}>
-            {nearestSummit.elevation_m}m · 체류 {GPS.MIN_STAY_MINUTES}분 필요
+            {nearestSummit.elevation_m}m · Stay {GPS.MIN_STAY_MINUTES} min
           </Text>
 
-          {/* 진행 바 */}
+          {/* progress bar */}
           <View style={styles.progressTrack}>
             <View style={[styles.progressFill, { width: `${stayPct * 100}%` }]} />
           </View>
           <Text style={styles.progressLabel}>
-            {stayPct >= 1 ? '인증 완료!' : `약 ${remainingMin}분 남음`}
+            {stayPct >= 1 ? 'Verified!' : `~${remainingMin} min left`}
           </Text>
         </View>
       )}
@@ -203,15 +212,15 @@ export default function MapScreen() {
       {/* 깃발 꽂기 버튼 */}
       {phase === 'verified' && nearestSummit && (
         <View style={styles.overlay}>
-          <Text style={styles.overlayTitle}>{nearestSummit.name_ko} 정상 인증!</Text>
-          <Text style={styles.overlaySubtitle}>{GPS.MIN_STAY_MINUTES}분 체류 완료</Text>
+          <Text style={styles.overlayTitle}>{nearestSummit.name_en ?? nearestSummit.name_ko} Verified!</Text>
+          <Text style={styles.overlaySubtitle}>{GPS.MIN_STAY_MINUTES} min stay complete</Text>
           <TouchableOpacity
             style={[styles.plantBtn, planting && styles.plantBtnDisabled]}
             onPress={handlePlantFlag}
             disabled={planting}
           >
             <Text style={styles.plantBtnText}>
-              {planting ? '처리 중...' : '🚩 깃발 꽂기'}
+              {planting ? 'Processing...' : '🚩 Plant Flag'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -227,13 +236,13 @@ export default function MapScreen() {
           ]}
         >
           <Text style={styles.successEmoji}>🏔️</Text>
-          <Text style={styles.successTitle}>{nearestSummit.name_ko} 정복!</Text>
-          <Text style={styles.successSub}>크루를 위해 깃발을 꽂았습니다</Text>
+          <Text style={styles.successTitle}>{nearestSummit.name_en ?? nearestSummit.name_ko} Conquered!</Text>
+          <Text style={styles.successSub}>You planted a flag for your crew</Text>
           <TouchableOpacity
             style={styles.successDismiss}
             onPress={() => useHikeStore.getState().reset()}
           >
-            <Text style={styles.successDismissText}>확인</Text>
+            <Text style={styles.successDismissText}>Done</Text>
           </TouchableOpacity>
         </Animated.View>
       )}
@@ -359,6 +368,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   crewBadgeText: { fontSize: 12, fontWeight: '600', color: Colors.white },
+  expiryText: { fontSize: 12, color: Colors.zinc500, marginTop: 6 },
   cardClose: { position: 'absolute', top: -8, right: -8, width: 24, height: 24, borderRadius: 12, backgroundColor: Colors.zinc200, alignItems: 'center', justifyContent: 'center' },
   cardCloseText: { fontSize: 10, color: Colors.zinc800, fontWeight: '700' },
 });
