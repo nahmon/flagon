@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ActivityIndicator, Platform } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
-import * as AppleAuthentication from 'expo-apple-authentication';
 import { makeRedirectUri } from 'expo-auth-session';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import { supabase } from '../../src/services/supabase';
 import { Colors } from '../../src/constants';
 
@@ -43,16 +43,15 @@ export default function LoginScreen() {
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
       });
-      if (credential.identityToken) {
-        const { error } = await supabase.auth.signInWithIdToken({
-          provider: 'apple',
-          token: credential.identityToken,
-        });
-        if (error) throw error;
-      }
+      if (!credential.identityToken) throw new Error('No identity token');
+      const { error } = await supabase.auth.signInWithIdToken({
+        provider: 'apple',
+        token: credential.identityToken,
+      });
+      if (error) throw error;
     } catch (e: any) {
       if (e.code !== 'ERR_REQUEST_CANCELED') {
-        console.error('[Apple Sign In]', e);
+        console.error('[Apple Sign-In]', e);
       }
     } finally {
       setLoading(null);
@@ -62,42 +61,41 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.hero}>
+        <Text style={styles.flagIcon}>🚩</Text>
         <Text style={styles.wordmark}>FlagOn</Text>
         <Text style={styles.tagline}>Plant your flag. Own the summit.</Text>
       </View>
 
-      <View style={styles.card}>
-        <Text style={styles.welcome}>시작하기</Text>
-        <Text style={styles.subtitle}>로그인하고 정상 경쟁을 시작하세요</Text>
+      <View style={styles.sheet}>
+        <View style={styles.handle} />
+
+        <Text style={styles.welcome}>Get started</Text>
+        <Text style={styles.subtitle}>Sign in to claim summits with your crew</Text>
 
         {Platform.OS === 'ios' && (
-          <TouchableOpacity
+          <AppleAuthentication.AppleAuthenticationButton
+            buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+            buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+            cornerRadius={14}
             style={styles.appleBtn}
             onPress={signInWithApple}
-            disabled={loading !== null}
-          >
-            {loading === 'apple' ? (
-              <ActivityIndicator color={Colors.white} />
-            ) : (
-              <Text style={styles.appleBtnText}> Apple로 계속하기</Text>
-            )}
-          </TouchableOpacity>
+          />
         )}
 
         <TouchableOpacity
-          style={styles.googleBtn}
+          style={[styles.googleBtn, loading === 'google' && { opacity: 0.6 }]}
           onPress={signInWithGoogle}
           disabled={loading !== null}
         >
           {loading === 'google' ? (
-            <ActivityIndicator color={Colors.zinc950} />
+            <ActivityIndicator color="#1F2421" />
           ) : (
-            <Text style={styles.googleBtnText}>Google로 계속하기</Text>
+            <Text style={styles.googleBtnText}>Continue with Google</Text>
           )}
         </TouchableOpacity>
 
         <Text style={styles.legal}>
-          계속하면 서비스 이용약관 및 개인정보처리방침에 동의합니다
+          By continuing, you agree to our Terms of Service and Privacy Policy
         </Text>
       </View>
     </SafeAreaView>
@@ -107,76 +105,87 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.greenDark,
+    backgroundColor: Colors.green,
   },
   hero: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 32,
+    gap: 10,
+  },
+  flagIcon: {
+    fontSize: 52,
+    marginBottom: 4,
   },
   wordmark: {
-    fontSize: 36,
-    fontWeight: '700',
+    fontSize: 44,
+    fontWeight: '800',
     color: Colors.white,
-    marginTop: 24,
-    letterSpacing: -0.5,
+    letterSpacing: -1.4,
+    lineHeight: 48,
   },
   tagline: {
     fontSize: 15,
-    color: Colors.zinc200,
-    marginTop: 8,
-    opacity: 0.8,
+    color: Colors.white,
+    opacity: 0.72,
+    letterSpacing: -0.2,
+    textAlign: 'center',
   },
-  card: {
-    backgroundColor: Colors.white,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: 32,
-    paddingTop: 28,
-    paddingBottom: 40,
-    gap: 12,
+  sheet: {
+    backgroundColor: Colors.cream,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 32,
+    gap: 10,
+  },
+  handle: {
+    width: 36,
+    height: 4,
+    backgroundColor: '#E5E0D5',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 12,
   },
   welcome: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: Colors.zinc950,
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#1F2421',
+    letterSpacing: -0.6,
   },
   subtitle: {
     fontSize: 14,
     color: Colors.zinc500,
-    marginBottom: 8,
+    letterSpacing: -0.2,
+    marginBottom: 4,
   },
   appleBtn: {
     height: 52,
-    backgroundColor: Colors.zinc950,
     borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  appleBtnText: {
-    color: Colors.white,
-    fontSize: 16,
-    fontWeight: '600',
   },
   googleBtn: {
     height: 52,
     backgroundColor: Colors.white,
     borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: Colors.zinc200,
+    borderWidth: 1,
+    borderColor: '#E5E0D5',
     alignItems: 'center',
     justifyContent: 'center',
   },
   googleBtnText: {
-    color: Colors.zinc950,
-    fontSize: 16,
+    color: '#1F2421',
+    fontSize: 15.5,
     fontWeight: '600',
+    letterSpacing: -0.2,
   },
   legal: {
-    fontSize: 11,
+    fontSize: 11.5,
     color: Colors.zinc500,
     textAlign: 'center',
     marginTop: 4,
+    lineHeight: 17,
+    letterSpacing: -0.1,
   },
 });

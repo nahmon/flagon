@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "flagon",
+    "name": "FlagOn",
     "slug": "flagon",
     "scheme": "flagon",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -16,14 +16,15 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.flagOn.app",
-      "buildNumber": "1",
+      "buildNumber": "9",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "정상 GPS 인증을 위해 위치 정보를 사용합니다.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "등산 중 GPS 트래킹을 위해 백그라운드 위치 접근이 필요합니다.",
         "ITSAppUsesNonExemptEncryption": false
       },
+      "usesAppleSignIn": true,
       "entitlements": {
-        "aps-environment": "production"
+        "com.apple.developer.applesignin": ["Default"]
       }
     },
     "android": {
@@ -43,7 +44,6 @@
     },
     "plugins": [
       "expo-web-browser",
-      "expo-apple-authentication",
       [
         "expo-location",
         {
@@ -53,14 +53,6 @@
       ],
       "@maplibre/maplibre-react-native",
       "expo-build-properties",
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/icon.png",
-          "color": "#2D6A4F",
-          "sounds": []
-        }
-      ],
       "expo-font"
     ],
     "extra": {
