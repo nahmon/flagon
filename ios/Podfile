@@ -1,0 +1,134 @@
+require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
+require File.join(File.dirname(`node --print "require.resolve('react-native/package.json')"`), "scripts/react_native_pods")
+
+require 'json'
+podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties.json'))) rescue {}
+
+def ccache_enabled?(podfile_properties)
+  # Environment variable takes precedence
+  return ENV['USE_CCACHE'] == '1' if ENV['USE_CCACHE']
+  
+  # Fall back to Podfile properties
+  podfile_properties['apple.ccacheEnabled'] == 'true'
+end
+
+ENV['RCT_NEW_ARCH_ENABLED'] ||= '0' if podfile_properties['newArchEnabled'] == 'false'
+ENV['EX_DEV_CLIENT_NETWORK_INSPECTOR'] ||= podfile_properties['EX_DEV_CLIENT_NETWORK_INSPECTOR']
+ENV['RCT_USE_RN_DEP'] ||= '1' if podfile_properties['ios.buildReactNativeFromSource'] != 'true' && podfile_properties['newArchEnabled'] != 'false'
+ENV['RCT_USE_PREBUILT_RNCORE'] ||= '1' if podfile_properties['ios.buildReactNativeFromSource'] != 'true' && podfile_properties['newArchEnabled'] != 'false'
+platform :ios, podfile_properties['ios.deploymentTarget'] || '15.1'
+
+prepare_react_native_project!
+
+target 'FlagOn' do
+  use_expo_modules!
+
+  if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
+    config_command = ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"];
+  else
+    config_command = [
+      'node',
+      '--no-warnings',
+      '--eval',
+      'require(\'expo/bin/autolinking\')',
+      'expo-modules-autolinking',
+      'react-native-config',
+      '--json',
+      '--platform',
+      'ios'
+    ]
+  end
+
+  config = use_native_modules!(config_command)
+
+  use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
+  use_frameworks! :linkage => ENV['USE_FRAMEWORKS'].to_sym if ENV['USE_FRAMEWORKS']
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :hermes_enabled => podfile_properties['expo.jsEngine'] == nil || podfile_properties['expo.jsEngine'] == 'hermes',
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/..",
+    :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] != 'false',
+  )
+
+  post_install do |installer|
+# @generated begin @maplibre/maplibre-react-native:post-install - expo prebuild (DO NOT MODIFY) sync-6e76c80af0d70c0003d06822dd59b7c729fca472
+    $MLRN.post_install(installer)
+# @generated end @maplibre/maplibre-react-native:post-install
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false,
+      :ccache_enabled => ccache_enabled?(podfile_properties),
+    )
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
+        if ['fmt', 'glog'].include?(target.name)
+          config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+        end
+        # Prevent private framework direct auto-link (Xcode 26 enforces allowable_clients).
+        # Swift -disable-autolink-framework suppresses Swift auto-links for private sub-frameworks.
+        # ObjC auto-links for UIUtilities/CoreAudioTypes are handled via stub TBDs in ios/Stubs/.
+        swift_flags = config.build_settings['OTHER_SWIFT_FLAGS'] || '$(inherited)'
+        unless swift_flags.include?('disable-autolink-framework')
+          config.build_settings['OTHER_SWIFT_FLAGS'] = "#{swift_flags} -Xfrontend -disable-autolink-framework -Xfrontend SwiftUICore -Xfrontend -disable-autolink-framework -Xfrontend UIUtilities -Xfrontend -disable-autolink-framework -Xfrontend UIKitCore -Xfrontend -disable-autolink-framework -Xfrontend CoreAudioTypes -Xfrontend -disable-autolink-framework -Xfrontend AVFCapture -Xfrontend -disable-autolink-framework -Xfrontend AVFCore -Xfrontend -disable-autolink-framework -Xfrontend CollectionViewCore"
+        end
+      end
+    end
+    # Patch MapLibre TurboModules to self-register via RCTRegisterModule
+    # Required because MapLibre v11 omits RCT_EXPORT_MODULE, so modules aren't
+    # auto-discovered by the TurboModule manager in New Architecture.
+    mlrn_modules = %w[
+      MLRNCameraModule MLRNImagesModule MLRNMapViewModule
+      MLRNGeoJSONSourceModule MLRNVectorSourceModule
+      MLRNLocationModule MLRNLogModule MLRNNetworkModule
+      MLRNOfflineModule MLRNStaticMapModule MLRNTransformRequestModule
+    ]
+    mlrn_base = File.expand_path("../node_modules/@maplibre/maplibre-react-native/ios", __dir__)
+    mlrn_modules.each do |mod|
+      mm_files = Dir.glob(File.join(mlrn_base, "**", "#{mod}.mm"))
+      mm_files.each do |path|
+        content = File.read(path)
+        next if content.include?('RCTRegisterModule')
+        # Insert extern "C" at file scope before first @implementation,
+        # and +load method before last @end.
+        # extern "C" must be at file scope in .mm (ObjC++) files — not inside a method body.
+        patched = content.rstrip
+        patched = patched.sub(/^(@implementation\b)/m) do
+          "extern \"C\" void RCTRegisterModule(Class);\n\n#{$1}"
+        end
+        patched = patched.sub(/(@end)\s*\z/m) do
+          "\n+ (void)load { RCTRegisterModule(self); }\n\n@end"
+        end
+        File.write(path, patched)
+        puts "  [MLRN] Patched #{mod} with RCTRegisterModule"
+      end
+    end
+
+
+    # Create stub for missing folly/coro headers in prebuilt ReactNativeDependencies
+    folly_coro_dir = File.join(installer.sandbox.root.to_s, "Headers/Public/ReactNativeDependencies/folly/coro")
+    FileUtils.mkdir_p(folly_coro_dir)
+    coroutine_stub = File.join(folly_coro_dir, "Coroutine.h")
+    File.write(coroutine_stub, <<~HEADER)
+      #pragma once
+      #if __has_include(<coroutine>)
+      #  include <coroutine>
+      namespace folly {
+      namespace coro {
+        using std::coroutine_handle;
+        using std::coroutine_traits;
+        using std::suspend_always;
+        using std::suspend_never;
+        // Returns false on clang (deferred conversion is the norm)
+        inline bool detect_promise_return_object_eager_conversion() noexcept {
+          return false;
+        }
+      } // namespace coro
+      } // namespace folly
+      #endif
+    HEADER
+  end
+end
