@@ -49,6 +49,15 @@ export default function LoginScreen() {
         token: credential.identityToken,
       });
       if (error) throw error;
+      // Apple only provides full_name on the first sign-in — update public.users immediately
+      const fullName = [credential.fullName?.givenName, credential.fullName?.familyName]
+        .filter(Boolean).join(' ');
+      if (fullName) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await supabase.from('users').update({ display_name: fullName }).eq('id', user.id);
+        }
+      }
     } catch (e: any) {
       if (e.code !== 'ERR_REQUEST_CANCELED') {
         console.error('[Apple Sign-In]', e);
