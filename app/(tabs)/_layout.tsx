@@ -33,6 +33,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="feed"
+        options={{
+          title: '피드',
+          tabBarIcon: ({ color, size, focused }) =>
+            icon(focused, 'flash', 'flash-outline')({ color, size }),
+        }}
+      />
+      <Tabs.Screen
         name="leaderboard"
         options={{
           title: '랭킹',

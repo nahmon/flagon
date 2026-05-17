@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Alert, Animated } from 'react-native';
 import { Map, Camera, GeoJSONSource, Layer, UserLocation, type CameraRef } from '@maplibre/maplibre-react-native';
+import SummitSearchBar from '../../src/components/SummitSearchBar';
 import * as Location from 'expo-location';
 import { Colors, MAP, GPS } from '../../src/constants';
 import { SummitWithFlag } from '../../src/types';
@@ -122,6 +123,12 @@ export default function MapScreen() {
     }
   }, [summits]);
 
+  const handleSearchSelect = useCallback((summit: SummitWithFlag) => {
+    const [lng, lat] = summit.location.coordinates;
+    cameraRef.current?.flyTo({ center: [lng, lat], zoom: 13, duration: 600 });
+    setSelectedSummit(summit);
+  }, []);
+
   const stayPct = stayProgressPct(stayElapsedMs, stayStartedAt);
   const remainingMin = Math.ceil((1 - stayPct) * GPS.MIN_STAY_MINUTES);
 
@@ -168,6 +175,8 @@ export default function MapScreen() {
           />
         </GeoJSONSource>
       </Map>
+
+      <SummitSearchBar summits={summits} onSelect={handleSearchSelect} />
 
       {/* 정상 탭 정보 카드 */}
       {selectedSummit && (phase === 'idle' || phase === 'hiking') ? (
