@@ -72,7 +72,8 @@ export async function fetchSummitsNear(
 }
 
 export function summitsToGeoJSON(
-  summits: SummitWithFlag[]
+  summits: SummitWithFlag[],
+  userCrewId?: string | null
 ): GeoJSON.FeatureCollection {
   return {
     type: 'FeatureCollection',
@@ -89,6 +90,7 @@ export function summitsToGeoJSON(
         elevation: s.elevation_m,
         crewId: s.active_flag?.crew_id ?? null,
         crewColor: s.active_flag?.crew?.color_hex ?? null,
+        isOwnCrew: userCrewId && s.active_flag?.crew_id === userCrewId ? 1 : 0,
       },
     })),
   };

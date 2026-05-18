@@ -23,9 +23,19 @@ export default function MapScreen() {
   const [geojson, setGeojson] = useState<GeoJSON.FeatureCollection>({ type: 'FeatureCollection', features: [] });
   const [planting, setPlanting] = useState(false);
   const [selectedSummit, setSelectedSummit] = useState<SummitWithFlag | null>(null);
+  const [userCrewId, setUserCrewId] = useState<string | null>(null);
   const plantAnim = useRef(new Animated.Value(0)).current;
 
   const [isOffline, setIsOffline] = useState(false);
+
+  useEffect(() => {
+    getUserCrewId().then(setUserCrewId).catch(() => {});
+  }, []);
+
+  // Single source of truth: re-derive geojson whenever summits or crew identity changes
+  useEffect(() => {
+    setGeojson(summitsToGeoJSON(summits, userCrewId));
+  }, [summits, userCrewId]);
 
   const hike = useHiking(summits);
   const phase = useHikeStore((s) => s.phase);
@@ -55,7 +65,6 @@ export default function MapScreen() {
         const data = await fetchSummitsNear(lat, lng);
         if (mounted) {
           setSummits(data);
-          setGeojson(summitsToGeoJSON(data));
           setIsOffline(false);
           cacheSummits(data, lat, lng).catch(() => undefined);
         }
@@ -65,7 +74,6 @@ export default function MapScreen() {
         const cached = await loadCachedSummits().catch(() => null);
         if (cached && mounted) {
           setSummits(cached.summits);
-          setGeojson(summitsToGeoJSON(cached.summits));
           setIsOffline(true);
         }
       }
@@ -84,13 +92,12 @@ export default function MapScreen() {
     try {
       const data = await fetchSummitsNear(lat, lng);
       setSummits(data);
-      setGeojson(summitsToGeoJSON(data));
       setIsOffline(false);
       cacheSummits(data, lat, lng).catch(() => undefined);
     } catch (e) {
       console.error('[summits refresh]', e);
     }
-  }, []);
+  }, [userCrewId]);
 
   // Realtime: refresh map when any flag changes
   useEffect(() => {
@@ -235,8 +242,8 @@ export default function MapScreen() {
                 ['!=', ['get', 'crewColor'], null], ['get', 'crewColor'],
                 Colors.zinc500,
               ],
-              'circle-stroke-width': 2.5,
-              'circle-stroke-color': Colors.white,
+              'circle-stroke-width': ['case', ['==', ['get', 'isOwnCrew'], 1], 3.5, 2.5],
+              'circle-stroke-color': ['case', ['==', ['get', 'isOwnCrew'], 1], '#FFD700', Colors.white],
             }}
           />
           <Layer
