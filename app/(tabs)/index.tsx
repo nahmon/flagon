@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Alert, Animated } from 'react-native';
 import { Map, Camera, GeoJSONSource, Layer, UserLocation, type CameraRef } from '@maplibre/maplibre-react-native';
 import SummitSearchBar from '../../src/components/SummitSearchBar';
+import SummitDetailSheet from '../../src/components/SummitDetailSheet';
 import * as Location from 'expo-location';
 import { Colors, MAP, GPS } from '../../src/constants';
 import { SummitWithFlag } from '../../src/types';
@@ -27,6 +28,7 @@ export default function MapScreen() {
   const plantAnim = useRef(new Animated.Value(0)).current;
 
   const [isOffline, setIsOffline] = useState(false);
+  const [detailSummit, setDetailSummit] = useState<SummitWithFlag | null>(null);
 
   useEffect(() => {
     getUserCrewId().then(setUserCrewId).catch(() => {});
@@ -303,11 +305,16 @@ export default function MapScreen() {
               </Text>
             );
           })() : null}
+          <TouchableOpacity style={styles.detailBtn} onPress={() => setDetailSummit(selectedSummit)}>
+            <Text style={styles.detailBtnText}>자세히 보기 →</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.cardClose} onPress={() => setSelectedSummit(null)}>
             <Text style={styles.cardCloseText}>✕</Text>
           </TouchableOpacity>
         </View>
       ) : null}
+
+      <SummitDetailSheet summit={detailSummit} onClose={() => setDetailSummit(null)} />
 
       {/* 정상 인증 오버레이 */}
       {phase === 'near_summit' && nearestSummit && (
@@ -504,6 +511,8 @@ const styles = StyleSheet.create({
   },
   crewBadgeText: { fontSize: 12, fontWeight: '600', color: Colors.white },
   expiryText: { fontSize: 12, color: Colors.zinc500, marginTop: 6 },
+  detailBtn: { marginTop: 10, paddingVertical: 8, borderRadius: 10, backgroundColor: Colors.zinc100, alignItems: 'center' },
+  detailBtnText: { fontSize: 13, fontWeight: '600', color: Colors.green },
   cardClose: { position: 'absolute', top: -8, right: -8, width: 24, height: 24, borderRadius: 12, backgroundColor: Colors.zinc200, alignItems: 'center', justifyContent: 'center' },
   cardCloseText: { fontSize: 10, color: Colors.zinc800, fontWeight: '700' },
 });
