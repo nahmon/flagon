@@ -5,6 +5,7 @@ import { supabase } from '../../src/services/supabase';
 import { fetchUserProfile, fetchCrews, joinCrew, leaveCrew, createCrew, UserProfile } from '../../src/services/crews';
 import { Crew } from '../../src/types';
 import RecentHikesList from '../../src/components/RecentHikesList';
+import AchievementGrid from '../../src/components/AchievementGrid';
 
 const CREW_COLORS = [
   { hex: '#4A7C59' }, { hex: '#C0704A' }, { hex: '#5B7FA6' },
@@ -269,6 +270,7 @@ export default function ProfileScreen() {
           )}
         </View>
 
+        {userId && <AchievementGrid userId={userId} />}
         {userId && <RecentHikesList userId={userId} />}
 
         <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
