@@ -7,6 +7,7 @@ interface FeedItem {
   id: string;
   planted_at: string;
   user_id: string;
+  display_name: string | null;
   summit: { name_ko: string; elevation_m: number } | null;
   crew: { name_ko: string | null; color_hex: string } | null;
 }
@@ -21,28 +22,37 @@ function timeAgo(isoString: string): string {
   return `${Math.floor(hours / 24)}일 전`;
 }
 
-function shortUserId(uid: string): string {
-  return `#${uid.slice(0, 6)}`;
-}
-
 function avatarColor(uid: string): string {
   const colors = [Colors.green, Colors.crewMe, Colors.crewNK, Colors.orange, Colors.greenLight];
-  const idx = uid.charCodeAt(0) % colors.length;
-  return colors[idx];
+  return colors[uid.charCodeAt(0) % colors.length];
+}
+
+function avatarInitial(name: string | null, uid: string): string {
+  if (name && name.length > 0) return name.charAt(0).toUpperCase();
+  return uid.charAt(0).toUpperCase();
 }
 
 async function fetchFeed(): Promise<FeedItem[]> {
   const { data, error } = await supabase
     .from('flags')
-    .select('id, planted_at, user_id, summit:summits(name_ko, elevation_m), crew:crews(name_ko, color_hex)')
+    .select(`
+      id,
+      planted_at,
+      user_id,
+      planted_by:users(display_name),
+      summit:summits(name_ko, elevation_m),
+      crew:crews(name_ko, color_hex)
+    `)
     .eq('is_active', true)
     .order('planted_at', { ascending: false })
     .limit(40);
   if (error) throw error;
+
   return (data ?? []).map((row: any) => ({
     id: row.id,
     planted_at: row.planted_at,
     user_id: row.user_id,
+    display_name: row.planted_by?.display_name ?? null,
     summit: row.summit ?? null,
     crew: row.crew ?? null,
   }));
@@ -50,14 +60,17 @@ async function fetchFeed(): Promise<FeedItem[]> {
 
 function FeedRow({ item }: { item: FeedItem }) {
   const avatarBg = avatarColor(item.user_id);
+  const name = item.display_name ?? `산악인 #${item.user_id.slice(0, 6)}`;
+  const initial = avatarInitial(item.display_name, item.user_id);
+
   return (
     <View style={styles.row}>
       <View style={[styles.avatar, { backgroundColor: avatarBg }]}>
-        <Text style={styles.avatarText}>🏔</Text>
+        <Text style={styles.avatarText}>{initial}</Text>
       </View>
       <View style={styles.rowBody}>
         <View style={styles.rowTop}>
-          <Text style={styles.userName}>산악인 {shortUserId(item.user_id)}</Text>
+          <Text style={styles.userName}>{name}</Text>
           <Text style={styles.timeAgo}>{timeAgo(item.planted_at)}</Text>
         </View>
         <Text style={styles.summitLine}>
@@ -100,14 +113,10 @@ export default function FeedScreen() {
 
   useEffect(() => {
     load();
-
     const channel = supabase
       .channel('feed-flags')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'flags' }, () => {
-        load();
-      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'flags' }, () => load())
       .subscribe();
-
     return () => { supabase.removeChannel(channel); };
   }, [load]);
 
@@ -175,7 +184,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarText: { fontSize: 20 },
+  avatarText: { fontSize: 18, fontWeight: '700', color: Colors.white },
   rowBody: { flex: 1, gap: 4 },
   rowTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   userName: { fontSize: 14, fontWeight: '600', color: Colors.zinc800 },

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Modal, FlatList, TextInput, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Modal, FlatList, TextInput, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Colors } from '../../src/constants';
 import { supabase } from '../../src/services/supabase';
 import { fetchUserProfile, fetchCrews, joinCrew, leaveCrew, createCrew, UserProfile } from '../../src/services/crews';
@@ -109,6 +109,9 @@ export default function ProfileScreen() {
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [showCrewPicker, setShowCrewPicker] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState('');
+  const [savingName, setSavingName] = useState(false);
 
   const loadProfile = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -117,12 +120,31 @@ export default function ProfileScreen() {
     try {
       const p = await fetchUserProfile(user.id);
       setProfile(p);
+      setNameInput(p?.display_name ?? '');
     } catch (e) {
       console.error('[profile]', e);
     } finally {
       setLoading(false);
     }
   }, []);
+
+  const handleSaveName = async () => {
+    if (!userId || !nameInput.trim()) return;
+    setSavingName(true);
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ display_name: nameInput.trim() })
+        .eq('id', userId);
+      if (error) throw error;
+      setProfile((p) => p ? { ...p, display_name: nameInput.trim() } : p);
+      setEditingName(false);
+    } catch (e: any) {
+      Alert.alert('저장 실패', e.message);
+    } finally {
+      setSavingName(false);
+    }
+  };
 
   useEffect(() => { loadProfile(); }, [loadProfile]);
 
@@ -143,7 +165,33 @@ export default function ProfileScreen() {
           <Text style={styles.avatarText}>{(profile?.display_name ?? 'U').charAt(0).toUpperCase()}</Text>
         </View>
         <View style={styles.headerMeta}>
-          <Text style={styles.displayName}>{profile?.display_name ?? 'User'}</Text>
+          {editingName ? (
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+              <View style={styles.nameEditRow}>
+                <TextInput
+                  style={styles.nameInput}
+                  value={nameInput}
+                  onChangeText={setNameInput}
+                  autoFocus
+                  returnKeyType="done"
+                  onSubmitEditing={handleSaveName}
+                  maxLength={30}
+                  placeholderTextColor="rgba(255,255,255,0.5)"
+                  placeholder="닉네임 입력"
+                />
+                <TouchableOpacity onPress={handleSaveName} disabled={savingName} style={styles.nameSaveBtn}>
+                  <Text style={styles.nameSaveText}>{savingName ? '…' : '저장'}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setEditingName(false)} style={styles.nameCancelBtn}>
+                  <Text style={styles.nameCancelText}>취소</Text>
+                </TouchableOpacity>
+              </View>
+            </KeyboardAvoidingView>
+          ) : (
+            <TouchableOpacity onPress={() => { setNameInput(profile?.display_name ?? ''); setEditingName(true); }} activeOpacity={0.7}>
+              <Text style={styles.displayName}>{profile?.display_name ?? 'User'} <Text style={styles.editHint}>✏</Text></Text>
+            </TouchableOpacity>
+          )}
           <View style={styles.statChip}>
             <Text style={styles.statChipText}>{profile?.flag_count ?? 0} flags planted</Text>
           </View>
@@ -207,6 +255,13 @@ const styles = StyleSheet.create({
   avatarText: { fontSize: 24, fontWeight: '800', color: Colors.white },
   headerMeta: { flex: 1 },
   displayName: { fontSize: 22, fontWeight: '800', color: Colors.white, letterSpacing: -0.5 },
+  editHint: { fontSize: 14, opacity: 0.6 },
+  nameEditRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  nameInput: { flex: 1, fontSize: 18, fontWeight: '700', color: Colors.white, borderBottomWidth: 1.5, borderBottomColor: 'rgba(255,255,255,0.6)', paddingVertical: 2, minWidth: 120 },
+  nameSaveBtn: { backgroundColor: Colors.white, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 },
+  nameSaveText: { fontSize: 13, fontWeight: '700', color: Colors.green },
+  nameCancelBtn: { paddingHorizontal: 4, paddingVertical: 5 },
+  nameCancelText: { fontSize: 13, color: 'rgba(255,255,255,0.7)' },
   statChip: {
     marginTop: 6,
     backgroundColor: 'rgba(255,255,255,0.18)',
