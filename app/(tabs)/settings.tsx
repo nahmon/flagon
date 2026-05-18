@@ -31,7 +31,7 @@ export default function SettingsScreen() {
   const handleNotifToggle = async (value: boolean) => {
     if (!value) {
       // Can't programmatically disable — guide user to system settings
-      Alert.alert(s.notifications, 'To disable notifications, go to your device Settings → Notifications → FlagOn.');
+      Alert.alert(s.notifications, s.notifDisable);
       return;
     }
     setNotifLoading(true);

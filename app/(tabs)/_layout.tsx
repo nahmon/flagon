@@ -51,7 +51,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: 'Map',
+            title: '지도',
             tabBarIcon: ({ color, size, focused }) =>
               icon(focused, 'map', 'map-outline')({ color, size }),
           }}
@@ -67,7 +67,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="leaderboard"
           options={{
-            title: 'Leaderboard',
+            title: '랭킹',
             tabBarIcon: ({ color, size, focused }) =>
               icon(focused, 'podium', 'podium-outline')({ color, size }),
           }}
@@ -75,7 +75,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="profile"
           options={{
-            title: 'You',
+            title: '내 정보',
             tabBarIcon: ({ color, size, focused }) =>
               icon(focused, 'person', 'person-outline')({ color, size }),
           }}
