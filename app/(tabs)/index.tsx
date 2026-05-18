@@ -80,6 +80,18 @@ export default function MapScreen() {
     }
   }, [phase]);
 
+  const refreshSummits = useCallback(async (lat: number, lng: number) => {
+    try {
+      const data = await fetchSummitsNear(lat, lng);
+      setSummits(data);
+      setGeojson(summitsToGeoJSON(data));
+      setIsOffline(false);
+      cacheSummits(data, lat, lng).catch(() => undefined);
+    } catch (e) {
+      console.error('[summits refresh]', e);
+    }
+  }, []);
+
   // Realtime: refresh map when any flag changes
   useEffect(() => {
     const channel = supabase
@@ -93,18 +105,6 @@ export default function MapScreen() {
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [refreshSummits]);
-
-  const refreshSummits = useCallback(async (lat: number, lng: number) => {
-    try {
-      const data = await fetchSummitsNear(lat, lng);
-      setSummits(data);
-      setGeojson(summitsToGeoJSON(data));
-      setIsOffline(false);
-      cacheSummits(data, lat, lng).catch(() => undefined);
-    } catch (e) {
-      console.error('[summits refresh]', e);
-    }
-  }, []);
 
   const handlePlantFlag = useCallback(async () => {
     if (!nearestSummit || planting) return;

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Colors } from '../../src/constants';
 import { fetchLeaderboard } from '../../src/services/crews';
 import { supabase } from '../../src/services/supabase';
@@ -43,7 +43,7 @@ function CrewRow({ entry, rank, onPress }: { entry: CrewLeaderboardEntry; rank: 
         <Text style={styles.flagCount}>{entry.flag_count}</Text>
         <Text style={styles.flagLabel}>flags</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -60,7 +60,7 @@ function HeroCard({ top }: { top: CrewLeaderboardEntry }) {
         <Text style={styles.heroFlagLabel}>flags</Text>
       </View>
       <Text style={styles.chevron}>›</Text>
-    </TouchableOpacity>
+    </View>
   );
 }
 
