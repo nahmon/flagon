@@ -7,6 +7,7 @@ import { Colors, MAP, GPS } from '../../src/constants';
 import { SummitWithFlag } from '../../src/types';
 import { fetchSummitsNear, summitsToGeoJSON } from '../../src/services/summits';
 import { plantFlag, getUserCrewId } from '../../src/services/flags';
+import { supabase } from '../../src/services/supabase';
 import { saveHike } from '../../src/services/hikes';
 import { useHikeStore, stayProgressPct } from '../../src/stores/hikeStore';
 import { useHiking } from '../../src/hooks/useHiking';
@@ -79,6 +80,20 @@ export default function MapScreen() {
     }
   }, [phase]);
 
+  // Realtime: refresh map when any flag changes
+  useEffect(() => {
+    const channel = supabase
+      .channel('map-flags')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'flags' }, () => {
+        const state = useHikeStore.getState();
+        if (state.currentLat && state.currentLng) {
+          refreshSummits(state.currentLat, state.currentLng);
+        }
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [refreshSummits]);
+
   const refreshSummits = useCallback(async (lat: number, lng: number) => {
     try {
       const data = await fetchSummitsNear(lat, lng);
@@ -114,7 +129,7 @@ export default function MapScreen() {
         refreshSummits(state.currentLat, state.currentLng);
       }
     } catch (e) {
-      Alert.alert('Error', 'Failed to plant flag. Please try again.');
+      Alert.alert('오류', '깃발 꽂기에 실패했습니다. 다시 시도해주세요.');
       console.error('[plantFlag]', e);
     } finally {
       setPlanting(false);
@@ -258,7 +273,7 @@ export default function MapScreen() {
         <View style={styles.summitCard}>
           <View style={styles.summitCardRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.summitCardName}>{selectedSummit.name_en ?? selectedSummit.name_ko}</Text>
+              <Text style={styles.summitCardName}>{selectedSummit.name_ko}</Text>
               <Text style={styles.summitCardSub}>{selectedSummit.elevation_m}m</Text>
             </View>
             {selectedSummit.active_flag?.crew ? (
@@ -290,9 +305,9 @@ export default function MapScreen() {
       {/* 정상 인증 오버레이 */}
       {phase === 'near_summit' && nearestSummit && (
         <View style={styles.overlay}>
-          <Text style={styles.overlayTitle}>Near {nearestSummit.name_en ?? nearestSummit.name_ko}</Text>
+          <Text style={styles.overlayTitle}>{nearestSummit.name_ko} 정상 근처</Text>
           <Text style={styles.overlaySubtitle}>
-            {nearestSummit.elevation_m}m · Stay {GPS.MIN_STAY_MINUTES} min
+            {nearestSummit.elevation_m}m · 체류 {GPS.MIN_STAY_MINUTES}분 필요
           </Text>
 
           {/* progress bar */}
@@ -300,7 +315,7 @@ export default function MapScreen() {
             <View style={[styles.progressFill, { width: `${stayPct * 100}%` }]} />
           </View>
           <Text style={styles.progressLabel}>
-            {stayPct >= 1 ? 'Verified!' : `~${remainingMin} min left`}
+            {stayPct >= 1 ? '인증 완료!' : `약 ${remainingMin}분 남음`}
           </Text>
         </View>
       )}
@@ -308,15 +323,15 @@ export default function MapScreen() {
       {/* 깃발 꽂기 버튼 */}
       {phase === 'verified' && nearestSummit && (
         <View style={styles.overlay}>
-          <Text style={styles.overlayTitle}>{nearestSummit.name_en ?? nearestSummit.name_ko} Verified!</Text>
-          <Text style={styles.overlaySubtitle}>{GPS.MIN_STAY_MINUTES} min stay complete</Text>
+          <Text style={styles.overlayTitle}>{nearestSummit.name_ko} 정상 인증!</Text>
+          <Text style={styles.overlaySubtitle}>{GPS.MIN_STAY_MINUTES}분 체류 완료</Text>
           <TouchableOpacity
             style={[styles.plantBtn, planting && styles.plantBtnDisabled]}
             onPress={handlePlantFlag}
             disabled={planting}
           >
             <Text style={styles.plantBtnText}>
-              {planting ? 'Processing...' : '🚩 Plant Flag'}
+              {planting ? '처리 중...' : '🚩 깃발 꽂기'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -332,13 +347,13 @@ export default function MapScreen() {
           ]}
         >
           <Text style={styles.successEmoji}>🏔️</Text>
-          <Text style={styles.successTitle}>{nearestSummit.name_en ?? nearestSummit.name_ko} Conquered!</Text>
-          <Text style={styles.successSub}>You planted a flag for your crew</Text>
+          <Text style={styles.successTitle}>{nearestSummit.name_ko} 정복!</Text>
+          <Text style={styles.successSub}>크루를 위해 깃발을 꽂았습니다</Text>
           <TouchableOpacity
             style={styles.successDismiss}
             onPress={() => useHikeStore.getState().reset()}
           >
-            <Text style={styles.successDismissText}>Done</Text>
+            <Text style={styles.successDismissText}>확인</Text>
           </TouchableOpacity>
         </Animated.View>
       )}
