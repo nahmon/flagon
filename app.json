@@ -11,7 +11,7 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#2D6A4F"
     },
     "ios": {
       "supportsTablet": false,
@@ -52,6 +52,12 @@
         }
       ],
       "@maplibre/maplibre-react-native",
+      [
+        "expo-notifications",
+        {
+          "iosPermissionPreamble": "정상 근처 알림 및 크루 깃발 탈취 알림을 받으려면 알림을 허용하세요."
+        }
+      ],
       "expo-build-properties",
       "expo-font"
     ],
