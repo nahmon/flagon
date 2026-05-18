@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../src/constants';
+import { LangProvider } from '../../src/contexts/LangContext';
 import { getUserCrewId } from '../../src/services/flags';
 import CrewSetupModal from '../../src/components/CrewSetupModal';
 
@@ -23,55 +24,71 @@ export default function TabLayout() {
   }, []);
 
   return (
-    <>
+    <LangProvider>
       {hasCrew === false && (
         <CrewSetupModal onComplete={() => setHasCrew(true)} />
       )}
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: Colors.green,
-        tabBarInactiveTintColor: Colors.zinc500,
-        tabBarStyle: {
-          backgroundColor: Colors.white,
-          borderTopColor: '#ECEAE5',
-          borderTopWidth: 1,
-          height: 84,
-          paddingBottom: 28,
-          paddingTop: 10,
-        },
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '600',
-          letterSpacing: 0.1,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Map',
-          tabBarIcon: ({ color, size, focused }) =>
-            icon(focused, 'map', 'map-outline')({ color, size }),
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: Colors.green,
+          tabBarInactiveTintColor: Colors.zinc500,
+          tabBarStyle: {
+            backgroundColor: Colors.white,
+            borderTopColor: '#ECEAE5',
+            borderTopWidth: 1,
+            height: 84,
+            paddingBottom: 28,
+            paddingTop: 10,
+          },
+          tabBarLabelStyle: {
+            fontSize: 11,
+            fontWeight: '600',
+            letterSpacing: 0.1,
+          },
         }}
-      />
-      <Tabs.Screen
-        name="leaderboard"
-        options={{
-          title: 'Leaderboard',
-          tabBarIcon: ({ color, size, focused }) =>
-            icon(focused, 'podium', 'podium-outline')({ color, size }),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'You',
-          tabBarIcon: ({ color, size, focused }) =>
-            icon(focused, 'person', 'person-outline')({ color, size }),
-        }}
-      />
-    </Tabs>
-    </>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Map',
+            tabBarIcon: ({ color, size, focused }) =>
+              icon(focused, 'map', 'map-outline')({ color, size }),
+          }}
+        />
+        <Tabs.Screen
+          name="feed"
+          options={{
+            title: '피드',
+            tabBarIcon: ({ color, size, focused }) =>
+              icon(focused, 'flash', 'flash-outline')({ color, size }),
+          }}
+        />
+        <Tabs.Screen
+          name="leaderboard"
+          options={{
+            title: 'Leaderboard',
+            tabBarIcon: ({ color, size, focused }) =>
+              icon(focused, 'podium', 'podium-outline')({ color, size }),
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: 'You',
+            tabBarIcon: ({ color, size, focused }) =>
+              icon(focused, 'person', 'person-outline')({ color, size }),
+          }}
+        />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: '설정',
+            tabBarIcon: ({ color, size, focused }) =>
+              icon(focused, 'settings', 'settings-outline')({ color, size }),
+          }}
+        />
+      </Tabs>
+    </LangProvider>
   );
 }

@@ -18,6 +18,7 @@ interface HikeState {
   nearestDistanceM: number | null;
   stayStartedAt: number | null;    // Date.now() when entered summit radius
   stayElapsedMs: number;           // accumulated ms at summit
+  verifiedAt: number | null;       // Date.now() when summit was verified
 
   // Actions
   setLocation: (lat: number, lng: number, point: GpsPoint) => void;
@@ -41,6 +42,7 @@ export const useHikeStore = create<HikeState>((set, get) => ({
   nearestDistanceM: null,
   stayStartedAt: null,
   stayElapsedMs: 0,
+  verifiedAt: null,
 
   setLocation: (lat, lng, point) =>
     set((s) => ({
@@ -80,7 +82,7 @@ export const useHikeStore = create<HikeState>((set, get) => ({
     }
   },
 
-  markVerified: () => set({ phase: 'verified' }),
+  markVerified: () => set({ phase: 'verified', verifiedAt: Date.now() }),
   markPlanted: () => set({ phase: 'planted' }),
 
   reset: () =>
@@ -93,6 +95,7 @@ export const useHikeStore = create<HikeState>((set, get) => ({
       nearestDistanceM: null,
       stayStartedAt: null,
       stayElapsedMs: 0,
+      verifiedAt: null,
     }),
 }));
 

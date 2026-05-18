@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Alert, Animated } from 'react-native';
 import { Map, Camera, GeoJSONSource, Layer, UserLocation, type CameraRef } from '@maplibre/maplibre-react-native';
+import SummitSearchBar from '../../src/components/SummitSearchBar';
 import * as Location from 'expo-location';
 import { Colors, MAP, GPS } from '../../src/constants';
 import { SummitWithFlag } from '../../src/types';
 import { fetchSummitsNear, summitsToGeoJSON } from '../../src/services/summits';
 import { plantFlag, getUserCrewId } from '../../src/services/flags';
+import { saveHike } from '../../src/services/hikes';
 import { useHikeStore, stayProgressPct } from '../../src/stores/hikeStore';
 import { useHiking } from '../../src/hooks/useHiking';
 import { requestLocationPermission, distanceMeters } from '../../src/services/gps';
@@ -81,9 +83,19 @@ export default function MapScreen() {
     try {
       const crewId = await getUserCrewId();
       await plantFlag(nearestSummit.id, crewId);
-      useHikeStore.getState().markPlanted();
-      // Refresh summits so map shows new crew color immediately
+
       const state = useHikeStore.getState();
+      // Save GPS hike record to Supabase in background — don't block UI
+      saveHike({
+        summitId: nearestSummit.id,
+        track: state.track,
+        startedAt: state.track[0]?.ts ?? null,
+        summitVerifiedAt: state.verifiedAt
+          ? new Date(state.verifiedAt).toISOString()
+          : null,
+      }).catch((e) => console.error('[saveHike]', e));
+
+      useHikeStore.getState().markPlanted();
       if (state.currentLat && state.currentLng) {
         refreshSummits(state.currentLat, state.currentLng);
       }
@@ -98,6 +110,17 @@ export default function MapScreen() {
   const handleMapPress = useCallback((e: any) => {
     const [lng, lat] = e.geometry?.coordinates ?? [];
     if (lat == null || lng == null) return;
+
+    // Cluster tap: zoom in to expand
+    const clusterFeature = (e.features ?? []).find(
+      (f: any) => f.properties?.cluster === true || f.properties?.point_count != null
+    );
+    if (clusterFeature) {
+      const [clusterLng, clusterLat] = clusterFeature.geometry?.coordinates ?? [lng, lat];
+      cameraRef.current?.flyTo({ center: [clusterLng, clusterLat], zoom: 13, duration: 500 });
+      return;
+    }
+
     let best: { summit: SummitWithFlag; dist: number } | null = null;
     for (const s of summits) {
       const dist = distanceMeters(lat, lng, s.location.coordinates[1], s.location.coordinates[0]);
@@ -109,6 +132,12 @@ export default function MapScreen() {
       setSelectedSummit(null);
     }
   }, [summits]);
+
+  const handleSearchSelect = useCallback((summit: SummitWithFlag) => {
+    const [lng, lat] = summit.location.coordinates;
+    cameraRef.current?.flyTo({ center: [lng, lat], zoom: 13, duration: 600 });
+    setSelectedSummit(summit);
+  }, []);
 
   const stayPct = stayProgressPct(stayElapsedMs, stayStartedAt);
   const remainingMin = Math.ceil((1 - stayPct) * GPS.MIN_STAY_MINUTES);
@@ -122,10 +151,54 @@ export default function MapScreen() {
         />
         {locationGranted && <UserLocation animated />}
 
-        <GeoJSONSource id="summits" data={geojson}>
+        <GeoJSONSource
+          id="summits"
+          data={geojson}
+          cluster
+          clusterRadius={50}
+          clusterMaxZoom={13}
+        >
+          {/* Cluster bubble */}
+          <Layer
+            id="cluster-circle"
+            type="circle"
+            filter={['has', 'point_count']}
+            paint={{
+              'circle-color': [
+                'step', ['get', 'point_count'],
+                Colors.greenLight, 5,
+                Colors.green, 15,
+                Colors.greenDark,
+              ],
+              'circle-radius': [
+                'step', ['get', 'point_count'],
+                18, 5,
+                24, 15,
+                30,
+              ],
+              'circle-stroke-width': 3,
+              'circle-stroke-color': Colors.white,
+            }}
+          />
+          {/* Cluster count label */}
+          <Layer
+            id="cluster-count"
+            type="symbol"
+            filter={['has', 'point_count']}
+            layout={{
+              'text-field': ['get', 'point_count_abbreviated'],
+              'text-size': 13,
+              'text-font': ['Noto Sans Regular', 'Arial Unicode MS Regular'],
+            }}
+            paint={{
+              'text-color': Colors.white,
+            }}
+          />
+          {/* Individual summit dots (unclustered) */}
           <Layer
             id="summit-dots"
             type="circle"
+            filter={['!', ['has', 'point_count']]}
             paint={{
               'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 6, 14, 10],
               'circle-color': [
@@ -141,6 +214,7 @@ export default function MapScreen() {
             id="summit-labels"
             type="symbol"
             minzoom={11}
+            filter={['!', ['has', 'point_count']]}
             layout={{
               'text-field': ['get', 'name'],
               'text-size': 11,
@@ -156,6 +230,8 @@ export default function MapScreen() {
           />
         </GeoJSONSource>
       </Map>
+
+      <SummitSearchBar summits={summits} onSelect={handleSearchSelect} />
 
       {/* 정상 탭 정보 카드 */}
       {selectedSummit && (phase === 'idle' || phase === 'hiking') ? (
