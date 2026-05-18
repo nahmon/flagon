@@ -1,0 +1,70 @@
+name: EAS Build (iOS TestFlight)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'Build profile'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - preview
+
+jobs:
+  build:
+    name: EAS iOS Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build iOS
+        run: eas build --profile ${{ inputs.profile || 'production' }} --platform ios --non-interactive
+
+      - name: Notify Telegram (success)
+        if: success()
+        env:
+          BOT_TOKEN: "8752731720:AAHtL3nXN05lzeEu92qn4-UDD6QdX9aAzj8"
+          CHAT_ID: "7169756842"
+          PROFILE: ${{ inputs.profile || 'production' }}
+          MSG: ${{ github.event.head_commit.message || 'manual dispatch' }}
+        run: |
+          SHORT="${MSG:0:80}"
+          TEXT=$(printf "✅ FlagOn iOS 빌드 성공 🚩\n\n프로파일: ${PROFILE}\n커밋: ${SHORT}\n\nTestFlight에서 확인하세요")
+          curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=${TEXT}"
+
+      - name: Notify Telegram (failure)
+        if: failure()
+        env:
+          BOT_TOKEN: "8752731720:AAHtL3nXN05lzeEu92qn4-UDD6QdX9aAzj8"
+          CHAT_ID: "7169756842"
+          PROFILE: ${{ inputs.profile || 'production' }}
+          MSG: ${{ github.event.head_commit.message || 'manual dispatch' }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          SHORT="${MSG:0:80}"
+          TEXT=$(printf "❌ FlagOn iOS 빌드 실패\n\n프로파일: ${PROFILE}\n커밋: ${SHORT}\n\n로그: ${RUN_URL}")
+          curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=${TEXT}"
