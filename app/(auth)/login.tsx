@@ -72,14 +72,14 @@ export default function LoginScreen() {
       <View style={styles.hero}>
         <Text style={styles.flagIcon}>🚩</Text>
         <Text style={styles.wordmark}>FlagOn</Text>
-        <Text style={styles.tagline}>Plant your flag. Own the summit.</Text>
+        <Text style={styles.tagline}>정상을 정복하고 깃발을 꽂아라</Text>
       </View>
 
       <View style={styles.sheet}>
         <View style={styles.handle} />
 
-        <Text style={styles.welcome}>Get started</Text>
-        <Text style={styles.subtitle}>Sign in to claim summits with your crew</Text>
+        <Text style={styles.welcome}>시작하기</Text>
+        <Text style={styles.subtitle}>크루와 함께 정상을 정복하세요</Text>
 
         {Platform.OS === 'ios' && (
           <AppleAuthentication.AppleAuthenticationButton
@@ -99,12 +99,12 @@ export default function LoginScreen() {
           {loading === 'google' ? (
             <ActivityIndicator color="#1F2421" />
           ) : (
-            <Text style={styles.googleBtnText}>Continue with Google</Text>
+            <Text style={styles.googleBtnText}>Google로 계속하기</Text>
           )}
         </TouchableOpacity>
 
         <Text style={styles.legal}>
-          By continuing, you agree to our Terms of Service and Privacy Policy
+          계속하면 서비스 이용약관 및 개인정보 처리방침에 동의하는 것으로 간주됩니다
         </Text>
       </View>
     </SafeAreaView>

@@ -8,9 +8,9 @@ function formatDate(iso: string): string {
   const d = new Date(iso);
   const now = new Date();
   const diffDays = Math.floor((now.getTime() - d.getTime()) / 86_400_000);
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return 'Yesterday';
-  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffDays === 0) return '오늘';
+  if (diffDays === 1) return '어제';
+  if (diffDays < 7) return `${diffDays}일 전`;
   return `${d.getMonth() + 1}/${d.getDate()}`;
 }
 
@@ -22,10 +22,10 @@ function HikeRow({ flag }: { flag: RecentFlag }) {
         <Text style={styles.icon}>{isExpired ? '🏔️' : '🚩'}</Text>
       </View>
       <View style={styles.rowBody}>
-        <Text style={styles.summitName}>{flag.summit?.name_en ?? flag.summit?.name_ko ?? 'Unknown'}</Text>
+        <Text style={styles.summitName}>{flag.summit?.name_ko ?? flag.summit?.name_en ?? '알 수 없는 정상'}</Text>
         <Text style={styles.rowSub}>
           {flag.summit ? `${flag.summit.elevation_m}m` : ''}{' '}
-          {isExpired ? '· Expired' : '· Active'}
+          {isExpired ? '· 만료' : '· 활성'}
         </Text>
       </View>
       <Text style={styles.date}>{formatDate(flag.planted_at)}</Text>
@@ -46,11 +46,11 @@ export default function RecentHikesList({ userId }: { userId: string }) {
 
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Recent Hikes</Text>
+      <Text style={styles.sectionTitle}>최근 등산 기록</Text>
       {loading ? (
         <ActivityIndicator color={Colors.green} style={{ marginVertical: 16 }} />
       ) : flags.length === 0 ? (
-        <Text style={styles.empty}>No hikes yet</Text>
+        <Text style={styles.empty}>등산 기록이 없습니다</Text>
       ) : (
         <FlatList
           data={flags}
