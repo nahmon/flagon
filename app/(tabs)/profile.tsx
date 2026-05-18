@@ -34,7 +34,7 @@ function CrewPickerModal({ visible, onClose, onJoined }: {
   const handleJoin = async (crewId: string) => {
     setBusy(true);
     try { await joinCrew(crewId); onJoined(); onClose(); }
-    catch (e: any) { Alert.alert('Error', e.message ?? 'Failed to join crew'); }
+    catch (e: any) { Alert.alert('오류', e.message ?? '크루 참여에 실패했습니다'); }
     finally { setBusy(false); }
   };
 
@@ -239,14 +239,14 @@ export default function ProfileScreen() {
             </TouchableOpacity>
           )}
           <View style={styles.statChip}>
-            <Text style={styles.statChipText}>{profile?.flag_count ?? 0} flags planted</Text>
+            <Text style={styles.statChipText}>깃발 {profile?.flag_count ?? 0}개</Text>
           </View>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>My Crew</Text>
+          <Text style={styles.sectionTitle}>내 크루</Text>
           {profile?.crew_id ? (
             <View style={styles.crewCard}>
               <View style={[styles.crewDot, { backgroundColor: profile.crew_color_hex ?? Colors.green }]} />
@@ -263,7 +263,7 @@ export default function ProfileScreen() {
             </View>
           ) : (
             <TouchableOpacity style={styles.joinBanner} onPress={() => setShowCrewPicker(true)}>
-              <Text style={styles.joinBannerText}>Join or create a crew</Text>
+              <Text style={styles.joinBannerText}>크루에 참여하거나 만들기</Text>
               <Text style={styles.joinArrow}>→</Text>
             </TouchableOpacity>
           )}
@@ -272,7 +272,7 @@ export default function ProfileScreen() {
         {userId && <RecentHikesList userId={userId} />}
 
         <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
-          <Text style={styles.signOutText}>Sign Out</Text>
+          <Text style={styles.signOutText}>로그아웃</Text>
         </TouchableOpacity>
       </ScrollView>
 

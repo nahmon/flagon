@@ -57,8 +57,9 @@ export async function registerForPushNotifications(): Promise<void> {
   if (!user) return;
 
   await supabase
-    .from('profiles')
-    .upsert({ id: user.id, push_token: token }, { onConflict: 'id' });
+    .from('users')
+    .update({ push_token: token })
+    .eq('id', user.id);
 }
 
 export async function scheduleHikingSummaryNotification(

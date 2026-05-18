@@ -36,7 +36,7 @@ function CrewRow({ entry, rank, onPress }: { entry: CrewLeaderboardEntry; rank: 
       <View style={styles.rowBody}>
         <Text style={styles.crewName}>{crewName}</Text>
         <Text style={styles.rowSub}>
-          {ago === null ? 'No flags yet' : ago < 1 ? 'Just now' : `${ago}h ago`}
+          {ago === null ? '깃발 없음' : ago < 1 ? '방금 전' : `${ago}시간 전`}
         </Text>
       </View>
       <View style={styles.flagCell}>
@@ -52,12 +52,12 @@ function HeroCard({ top }: { top: CrewLeaderboardEntry }) {
   return (
     <View style={styles.heroCard}>
       <View style={styles.heroLeft}>
-        <Text style={styles.heroLabel}>Top crew</Text>
+        <Text style={styles.heroLabel}>1위 크루</Text>
         <Text style={styles.heroName}>{name}</Text>
       </View>
       <View style={styles.heroRight}>
         <Text style={styles.heroCount}>{top.flag_count}</Text>
-        <Text style={styles.heroFlagLabel}>flags</Text>
+        <Text style={styles.heroFlagLabel}>깃발</Text>
       </View>
       <Text style={styles.chevron}>›</Text>
     </View>
@@ -101,8 +101,8 @@ export default function LeaderboardScreen() {
     <View style={styles.container}>
       <SafeAreaView style={styles.safeHeader}>
         <View style={styles.header}>
-          <Text style={styles.title}>Leaderboard</Text>
-          <Text style={styles.subtitle}>Ranked by active flags</Text>
+          <Text style={styles.title}>리더보드</Text>
+          <Text style={styles.subtitle}>활성 깃발 수 기준</Text>
         </View>
         {entries.length > 0 && <HeroCard top={entries[0]} />}
       </SafeAreaView>
@@ -117,7 +117,7 @@ export default function LeaderboardScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={Colors.green} />
         }
         ListEmptyComponent={
-          <View style={styles.center}><Text style={styles.empty}>No flags yet — be first!</Text></View>
+          <View style={styles.center}><Text style={styles.empty}>깃발이 없습니다 — 첫 번째 크루가 되세요!</Text></View>
         }
         contentContainerStyle={entries.length === 0 ? { flex: 1 } : { paddingBottom: 32 }}
       />
