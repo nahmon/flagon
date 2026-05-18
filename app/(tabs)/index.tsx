@@ -11,6 +11,7 @@ import { saveHike } from '../../src/services/hikes';
 import { useHikeStore, stayProgressPct } from '../../src/stores/hikeStore';
 import { useHiking } from '../../src/hooks/useHiking';
 import { requestLocationPermission, distanceMeters } from '../../src/services/gps';
+import { cacheSummits, loadCachedSummits } from '../../src/services/offlineCache';
 
 const CARTO_POSITRON = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 const SEOUL: [number, number] = [MAP.DEFAULT_CENTER.lng, MAP.DEFAULT_CENTER.lat];
@@ -23,6 +24,8 @@ export default function MapScreen() {
   const [planting, setPlanting] = useState(false);
   const [selectedSummit, setSelectedSummit] = useState<SummitWithFlag | null>(null);
   const plantAnim = useRef(new Animated.Value(0)).current;
+
+  const [isOffline, setIsOffline] = useState(false);
 
   const hike = useHiking(summits);
   const phase = useHikeStore((s) => s.phase);
@@ -53,9 +56,18 @@ export default function MapScreen() {
         if (mounted) {
           setSummits(data);
           setGeojson(summitsToGeoJSON(data));
+          setIsOffline(false);
+          cacheSummits(data, lat, lng).catch(() => undefined);
         }
       } catch (e) {
         console.error('[summits]', e);
+        if (!mounted) return;
+        const cached = await loadCachedSummits().catch(() => null);
+        if (cached && mounted) {
+          setSummits(cached.summits);
+          setGeojson(summitsToGeoJSON(cached.summits));
+          setIsOffline(true);
+        }
       }
     })();
     return () => { mounted = false; };
@@ -73,6 +85,8 @@ export default function MapScreen() {
       const data = await fetchSummitsNear(lat, lng);
       setSummits(data);
       setGeojson(summitsToGeoJSON(data));
+      setIsOffline(false);
+      cacheSummits(data, lat, lng).catch(() => undefined);
     } catch (e) {
       console.error('[summits refresh]', e);
     }
@@ -232,6 +246,12 @@ export default function MapScreen() {
         </GeoJSONSource>
       </Map>
 
+      {isOffline && (
+        <View style={styles.offlineBanner}>
+          <Text style={styles.offlineBannerText}>오프라인 — 캐시된 정상 데이터 표시 중</Text>
+        </View>
+      )}
+
       <SummitSearchBar summits={summits} onSelect={handleSearchSelect} />
 
       {/* 정상 탭 정보 카드 */}
@@ -320,6 +340,23 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   map: { flex: 1 },
+
+  offlineBanner: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: Colors.orange,
+    paddingVertical: 6,
+    alignItems: 'center',
+    zIndex: 20,
+  },
+  offlineBannerText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: Colors.white,
+    letterSpacing: 0.2,
+  },
 
   overlay: {
     position: 'absolute',
