@@ -148,6 +148,20 @@ const strings = {
     shareFlagPlanted: (summit: string) => `🚩 ${summit} 정복! FlagOn에서 나와 크루를 결성하자 — 초대 코드: `,
     notifFlagPlantedCrew: (name: string, summit: string) => `${name}이(가) ${summit}에 깃발을 꽂았습니다!`,
     notifFlagPlantedSummit: (name: string, summit: string) => `${name}이(가) 당신이 오른 ${summit}을 점령했습니다`,
+
+    // Filter
+    filterTitle: '필터',
+    filterFlagStatus: '깃발 상태',
+    filterAll: '전체',
+    filterUnclaimed: '미점령',
+    filterMyCrew: '내 크루',
+    filterOtherCrew: '다른 크루',
+    filterElevation: '고도',
+    filterLow: '500m 미만',
+    filterMid: '500–1500m',
+    filterHigh: '1500m 이상',
+    filterReset: '초기화',
+    filterActive: (n: number) => `필터 ${n}개 적용 중`,
   },
 
   en: {
@@ -297,6 +311,20 @@ const strings = {
     shareFlagPlanted: (summit: string) => `🚩 Conquered ${summit}! Join my FlagOn crew — invite code: `,
     notifFlagPlantedCrew: (name: string, summit: string) => `${name} planted a flag on ${summit}!`,
     notifFlagPlantedSummit: (name: string, summit: string) => `${name} just claimed ${summit} — a peak you've summited`,
+
+    // Filter
+    filterTitle: 'Filter',
+    filterFlagStatus: 'Flag Status',
+    filterAll: 'All',
+    filterUnclaimed: 'Unclaimed',
+    filterMyCrew: 'My Crew',
+    filterOtherCrew: 'Other Crew',
+    filterElevation: 'Elevation',
+    filterLow: '< 500m',
+    filterMid: '500–1500m',
+    filterHigh: '> 1500m',
+    filterReset: 'Reset',
+    filterActive: (n: number) => `${n} filter${n > 1 ? 's' : ''} active`,
   },
 
   ja: {
@@ -446,6 +474,20 @@ const strings = {
     shareFlagPlanted: (summit: string) => `🚩 ${summit}を征服！FlagOnでクルーを組もう — 招待コード: `,
     notifFlagPlantedCrew: (name: string, summit: string) => `${name}が${summit}に旗を立てました！`,
     notifFlagPlantedSummit: (name: string, summit: string) => `${name}があなたが登った${summit}を制覇しました`,
+
+    // Filter
+    filterTitle: 'フィルター',
+    filterFlagStatus: '旗の状態',
+    filterAll: 'すべて',
+    filterUnclaimed: '未占領',
+    filterMyCrew: 'マイクルー',
+    filterOtherCrew: '他のクルー',
+    filterElevation: '標高',
+    filterLow: '500m未満',
+    filterMid: '500–1500m',
+    filterHigh: '1500m以上',
+    filterReset: 'リセット',
+    filterActive: (n: number) => `${n}件のフィルター適用中`,
   },
 } as const;
 

@@ -1,8 +1,13 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Alert, Animated, Share } from 'react-native';
 import { Map, Camera, GeoJSONSource, Layer, UserLocation, type CameraRef } from '@maplibre/maplibre-react-native';
 import SummitSearchBar from '../../src/components/SummitSearchBar';
 import SummitDetailSheet from '../../src/components/SummitDetailSheet';
+import SummitFilterSheet, {
+  SummitFilters,
+  DEFAULT_FILTERS,
+  countActiveFilters,
+} from '../../src/components/SummitFilterSheet';
 import * as Location from 'expo-location';
 import { Colors, MAP, GPS } from '../../src/constants';
 import { SummitWithFlag } from '../../src/types';
@@ -33,15 +38,32 @@ export default function MapScreen() {
 
   const [isOffline, setIsOffline] = useState(false);
   const [detailSummit, setDetailSummit] = useState<SummitWithFlag | null>(null);
+  const [filters, setFilters] = useState<SummitFilters>(DEFAULT_FILTERS);
+  const [filterSheetVisible, setFilterSheetVisible] = useState(false);
 
   useEffect(() => {
     getUserCrewId().then(setUserCrewId).catch(() => {});
   }, []);
 
-  // Single source of truth: re-derive geojson whenever summits, crew identity, or lang changes
+  // Apply client-side filters before rendering
+  const filteredSummits = useMemo(() => summits.filter((summit) => {
+    if (filters.flagStatus === 'unclaimed' && summit.active_flag) return false;
+    if (filters.flagStatus === 'own' && summit.active_flag?.crew_id !== userCrewId) return false;
+    if (filters.flagStatus === 'other') {
+      if (!summit.active_flag) return false;
+      if (userCrewId && summit.active_flag.crew_id === userCrewId) return false;
+    }
+    const elev = summit.elevation_m;
+    if (filters.elevation === 'low' && elev >= 500) return false;
+    if (filters.elevation === 'mid' && (elev < 500 || elev > 1500)) return false;
+    if (filters.elevation === 'high' && elev <= 1500) return false;
+    return true;
+  }), [summits, filters, userCrewId]);
+
+  // Single source of truth: re-derive geojson whenever filtered summits, crew identity, or lang changes
   useEffect(() => {
-    setGeojson(summitsToGeoJSON(summits, userCrewId, lang));
-  }, [summits, userCrewId, lang]);
+    setGeojson(summitsToGeoJSON(filteredSummits, userCrewId, lang));
+  }, [filteredSummits, userCrewId, lang]);
 
   const hike = useHiking(summits);
   const phase = useHikeStore((s) => s.phase);
@@ -279,7 +301,24 @@ export default function MapScreen() {
         </View>
       )}
 
-      <SummitSearchBar summits={summits} onSelect={handleSearchSelect} />
+      <SummitSearchBar summits={filteredSummits} onSelect={handleSearchSelect} />
+
+      <TouchableOpacity
+        style={[styles.filterBtn, countActiveFilters(filters) > 0 && styles.filterBtnActive]}
+        onPress={() => setFilterSheetVisible(true)}
+        activeOpacity={0.8}
+      >
+        <Text style={[styles.filterBtnIcon, countActiveFilters(filters) > 0 && styles.filterBtnIconActive]}>
+          {countActiveFilters(filters) > 0 ? `≡ ${countActiveFilters(filters)}` : '≡'}
+        </Text>
+      </TouchableOpacity>
+
+      <SummitFilterSheet
+        visible={filterSheetVisible}
+        filters={filters}
+        onFiltersChange={setFilters}
+        onClose={() => setFilterSheetVisible(false)}
+      />
 
       {/* Summit tap info card */}
       {selectedSummit && (phase === 'idle' || phase === 'hiking') ? (
@@ -511,6 +550,37 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     color: Colors.white,
+  },
+
+  filterBtn: {
+    position: 'absolute',
+    top: 110,
+    right: 12,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
+    zIndex: 10,
+  },
+  filterBtnActive: {
+    backgroundColor: Colors.green,
+  },
+  filterBtnIcon: {
+    fontSize: 20,
+    color: Colors.zinc800,
+    fontWeight: '700',
+  },
+  filterBtnIconActive: {
+    color: Colors.white,
+    fontSize: 13,
+    fontWeight: '700',
   },
 
   summitCard: {
