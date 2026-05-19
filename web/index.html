@@ -25,13 +25,14 @@
       --white:      #FFFFFF;
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
 
     body {
       font-family: 'Outfit', system-ui, sans-serif;
       background: var(--cream);
       color: var(--ink);
       overflow-x: hidden;
+      max-width: 100vw;
     }
 
     /* ── Nav ─────────────────────────────────── */
@@ -211,59 +212,42 @@
       z-index: 2;
     }
 
-    .phone-screen { flex: 1; position: relative; }
-
-    .map-base {
-      position: absolute; inset: 0;
-      background: linear-gradient(148deg, #1C3828 0%, #2A5438 55%, #366846 100%);
-    }
-
-    .map-lines {
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
-      background-size: 22px 22px;
-    }
-
-    .dot {
-      position: absolute;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.9);
-    }
-
-    .dot-claimed { width: 13px; height: 13px; background: #C0704A; }
-    .dot-neutral { width: 9px;  height: 9px;  background: #71717A; border-color: rgba(255,255,255,0.5); }
-    .dot-active  { width: 15px; height: 15px; background: #4A7C59; animation: pulseMap 2s ease-in-out infinite; }
-
-    .phone-overlay {
-      position: absolute;
-      bottom: 18px; left: 12px; right: 12px;
-      background: rgba(10, 22, 16, 0.88);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255,255,255,0.09);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
-      border-radius: 20px;
-      padding: 16px;
-    }
-
-    .ov-title { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
-    .ov-sub   { font-size: 10px; color: rgba(255,255,255,0.45); margin-bottom: 11px; }
-
-    .ov-bar {
-      height: 4px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 2px;
+    .phone-screen {
+      flex: 1;
+      position: relative;
       overflow: hidden;
     }
 
-    .ov-fill {
-      height: 100%;
-      background: #4A7C59;
-      border-radius: 2px;
-      width: 62%;
-      animation: barPulse 3s ease-in-out infinite alternate;
+    .screen-img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: top;
+      transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .screen-login {
+      opacity: 1;
+      transform: translateY(0);
+      z-index: 2;
+    }
+
+    .screen-flag {
+      opacity: 0;
+      transform: translateY(16px);
+      z-index: 1;
+    }
+
+    .phone:hover .screen-login {
+      opacity: 0;
+      transform: translateY(-16px);
+    }
+
+    .phone:hover .screen-flag {
+      opacity: 1;
+      transform: translateY(0);
+      z-index: 3;
     }
 
     /* ── Features ────────────────────────────── */
@@ -465,16 +449,6 @@
       to   { opacity: 1; transform: translateX(0); }
     }
 
-    @keyframes pulseMap {
-      0%,100% { box-shadow: 0 0 0 0 rgba(74,124,89,0.7); }
-      50%      { box-shadow: 0 0 0 9px rgba(74,124,89,0); }
-    }
-
-    @keyframes barPulse {
-      from { width: 44%; }
-      to   { width: 72%; }
-    }
-
     /* ── Mobile ──────────────────────────────── */
     @media (max-width: 768px) {
       nav { padding: 16px 20px; }
@@ -564,18 +538,8 @@
     <div class="phone">
       <div class="phone-notch"></div>
       <div class="phone-screen">
-        <div class="map-base"></div>
-        <div class="map-lines"></div>
-        <div class="dot dot-claimed" style="top:32%;left:48%"></div>
-        <div class="dot dot-claimed" style="top:18%;left:68%"></div>
-        <div class="dot dot-neutral" style="top:52%;left:22%"></div>
-        <div class="dot dot-neutral" style="top:62%;left:72%"></div>
-        <div class="dot dot-active"  style="top:44%;left:57%"></div>
-        <div class="phone-overlay">
-          <div class="ov-title">북한산 백운대</div>
-          <div class="ov-sub">836m &middot; 정상 체류 13분</div>
-          <div class="ov-bar"><div class="ov-fill"></div></div>
-        </div>
+        <img class="screen-img screen-login" src="flagon-00-login.svg" alt="FlagOn 로그인 화면">
+        <img class="screen-img screen-flag"  src="flagon-03-flag-planted.svg" alt="FlagOn 깃발 꽂기 화면">
       </div>
     </div>
   </div>
