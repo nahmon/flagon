@@ -5,6 +5,8 @@ import { fetchLeaderboard } from '../../src/services/crews';
 import { supabase } from '../../src/services/supabase';
 import { CrewLeaderboardEntry } from '../../src/types';
 import CrewDetailModal from '../../src/components/CrewDetailModal';
+import { useLang } from '../../src/contexts/LangContext';
+import { t, type Lang } from '../../src/i18n/strings';
 
 const RANK_COLORS = ['#D4B060', '#A0A8B0', '#C07840'];
 
@@ -21,7 +23,10 @@ function RankNum({ rank }: { rank: number }) {
   return <Text style={[styles.rankNum, { color }]}>{rank}</Text>;
 }
 
-function CrewRow({ entry, rank, onPress }: { entry: CrewLeaderboardEntry; rank: number; onPress: () => void }) {
+function CrewRow({ entry, rank, lang, onPress }: {
+  entry: CrewLeaderboardEntry; rank: number; lang: Lang; onPress: () => void;
+}) {
+  const s = t(lang);
   const crewName = entry.name ?? entry.name_ko ?? '—';
   const ago = entry.last_flag_at
     ? Math.floor((Date.now() - new Date(entry.last_flag_at).getTime()) / 3_600_000)
@@ -36,28 +41,29 @@ function CrewRow({ entry, rank, onPress }: { entry: CrewLeaderboardEntry; rank: 
       <View style={styles.rowBody}>
         <Text style={styles.crewName}>{crewName}</Text>
         <Text style={styles.rowSub}>
-          {ago === null ? '깃발 없음' : ago < 1 ? '방금 전' : `${ago}시간 전`}
+          {ago === null ? s.noFlags : ago < 1 ? s.justNow : s.hoursAgo(ago)}
         </Text>
       </View>
       <View style={styles.flagCell}>
         <Text style={styles.flagCount}>{entry.flag_count}</Text>
-        <Text style={styles.flagLabel}>flags</Text>
+        <Text style={styles.flagLabel}>{s.flags}</Text>
       </View>
     </TouchableOpacity>
   );
 }
 
-function HeroCard({ top }: { top: CrewLeaderboardEntry }) {
+function HeroCard({ top, lang }: { top: CrewLeaderboardEntry; lang: Lang }) {
+  const s = t(lang);
   const name = top.name ?? top.name_ko ?? '—';
   return (
     <View style={styles.heroCard}>
       <View style={styles.heroLeft}>
-        <Text style={styles.heroLabel}>1위 크루</Text>
+        <Text style={styles.heroLabel}>{s.topCrew}</Text>
         <Text style={styles.heroName}>{name}</Text>
       </View>
       <View style={styles.heroRight}>
         <Text style={styles.heroCount}>{top.flag_count}</Text>
-        <Text style={styles.heroFlagLabel}>깃발</Text>
+        <Text style={styles.heroFlagLabel}>{s.flags}</Text>
       </View>
       <Text style={styles.chevron}>›</Text>
     </View>
@@ -65,6 +71,8 @@ function HeroCard({ top }: { top: CrewLeaderboardEntry }) {
 }
 
 export default function LeaderboardScreen() {
+  const { lang } = useLang();
+  const s = t(lang);
   const [entries, setEntries] = useState<CrewLeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -101,23 +109,23 @@ export default function LeaderboardScreen() {
     <View style={styles.container}>
       <SafeAreaView style={styles.safeHeader}>
         <View style={styles.header}>
-          <Text style={styles.title}>리더보드</Text>
-          <Text style={styles.subtitle}>활성 깃발 수 기준</Text>
+          <Text style={styles.title}>{s.leaderboard}</Text>
+          <Text style={styles.subtitle}>{s.byActiveFlagCount}</Text>
         </View>
-        {entries.length > 0 && <HeroCard top={entries[0]} />}
+        {entries.length > 0 && <HeroCard top={entries[0]} lang={lang} />}
       </SafeAreaView>
       <FlatList
         data={entries}
         keyExtractor={(e) => e.id}
         renderItem={({ item, index }) => (
-          <CrewRow entry={item} rank={index + 1} onPress={() => setSelectedCrew(item)} />
+          <CrewRow entry={item} rank={index + 1} lang={lang} onPress={() => setSelectedCrew(item)} />
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={Colors.green} />
         }
         ListEmptyComponent={
-          <View style={styles.center}><Text style={styles.empty}>깃발이 없습니다 — 첫 번째 크루가 되세요!</Text></View>
+          <View style={styles.center}><Text style={styles.empty}>{s.noLeaderboard}</Text></View>
         }
         contentContainerStyle={entries.length === 0 ? { flex: 1 } : { paddingBottom: 32 }}
       />

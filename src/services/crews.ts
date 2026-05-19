@@ -1,6 +1,12 @@
 import { supabase } from './supabase';
 import { Crew, CrewLeaderboardEntry, CrewMemberDetail } from '../types';
 
+// Alphanumeric without ambiguous chars (0/O, 1/I)
+const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function generateInviteCode(): string {
+  return Array.from({ length: 6 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
+}
+
 export async function fetchCrews(): Promise<Crew[]> {
   const { data, error } = await supabase
     .from('crews')
@@ -27,7 +33,7 @@ export async function createCrew(
 
   const { data: crew, error: crewErr } = await supabase
     .from('crews')
-    .insert({ name, name_ko: nameKo, color_hex: colorHex, icon_type: iconType, created_by: user.id })
+    .insert({ name, name_ko: nameKo, color_hex: colorHex, icon_type: iconType, created_by: user.id, invite_code: generateInviteCode() })
     .select()
     .single();
   if (crewErr) throw crewErr;
@@ -38,6 +44,23 @@ export async function createCrew(
   if (memberErr) throw memberErr;
 
   return crew as Crew;
+}
+
+export async function fetchCrew(crewId: string): Promise<Crew | null> {
+  const { data, error } = await supabase.from('crews').select('*').eq('id', crewId).single();
+  if (error) throw error;
+  return data as Crew ?? null;
+}
+
+export async function joinCrewByCode(inviteCode: string): Promise<Crew> {
+  const { data, error } = await supabase
+    .from('crews')
+    .select('*')
+    .eq('invite_code', inviteCode.trim().toUpperCase())
+    .single();
+  if (error || !data) throw new Error('invalid_code');
+  await joinCrew((data as Crew).id);
+  return data as Crew;
 }
 
 export async function joinCrew(crewId: string): Promise<void> {

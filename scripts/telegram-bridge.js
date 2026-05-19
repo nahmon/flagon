@@ -97,13 +97,14 @@ function createIssue(title, body) {
 function runClaude(prompt) {
   return new Promise((resolve) => {
     const chunks = [];
-    const child = spawn(CLAUDE_BIN, ['-p', prompt, '--no-ansi'], {
+    const child = spawn(CLAUDE_BIN, ['-p', prompt], {
       cwd: PROJECT_DIR,
       env: { ...process.env, FORCE_COLOR: '0' },
       timeout: 120_000,
     });
-    child.stdout.on('data', d => chunks.push(d.toString()));
-    child.stderr.on('data', d => chunks.push('[stderr] ' + d.toString()));
+    const strip = s => s.replace(/\x1B\[[0-9;]*m/g, '');
+    child.stdout.on('data', d => chunks.push(strip(d.toString())));
+    child.stderr.on('data', d => { /* ignore stderr noise */ });
     child.on('close', () => resolve(chunks.join('')));
     child.on('error', e => resolve('실행 오류: ' + e.message));
   });

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Alert, Animated } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Alert, Animated, Share } from 'react-native';
 import { Map, Camera, GeoJSONSource, Layer, UserLocation, type CameraRef } from '@maplibre/maplibre-react-native';
 import SummitSearchBar from '../../src/components/SummitSearchBar';
 import SummitDetailSheet from '../../src/components/SummitDetailSheet';
@@ -14,10 +14,14 @@ import { useHikeStore, stayProgressPct } from '../../src/stores/hikeStore';
 import { useHiking } from '../../src/hooks/useHiking';
 import { requestLocationPermission, distanceMeters } from '../../src/services/gps';
 import { cacheSummits, loadCachedSummits } from '../../src/services/offlineCache';
+import { useLang } from '../../src/contexts/LangContext';
+import { t, summitName } from '../../src/i18n/strings';
 
 const SEOUL: [number, number] = [MAP.DEFAULT_CENTER.lng, MAP.DEFAULT_CENTER.lat];
 
 export default function MapScreen() {
+  const { lang } = useLang();
+  const s = t(lang);
   const cameraRef = useRef<CameraRef>(null);
   const [locationGranted, setLocationGranted] = useState(false);
   const [summits, setSummits] = useState<SummitWithFlag[]>([]);
@@ -34,10 +38,10 @@ export default function MapScreen() {
     getUserCrewId().then(setUserCrewId).catch(() => {});
   }, []);
 
-  // Single source of truth: re-derive geojson whenever summits or crew identity changes
+  // Single source of truth: re-derive geojson whenever summits, crew identity, or lang changes
   useEffect(() => {
-    setGeojson(summitsToGeoJSON(summits, userCrewId));
-  }, [summits, userCrewId]);
+    setGeojson(summitsToGeoJSON(summits, userCrewId, lang));
+  }, [summits, userCrewId, lang]);
 
   const hike = useHiking(summits);
   const phase = useHikeStore((s) => s.phase);
@@ -138,7 +142,7 @@ export default function MapScreen() {
         refreshSummits(state.currentLat, state.currentLng);
       }
     } catch (e) {
-      Alert.alert('오류', '깃발 꽂기에 실패했습니다. 다시 시도해주세요.');
+      Alert.alert(s.error, s.errorPlanting);
       console.error('[plantFlag]', e);
     } finally {
       setPlanting(false);
@@ -271,18 +275,18 @@ export default function MapScreen() {
 
       {isOffline && (
         <View style={styles.offlineBanner}>
-          <Text style={styles.offlineBannerText}>오프라인 — 캐시된 정상 데이터 표시 중</Text>
+          <Text style={styles.offlineBannerText}>{s.offlineBanner}</Text>
         </View>
       )}
 
       <SummitSearchBar summits={summits} onSelect={handleSearchSelect} />
 
-      {/* 정상 탭 정보 카드 */}
+      {/* Summit tap info card */}
       {selectedSummit && (phase === 'idle' || phase === 'hiking') ? (
         <View style={styles.summitCard}>
           <View style={styles.summitCardRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.summitCardName}>{selectedSummit.name_ko}</Text>
+              <Text style={styles.summitCardName}>{summitName(selectedSummit, lang)}</Text>
               <Text style={styles.summitCardSub}>{selectedSummit.elevation_m}m</Text>
             </View>
             {selectedSummit.active_flag?.crew ? (
@@ -291,7 +295,7 @@ export default function MapScreen() {
               </View>
             ) : (
               <View style={styles.crewBadge}>
-                <Text style={[styles.crewBadgeText, { color: Colors.zinc500 }]}>무주공산</Text>
+                <Text style={[styles.crewBadgeText, { color: Colors.zinc500 }]}>{s.noOwner}</Text>
               </View>
             )}
           </View>
@@ -301,7 +305,7 @@ export default function MapScreen() {
             );
             return (
               <Text style={styles.expiryText}>
-                {daysLeft > 1 ? `${daysLeft}일 후 만료` : daysLeft === 1 ? '내일 만료' : '오늘 만료'}
+                {daysLeft > 1 ? s.expiresInDays(daysLeft) : daysLeft === 1 ? s.expiresTomorrow : s.expiresToday}
               </Text>
             );
           })() : null}
@@ -316,12 +320,12 @@ export default function MapScreen() {
 
       <SummitDetailSheet summit={detailSummit} onClose={() => setDetailSummit(null)} />
 
-      {/* 정상 인증 오버레이 */}
+      {/* Near summit overlay */}
       {phase === 'near_summit' && nearestSummit && (
         <View style={styles.overlay}>
-          <Text style={styles.overlayTitle}>{nearestSummit.name_ko} 정상 근처</Text>
+          <Text style={styles.overlayTitle}>{s.summitNearTitle(summitName(nearestSummit, lang))}</Text>
           <Text style={styles.overlaySubtitle}>
-            {nearestSummit.elevation_m}m · 체류 {GPS.MIN_STAY_MINUTES}분 필요
+            {nearestSummit.elevation_m}m · {s.stayMinRequired(GPS.MIN_STAY_MINUTES)}
           </Text>
 
           {/* progress bar */}
@@ -329,29 +333,29 @@ export default function MapScreen() {
             <View style={[styles.progressFill, { width: `${stayPct * 100}%` }]} />
           </View>
           <Text style={styles.progressLabel}>
-            {stayPct >= 1 ? '인증 완료!' : `약 ${remainingMin}분 남음`}
+            {stayPct >= 1 ? s.authComplete : s.minRemaining(remainingMin)}
           </Text>
         </View>
       )}
 
-      {/* 깃발 꽂기 버튼 */}
+      {/* Plant flag button */}
       {phase === 'verified' && nearestSummit && (
         <View style={styles.overlay}>
-          <Text style={styles.overlayTitle}>{nearestSummit.name_ko} 정상 인증!</Text>
-          <Text style={styles.overlaySubtitle}>{GPS.MIN_STAY_MINUTES}분 체류 완료</Text>
+          <Text style={styles.overlayTitle}>{s.summitVerifiedTitle(summitName(nearestSummit, lang))}</Text>
+          <Text style={styles.overlaySubtitle}>{s.minutesStayed(GPS.MIN_STAY_MINUTES)}</Text>
           <TouchableOpacity
             style={[styles.plantBtn, planting && styles.plantBtnDisabled]}
             onPress={handlePlantFlag}
             disabled={planting}
           >
             <Text style={styles.plantBtnText}>
-              {planting ? '처리 중...' : '🚩 깃발 꽂기'}
+              {planting ? s.processing : `🚩 ${s.plantFlag}`}
             </Text>
           </TouchableOpacity>
         </View>
       )}
 
-      {/* 성공 메시지 */}
+      {/* Success overlay */}
       {phase === 'planted' && nearestSummit && (
         <Animated.View
           style={[
@@ -361,14 +365,22 @@ export default function MapScreen() {
           ]}
         >
           <Text style={styles.successEmoji}>🏔️</Text>
-          <Text style={styles.successTitle}>{nearestSummit.name_ko} 정복!</Text>
-          <Text style={styles.successSub}>크루를 위해 깃발을 꽂았습니다</Text>
-          <TouchableOpacity
-            style={styles.successDismiss}
-            onPress={() => useHikeStore.getState().reset()}
-          >
-            <Text style={styles.successDismissText}>확인</Text>
-          </TouchableOpacity>
+          <Text style={styles.successTitle}>{s.summitConquered(summitName(nearestSummit, lang))}</Text>
+          <Text style={styles.successSub}>{s.plantedForCrew}</Text>
+          <View style={styles.successActions}>
+            <TouchableOpacity
+              style={styles.successShare}
+              onPress={() => Share.share({ message: s.shareFlagPlanted(summitName(nearestSummit, lang)) })}
+            >
+              <Text style={styles.successShareText}>{s.shareFlag}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.successDismiss}
+              onPress={() => useHikeStore.getState().reset()}
+            >
+              <Text style={styles.successDismissText}>{s.confirm}</Text>
+            </TouchableOpacity>
+          </View>
         </Animated.View>
       )}
     </View>
@@ -473,9 +485,24 @@ const styles = StyleSheet.create({
     color: Colors.white,
     opacity: 0.85,
   },
+  successActions: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 12,
+  },
+  successShare: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    backgroundColor: Colors.white,
+    borderRadius: 20,
+  },
+  successShareText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: Colors.green,
+  },
   successDismiss: {
-    marginTop: 8,
-    paddingHorizontal: 32,
+    paddingHorizontal: 24,
     paddingVertical: 10,
     backgroundColor: 'rgba(255,255,255,0.25)',
     borderRadius: 20,

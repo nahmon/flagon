@@ -2,24 +2,27 @@ import { useEffect, useState, useCallback } from 'react';
 import { FlatList, StyleSheet, Text, View, ActivityIndicator, RefreshControl } from 'react-native';
 import { Colors } from '../../src/constants';
 import { supabase } from '../../src/services/supabase';
+import { useLang } from '../../src/contexts/LangContext';
+import { t, summitName, type Lang } from '../../src/i18n/strings';
 
 interface FeedItem {
   id: string;
   planted_at: string;
   user_id: string;
   display_name: string | null;
-  summit: { name_ko: string; elevation_m: number } | null;
+  summit: { name_ko: string; name_en: string | null; name_ja: string | null; elevation_m: number } | null;
   crew: { name_ko: string | null; color_hex: string } | null;
 }
 
-function timeAgo(isoString: string): string {
+function timeAgo(isoString: string, lang: Lang): string {
+  const s = t(lang);
   const diff = Date.now() - new Date(isoString).getTime();
   const mins = Math.floor(diff / 60_000);
-  if (mins < 1) return '방금 전';
-  if (mins < 60) return `${mins}분 전`;
+  if (mins < 1) return s.justNow;
+  if (mins < 60) return s.minutesAgo(mins);
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}시간 전`;
-  return `${Math.floor(hours / 24)}일 전`;
+  if (hours < 24) return s.hoursAgo(hours);
+  return s.daysAgo(Math.floor(hours / 24));
 }
 
 function avatarColor(uid: string): string {
@@ -40,7 +43,7 @@ async function fetchFeed(): Promise<FeedItem[]> {
       planted_at,
       user_id,
       planted_by:users(display_name),
-      summit:summits(name_ko, elevation_m),
+      summit:summits(name_ko, name_en, name_ja, elevation_m),
       crew:crews(name_ko, color_hex)
     `)
     .eq('is_active', true)
@@ -59,9 +62,12 @@ async function fetchFeed(): Promise<FeedItem[]> {
 }
 
 function FeedRow({ item }: { item: FeedItem }) {
+  const { lang } = useLang();
+  const s = t(lang);
   const avatarBg = avatarColor(item.user_id);
-  const name = item.display_name ?? `산악인 #${item.user_id.slice(0, 6)}`;
+  const name = item.display_name ?? s.hikerLabel(item.user_id.slice(0, 6));
   const initial = avatarInitial(item.display_name, item.user_id);
+  const sName = item.summit ? summitName(item.summit, lang) : s.unknownSummit;
 
   return (
     <View style={styles.row}>
@@ -71,19 +77,19 @@ function FeedRow({ item }: { item: FeedItem }) {
       <View style={styles.rowBody}>
         <View style={styles.rowTop}>
           <Text style={styles.userName}>{name}</Text>
-          <Text style={styles.timeAgo}>{timeAgo(item.planted_at)}</Text>
+          <Text style={styles.timeAgo}>{timeAgo(item.planted_at, lang)}</Text>
         </View>
         <Text style={styles.summitLine}>
-          <Text style={styles.summitName}>{item.summit?.name_ko ?? '알 수 없는 정상'}</Text>
+          <Text style={styles.summitName}>{sName}</Text>
           {item.summit ? <Text style={styles.elevation}> {item.summit.elevation_m}m</Text> : null}
         </Text>
         {item.crew ? (
           <View style={[styles.crewBadge, { backgroundColor: item.crew.color_hex }]}>
-            <Text style={styles.crewText}>{item.crew.name_ko ?? '크루'}</Text>
+            <Text style={styles.crewText}>{item.crew.name_ko ?? s.crew}</Text>
           </View>
         ) : (
           <View style={[styles.crewBadge, { backgroundColor: Colors.zinc200 }]}>
-            <Text style={[styles.crewText, { color: Colors.zinc500 }]}>솔로</Text>
+            <Text style={[styles.crewText, { color: Colors.zinc500 }]}>{s.solo}</Text>
           </View>
         )}
       </View>
@@ -95,6 +101,8 @@ function FeedRow({ item }: { item: FeedItem }) {
 }
 
 export default function FeedScreen() {
+  const { lang } = useLang();
+  const s = t(lang);
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -135,7 +143,7 @@ export default function FeedScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>활동 피드</Text>
+      <Text style={styles.header}>{s.activityFeed}</Text>
       <FlatList
         data={items}
         keyExtractor={(item) => item.id}
@@ -145,8 +153,8 @@ export default function FeedScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.green} />}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>아직 피드가 없습니다</Text>
-            <Text style={styles.emptyHint}>정상에 깃발을 꽂아 첫 번째 탐험가가 되세요!</Text>
+            <Text style={styles.emptyText}>{s.noFeed}</Text>
+            <Text style={styles.emptyHint}>{s.noFeedDesc}</Text>
           </View>
         }
       />

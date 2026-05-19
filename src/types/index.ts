@@ -12,6 +12,7 @@ export interface Crew {
   color_hex: string;
   icon_type: 'ME' | 'SA' | 'NK';
   description: string | null;
+  invite_code?: string;
   created_by: string | null;
   created_at: string;
 }

@@ -27,11 +27,11 @@ export function useHiking(summits: SummitWithFlag[]) {
     }
   }, [phase]);
 
-  // Tick stay timer every 5 seconds
+  // Tick stay timer every second for smooth progress bar
   useEffect(() => {
     const id = setInterval(() => {
       useHikeStore.getState().tickStayTimer();
-    }, 5_000);
+    }, 1_000);
     return () => clearInterval(id);
   }, []);
 

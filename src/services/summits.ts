@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { SummitWithFlag } from '../types';
+import { Lang, summitName } from '../i18n/strings';
 
 type SummitsNearRow = {
   id: string;
@@ -73,7 +74,8 @@ export async function fetchSummitsNear(
 
 export function summitsToGeoJSON(
   summits: SummitWithFlag[],
-  userCrewId?: string | null
+  userCrewId?: string | null,
+  lang: Lang = 'ko',
 ): GeoJSON.FeatureCollection {
   return {
     type: 'FeatureCollection',
@@ -86,7 +88,7 @@ export function summitsToGeoJSON(
       },
       properties: {
         id: s.id,
-        name: s.name_ko,
+        name: summitName(s, lang),
         elevation: s.elevation_m,
         crewId: s.active_flag?.crew_id ?? null,
         crewColor: s.active_flag?.crew?.color_hex ?? null,

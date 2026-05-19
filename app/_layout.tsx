@@ -1,16 +1,48 @@
-import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Stack } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { Stack, router } from 'expo-router';
 import { Session } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
+import {
+  useFonts,
+  OpenSans_400Regular,
+  OpenSans_600SemiBold,
+  OpenSans_700Bold,
+  OpenSans_800ExtraBold,
+} from '@expo-google-fonts/open-sans';
 import { supabase } from '../src/services/supabase';
 import { registerForPushNotifications, deliverPendingNotifications } from '../src/services/notifications';
 import { Colors } from '../src/constants';
 
+// Apply Open Sans globally — all Text/TextInput inherit this without per-screen changes
+(Text as any).defaultProps = (Text as any).defaultProps ?? {};
+(Text as any).defaultProps.style = { fontFamily: 'OpenSans_400Regular' };
+(TextInput as any).defaultProps = (TextInput as any).defaultProps ?? {};
+(TextInput as any).defaultProps.style = { fontFamily: 'OpenSans_400Regular' };
+
 type AppState = 'loading' | 'onboarding' | 'auth' | 'app';
 
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    OpenSans_400Regular,
+    OpenSans_600SemiBold,
+    OpenSans_700Bold,
+    OpenSans_800ExtraBold,
+  });
+
   const [appState, setAppState] = useState<AppState>('loading');
+  const appStateRef = useRef<AppState>('loading');
+  appStateRef.current = appState;
+
+  useEffect(() => {
+    const sub = Notifications.addNotificationResponseReceivedListener(() => {
+      if (appStateRef.current === 'app') {
+        router.push('/(tabs)');
+      }
+    });
+    return () => sub.remove();
+  }, []);
 
   useEffect(() => {
     if (appState === 'app') {
@@ -45,13 +77,12 @@ export default function RootLayout() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // safety timeout — unblock loading if getSession hangs
   useEffect(() => {
     const t = setTimeout(() => setAppState((p) => p === 'loading' ? 'auth' : p), 5000);
     return () => clearTimeout(t);
   }, []);
 
-  if (appState === 'loading') {
+  if (!fontsLoaded || appState === 'loading') {
     return (
       <View style={styles.splash}>
         <Text style={styles.splashIcon}>🚩</Text>
@@ -78,5 +109,5 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   splashIcon: { fontSize: 52 },
-  splashWord: { fontSize: 36, fontWeight: '800', color: Colors.white, letterSpacing: -1 },
+  splashWord: { fontSize: 36, fontFamily: 'OpenSans_800ExtraBold', color: Colors.white, letterSpacing: -1 },
 });

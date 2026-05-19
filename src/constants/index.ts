@@ -26,10 +26,10 @@ export const Colors = {
 } as const;
 
 export const Fonts = {
-  regular: 'System',
-  medium: 'System',
-  bold: 'System',
-  // Will add Poppins for logo, Geist for body after font loading
+  regular: 'OpenSans_400Regular',
+  semiBold: 'OpenSans_600SemiBold',
+  bold: 'OpenSans_700Bold',
+  extraBold: 'OpenSans_800ExtraBold',
 } as const;
 
 // GPS verification config

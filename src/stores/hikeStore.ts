@@ -78,7 +78,11 @@ export const useHikeStore = create<HikeState>((set, get) => ({
     if (s.phase !== 'near_summit' || !s.stayStartedAt) return;
     const totalMs = s.stayElapsedMs + (Date.now() - s.stayStartedAt);
     if (totalMs >= STAY_REQUIRED_MS) {
-      set({ phase: 'verified' });
+      set({ phase: 'verified', stayElapsedMs: STAY_REQUIRED_MS });
+    } else {
+      // Snapshot elapsed time + reset stayStartedAt so exitSummitRadius
+      // doesn't double-count, and forces a Zustand re-render for progress bar
+      set({ stayElapsedMs: totalMs, stayStartedAt: Date.now() });
     }
   },
 

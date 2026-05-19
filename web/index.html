@@ -193,7 +193,7 @@
       height: 572px;
       background: var(--green-dark);
       border-radius: 44px;
-      border: 2px solid rgba(255,255,255,0.09);
+      border: 2.5px solid rgba(0,0,0,0.75);
       box-shadow:
         0 48px 96px rgba(0,0,0,0.45),
         inset 0 1px 0 rgba(255,255,255,0.07);
@@ -438,6 +438,80 @@
       color: rgba(255,255,255,0.3);
     }
 
+    /* ── Screenshots strip ───────────────────── */
+    .screenshots {
+      background: var(--cream);
+      padding: 80px 0 100px;
+      overflow: hidden;
+    }
+
+    .screenshots-inner {
+      padding: 0 72px;
+      margin-bottom: 48px;
+    }
+
+    .screenshots-scroll {
+      display: flex;
+      gap: 20px;
+      padding: 20px 72px 32px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .screenshots-scroll::-webkit-scrollbar { display: none; }
+
+    .sphone {
+      flex: 0 0 186px;
+      height: 403px;
+      border-radius: 34px;
+      border: 2.5px solid rgba(0,0,0,0.75);
+      background: var(--ink);
+      overflow: hidden;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sphone-notch {
+      width: 64px; height: 18px;
+      background: var(--ink);
+      border-radius: 0 0 12px 12px;
+      margin: 0 auto;
+      flex-shrink: 0;
+    }
+
+    .sphone-screen {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sphone-screen img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+
+    .sphone-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--zinc);
+      text-align: center;
+      margin-top: 12px;
+      letter-spacing: -0.2px;
+    }
+
+    .sphone-wrap {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      scroll-snap-align: start;
+    }
+
     /* ── Animations ──────────────────────────── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(18px); }
@@ -494,6 +568,11 @@
         gap: 10px;
         text-align: center;
       }
+
+      .screenshots-inner { padding: 0 20px; }
+      .screenshots-scroll { padding: 8px 20px 24px; gap: 14px; }
+      .sphone { flex: 0 0 158px; height: 342px; border-radius: 28px; }
+      .sphone-notch { width: 52px; height: 14px; }
     }
   </style>
 </head>
@@ -606,6 +685,50 @@
     <div class="stat-label">출시 예정 시장</div>
   </div>
 </div>
+
+<section class="screenshots">
+  <div class="screenshots-inner">
+    <p class="section-eyebrow">앱 화면</p>
+    <h2 class="section-h2">손안의<br>정상 전투</h2>
+  </div>
+  <div class="screenshots-scroll">
+    <div class="sphone-wrap">
+      <div class="sphone">
+        <div class="sphone-notch"></div>
+        <div class="sphone-screen"><img src="flagon-00-login.svg" alt="로그인"></div>
+      </div>
+      <p class="sphone-label">로그인</p>
+    </div>
+    <div class="sphone-wrap">
+      <div class="sphone">
+        <div class="sphone-notch"></div>
+        <div class="sphone-screen"><img src="flagon-03-flag-planted.svg" alt="깃발 꽂기"></div>
+      </div>
+      <p class="sphone-label">깃발 꽂기</p>
+    </div>
+    <div class="sphone-wrap">
+      <div class="sphone">
+        <div class="sphone-notch"></div>
+        <div class="sphone-screen"><img src="flagon-04-track.svg" alt="등산 트랙"></div>
+      </div>
+      <p class="sphone-label">등산 트랙</p>
+    </div>
+    <div class="sphone-wrap">
+      <div class="sphone">
+        <div class="sphone-notch"></div>
+        <div class="sphone-screen"><img src="flagon-05-leaderboard.svg" alt="리더보드"></div>
+      </div>
+      <p class="sphone-label">리더보드</p>
+    </div>
+    <div class="sphone-wrap">
+      <div class="sphone">
+        <div class="sphone-notch"></div>
+        <div class="sphone-screen"><img src="flagon-06-crew-room.svg" alt="크루룸"></div>
+      </div>
+      <p class="sphone-label">크루룸</p>
+    </div>
+  </div>
+</section>
 
 <section class="cta" id="cta">
   <h2 class="cta-h2">첫 번째<br><mark>크루</mark>가<br>되어라.</h2>

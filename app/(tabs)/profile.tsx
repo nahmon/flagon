@@ -1,12 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Modal, FlatList, TextInput, ScrollView, KeyboardAvoidingView, Platform, Share } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, Modal, FlatList, TextInput, ScrollView, KeyboardAvoidingView, Platform, Share, Clipboard } from 'react-native';
 import { Colors } from '../../src/constants';
 import { supabase } from '../../src/services/supabase';
-import { fetchUserProfile, fetchCrews, joinCrew, leaveCrew, createCrew, UserProfile } from '../../src/services/crews';
+import { fetchUserProfile, fetchCrew, fetchCrews, joinCrew, joinCrewByCode, leaveCrew, createCrew, UserProfile } from '../../src/services/crews';
 import { Crew } from '../../src/types';
 import RecentHikesList from '../../src/components/RecentHikesList';
 import AchievementGrid from '../../src/components/AchievementGrid';
 import StatsCard from '../../src/components/StatsCard';
+import { useLang } from '../../src/contexts/LangContext';
+import { t } from '../../src/i18n/strings';
 
 const CREW_COLORS = [
   { hex: '#4A7C59' }, { hex: '#C0704A' }, { hex: '#5B7FA6' },
@@ -16,6 +18,8 @@ const CREW_COLORS = [
 function CrewPickerModal({ visible, onClose, onJoined }: {
   visible: boolean; onClose: () => void; onJoined: () => void;
 }) {
+  const { lang } = useLang();
+  const s = t(lang);
   const [tab, setTab] = useState<'join' | 'create' | 'code'>('join');
   const [crews, setCrews] = useState<Crew[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,31 +40,29 @@ function CrewPickerModal({ visible, onClose, onJoined }: {
   const handleJoin = async (crewId: string) => {
     setBusy(true);
     try { await joinCrew(crewId); onJoined(); onClose(); }
-    catch (e: any) { Alert.alert('오류', e.message ?? '크루 참여에 실패했습니다'); }
+    catch (e: any) { Alert.alert(s.error, e.message ?? s.errorJoiningCrew); }
     finally { setBusy(false); }
   };
 
   const handleCreate = async () => {
-    if (!newName.trim()) { Alert.alert('이름을 입력해주세요'); return; }
+    if (!newName.trim()) { Alert.alert(s.enterName); return; }
     setBusy(true);
     try { await createCrew(newName.trim(), newNameKo.trim() || newName.trim(), selectedColor, 'SA'); onJoined(); onClose(); }
-    catch (e: any) { Alert.alert('오류', e.message ?? '크루 생성 실패'); }
+    catch (e: any) { Alert.alert(s.error, e.message ?? s.errorCreatingCrew); }
     finally { setBusy(false); }
   };
 
   const handleJoinByCode = async () => {
     const code = inviteCode.trim();
-    if (!code) { setCodeError('코드를 입력해주세요'); return; }
+    if (!code) { setCodeError(s.enterCrewCode); return; }
     setBusy(true);
     setCodeError('');
     try {
-      const { data, error } = await supabase.from('crews').select('*').eq('id', code).single();
-      if (error || !data) { setCodeError('유효하지 않은 초대 코드입니다'); return; }
-      await joinCrew(data.id);
+      await joinCrewByCode(code);
       onJoined();
       onClose();
     } catch (e: any) {
-      setCodeError(e.message ?? '참여 실패');
+      setCodeError(e.message === 'invalid_code' ? s.invalidCode : (e.message ?? s.errorJoiningCrew));
     } finally {
       setBusy(false);
     }
@@ -70,12 +72,12 @@ function CrewPickerModal({ visible, onClose, onJoined }: {
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
       <View style={modal.container}>
         <View style={modal.handle} />
-        <Text style={modal.title}>크루 선택</Text>
+        <Text style={modal.title}>{s.crewSelect}</Text>
         <View style={modal.tabs}>
-          {(['join', 'create', 'code'] as const).map((t) => (
-            <TouchableOpacity key={t} style={[modal.tab, tab === t && modal.tabActive]} onPress={() => setTab(t)}>
-              <Text style={[modal.tabText, tab === t && modal.tabTextActive]}>
-                {t === 'join' ? '크루 찾기' : t === 'create' ? '크루 만들기' : '코드 입력'}
+          {(['join', 'create', 'code'] as const).map((tabKey) => (
+            <TouchableOpacity key={tabKey} style={[modal.tab, tab === tabKey && modal.tabActive]} onPress={() => setTab(tabKey)}>
+              <Text style={[modal.tabText, tab === tabKey && modal.tabTextActive]}>
+                {tabKey === 'join' ? s.crewFind : tabKey === 'create' ? s.createCrewTab : s.codeTab}
               </Text>
             </TouchableOpacity>
           ))}
@@ -93,50 +95,50 @@ function CrewPickerModal({ visible, onClose, onJoined }: {
                     <Text style={modal.crewName}>{item.name_ko ?? item.name}</Text>
                     <Text style={modal.crewSub}>{item.name ?? ''}</Text>
                   </View>
-                  <Text style={modal.joinBtn}>참여 →</Text>
+                  <Text style={modal.joinBtn}>{s.joinArrow}</Text>
                 </TouchableOpacity>
               )}
               ItemSeparatorComponent={() => <View style={{ height: 1, backgroundColor: Colors.zinc100 }} />}
-              ListEmptyComponent={<Text style={modal.empty}>크루가 없습니다</Text>}
+              ListEmptyComponent={<Text style={modal.empty}>{s.noCrews}</Text>}
             />
           )
         ) : tab === 'create' ? (
           <View style={modal.createForm}>
-            <Text style={modal.label}>크루 이름 (한국어)</Text>
+            <Text style={modal.label}>{s.crewNameKo}</Text>
             <TextInput style={modal.input} value={newNameKo} onChangeText={setNewNameKo} placeholder="예) 북한산 크루" placeholderTextColor={Colors.zinc500} />
-            <Text style={modal.label}>크루 이름 (영어)</Text>
+            <Text style={modal.label}>{s.crewNameEn}</Text>
             <TextInput style={modal.input} value={newName} onChangeText={setNewName} placeholder="e.g. BukhanCrew" placeholderTextColor={Colors.zinc500} />
-            <Text style={modal.label}>크루 색상</Text>
+            <Text style={modal.label}>{s.crewColor}</Text>
             <View style={modal.colorRow}>
               {CREW_COLORS.map((c) => (
                 <TouchableOpacity key={c.hex} style={[modal.colorDot, { backgroundColor: c.hex }, selectedColor === c.hex && modal.colorSelected]} onPress={() => setSelectedColor(c.hex)} />
               ))}
             </View>
             <TouchableOpacity style={[modal.createBtn, busy && { opacity: 0.6 }]} onPress={handleCreate} disabled={busy}>
-              <Text style={modal.createBtnText}>{busy ? '생성 중...' : '크루 만들기'}</Text>
+              <Text style={modal.createBtnText}>{busy ? s.creating : s.createCrew}</Text>
             </TouchableOpacity>
           </View>
         ) : (
           <View style={modal.createForm}>
-            <Text style={modal.label}>초대 코드</Text>
+            <Text style={modal.label}>{s.inviteCode}</Text>
             <TextInput
               style={modal.input}
               value={inviteCode}
               onChangeText={(v) => { setInviteCode(v); setCodeError(''); }}
-              placeholder="초대 코드를 입력하세요"
+              placeholder={s.enterInviteCode}
               placeholderTextColor={Colors.zinc500}
               autoCapitalize="none"
               autoCorrect={false}
             />
             {codeError ? <Text style={modal.codeError}>{codeError}</Text> : null}
             <TouchableOpacity style={[modal.createBtn, busy && { opacity: 0.6 }]} onPress={handleJoinByCode} disabled={busy}>
-              <Text style={modal.createBtnText}>{busy ? '참여 중...' : '코드로 참여하기'}</Text>
+              <Text style={modal.createBtnText}>{busy ? s.joining : s.joinByCode}</Text>
             </TouchableOpacity>
           </View>
         )}
 
         <TouchableOpacity style={modal.closeBtn} onPress={onClose}>
-          <Text style={modal.closeBtnText}>닫기</Text>
+          <Text style={modal.closeBtnText}>{s.close}</Text>
         </TouchableOpacity>
       </View>
     </Modal>
@@ -144,8 +146,12 @@ function CrewPickerModal({ visible, onClose, onJoined }: {
 }
 
 export default function ProfileScreen() {
+  const { lang } = useLang();
+  const s = t(lang);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [crewInviteCode, setCrewInviteCode] = useState<string | null>(null);
+  const [codeCopied, setCodeCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showCrewPicker, setShowCrewPicker] = useState(false);
   const [editingName, setEditingName] = useState(false);
@@ -160,6 +166,12 @@ export default function ProfileScreen() {
       const p = await fetchUserProfile(user.id);
       setProfile(p);
       setNameInput(p?.display_name ?? '');
+      if (p?.crew_id) {
+        const crew = await fetchCrew(p.crew_id);
+        setCrewInviteCode(crew?.invite_code ?? null);
+      } else {
+        setCrewInviteCode(null);
+      }
     } catch (e) {
       console.error('[profile]', e);
     } finally {
@@ -179,7 +191,7 @@ export default function ProfileScreen() {
       setProfile((p) => p ? { ...p, display_name: nameInput.trim() } : p);
       setEditingName(false);
     } catch (e: any) {
-      Alert.alert('저장 실패', e.message);
+      Alert.alert(s.saveFailed, e.message);
     } finally {
       setSavingName(false);
     }
@@ -188,19 +200,22 @@ export default function ProfileScreen() {
   useEffect(() => { loadProfile(); }, [loadProfile]);
 
   const handleInvite = async () => {
-    if (!profile?.crew_id || !profile?.crew_name_ko) return;
-    const code = profile.crew_id;
-    const crewName = profile.crew_name_ko ?? profile.crew_name ?? '크루';
-    await Share.share({
-      message: `FlagOn에서 ${crewName} 크루에 참여하세요 🚩\n\n초대 코드: ${code}`,
-    });
+    if (!crewInviteCode) return;
+    await Share.share({ message: s.inviteMessage(crewInviteCode) });
+  };
+
+  const handleCopyCode = () => {
+    if (!crewInviteCode) return;
+    Clipboard.setString(crewInviteCode);
+    setCodeCopied(true);
+    setTimeout(() => setCodeCopied(false), 2000);
   };
 
   const handleLeave = () => {
     if (!profile?.crew_id) return;
-    Alert.alert('크루 탈퇴', '정말 이 크루를 떠나시겠습니까?', [
-      { text: '취소', style: 'cancel' },
-      { text: '탈퇴', style: 'destructive', onPress: async () => { await leaveCrew(profile.crew_id!); loadProfile(); } },
+    Alert.alert(s.leaveCrew, s.leaveConfirm, [
+      { text: s.cancel, style: 'cancel' },
+      { text: s.leave, style: 'destructive', onPress: async () => { await leaveCrew(profile.crew_id!); loadProfile(); } },
     ]);
   };
 
@@ -225,13 +240,13 @@ export default function ProfileScreen() {
                   onSubmitEditing={handleSaveName}
                   maxLength={30}
                   placeholderTextColor="rgba(255,255,255,0.5)"
-                  placeholder="닉네임 입력"
+                  placeholder={s.nicknameInput}
                 />
                 <TouchableOpacity onPress={handleSaveName} disabled={savingName} style={styles.nameSaveBtn}>
-                  <Text style={styles.nameSaveText}>{savingName ? '…' : '저장'}</Text>
+                  <Text style={styles.nameSaveText}>{savingName ? s.saving : s.save}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setEditingName(false)} style={styles.nameCancelBtn}>
-                  <Text style={styles.nameCancelText}>취소</Text>
+                  <Text style={styles.nameCancelText}>{s.cancel}</Text>
                 </TouchableOpacity>
               </View>
             </KeyboardAvoidingView>
@@ -241,31 +256,44 @@ export default function ProfileScreen() {
             </TouchableOpacity>
           )}
           <View style={styles.statChip}>
-            <Text style={styles.statChipText}>깃발 {profile?.flag_count ?? 0}개</Text>
+            <Text style={styles.statChipText}>{s.flagCount(profile?.flag_count ?? 0)}</Text>
           </View>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>내 크루</Text>
+          <Text style={styles.sectionTitle}>{s.myCrew}</Text>
           {profile?.crew_id ? (
-            <View style={styles.crewCard}>
-              <View style={[styles.crewDot, { backgroundColor: profile.crew_color_hex ?? Colors.green }]} />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.crewName}>{profile.crew_name ?? profile.crew_name_ko}</Text>
-                <Text style={styles.crewSub}>{profile.crew_name_ko ?? profile.crew_name}</Text>
+            <>
+              <View style={styles.crewCard}>
+                <View style={[styles.crewDot, { backgroundColor: profile.crew_color_hex ?? Colors.green }]} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.crewName}>{profile.crew_name ?? profile.crew_name_ko}</Text>
+                  <Text style={styles.crewSub}>{profile.crew_name_ko ?? profile.crew_name}</Text>
+                </View>
+                <TouchableOpacity onPress={handleLeave}>
+                  <Text style={styles.leaveText}>{s.leave}</Text>
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity onPress={handleInvite} style={styles.inviteBtn}>
-                <Text style={styles.inviteText}>초대</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleLeave}>
-                <Text style={styles.leaveText}>탈퇴</Text>
-              </TouchableOpacity>
-            </View>
+              {crewInviteCode ? (
+                <View style={styles.inviteCard}>
+                  <Text style={styles.inviteCardLabel}>{s.yourInviteCode}</Text>
+                  <Text style={styles.inviteCodeText}>{crewInviteCode}</Text>
+                  <View style={styles.inviteActions}>
+                    <TouchableOpacity style={styles.inviteActionBtn} onPress={handleCopyCode}>
+                      <Text style={styles.inviteActionText}>{codeCopied ? s.codeCopied : s.copyCode}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.inviteActionBtn, styles.inviteShareBtn]} onPress={handleInvite}>
+                      <Text style={[styles.inviteActionText, { color: Colors.white }]}>{s.invite}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : null}
+            </>
           ) : (
             <TouchableOpacity style={styles.joinBanner} onPress={() => setShowCrewPicker(true)}>
-              <Text style={styles.joinBannerText}>크루에 참여하거나 만들기</Text>
+              <Text style={styles.joinBannerText}>{s.joinOrCreate}</Text>
               <Text style={styles.joinArrow}>→</Text>
             </TouchableOpacity>
           )}
@@ -276,7 +304,7 @@ export default function ProfileScreen() {
         {userId && <RecentHikesList userId={userId} />}
 
         <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
-          <Text style={styles.signOutText}>로그아웃</Text>
+          <Text style={styles.signOutText}>{s.logout}</Text>
         </TouchableOpacity>
       </ScrollView>
 
@@ -330,9 +358,14 @@ const styles = StyleSheet.create({
   crewDot: { width: 14, height: 14, borderRadius: 7 },
   crewName: { fontSize: 16, fontWeight: '600', color: Colors.zinc950 },
   crewSub: { fontSize: 12, color: Colors.zinc500, marginTop: 1 },
-  inviteBtn: { backgroundColor: Colors.zinc100, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5, marginRight: 8 },
-  inviteText: { fontSize: 13, fontWeight: '600', color: Colors.green },
   leaveText: { fontSize: 14, color: Colors.orange },
+  inviteCard: { backgroundColor: Colors.white, borderRadius: 14, padding: 16, marginTop: 10, borderWidth: 1, borderColor: Colors.zinc100 },
+  inviteCardLabel: { fontSize: 11, fontWeight: '700', color: Colors.zinc500, letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 8 },
+  inviteCodeText: { fontSize: 32, fontWeight: '900', color: Colors.green, letterSpacing: 4, marginBottom: 14 },
+  inviteActions: { flexDirection: 'row', gap: 8 },
+  inviteActionBtn: { flex: 1, paddingVertical: 10, borderRadius: 10, backgroundColor: Colors.zinc100, alignItems: 'center' },
+  inviteShareBtn: { backgroundColor: Colors.green },
+  inviteActionText: { fontSize: 14, fontWeight: '700', color: Colors.zinc800 },
   joinBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.zinc100, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14 },
   joinBannerText: { flex: 1, fontSize: 15, color: Colors.zinc800, fontWeight: '500' },
   joinArrow: { fontSize: 18, color: Colors.zinc500 },
