@@ -6,6 +6,7 @@ import { fetchUserProfile, fetchCrews, joinCrew, leaveCrew, createCrew, UserProf
 import { Crew } from '../../src/types';
 import RecentHikesList from '../../src/components/RecentHikesList';
 import AchievementGrid from '../../src/components/AchievementGrid';
+import StatsCard from '../../src/components/StatsCard';
 
 const CREW_COLORS = [
   { hex: '#4A7C59' }, { hex: '#C0704A' }, { hex: '#5B7FA6' },
@@ -270,6 +271,7 @@ export default function ProfileScreen() {
           )}
         </View>
 
+        {userId && <StatsCard userId={userId} />}
         {userId && <AchievementGrid userId={userId} />}
         {userId && <RecentHikesList userId={userId} />}
 
