@@ -63,6 +63,7 @@ export interface GpsPoint {
   lng: number;
   ts: string;
   accuracy?: number;
+  alt?: number;
 }
 
 export interface CrewLeaderboardEntry {

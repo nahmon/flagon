@@ -40,6 +40,7 @@ export function makeGpsPoint(pos: Location.LocationObject): GpsPoint {
     lng: pos.coords.longitude,
     ts: new Date(pos.timestamp).toISOString(),
     accuracy: pos.coords.accuracy ?? undefined,
+    alt: pos.coords.altitude ?? undefined,
   };
 }
 

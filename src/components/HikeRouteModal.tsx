@@ -1,8 +1,9 @@
 import { useRef, useMemo, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
 import { Map, Camera, GeoJSONSource, Layer, type CameraRef } from '@maplibre/maplibre-react-native';
 import { Colors, MAP } from '../constants';
 import { GpsPoint } from '../types';
+import ElevationChart from './ElevationChart';
 
 export interface HikeRecord {
   id: string;
@@ -154,46 +155,55 @@ export default function HikeRouteModal({ visible, hike, onClose }: Props) {
           </View>
         </View>
 
-        <View style={styles.mapWrap}>
-          {hasTrack ? (
-            <Map style={styles.map} mapStyle={MAP.STYLE_URL}>
-              <Camera
-                ref={cameraRef}
-                initialViewState={{ center, zoom: 13 }}
-              />
-              <GeoJSONSource id="hike-route" data={geojson}>
-                <Layer
-                  id="hike-line"
-                  type="line"
-                  filter={['==', ['geometry-type'], 'LineString']}
-                  layout={{ 'line-cap': 'round', 'line-join': 'round' }}
-                  paint={{
-                    'line-color': Colors.orange,
-                    'line-width': 4,
-                    'line-opacity': 0.9,
-                  }}
+        <ScrollView style={styles.scrollArea} contentContainerStyle={styles.scrollContent}>
+          <View style={styles.mapWrap}>
+            {hasTrack ? (
+              <Map style={styles.map} mapStyle={MAP.STYLE_URL}>
+                <Camera
+                  ref={cameraRef}
+                  initialViewState={{ center, zoom: 13 }}
                 />
-                <Layer
-                  id="hike-end"
-                  type="circle"
-                  filter={['==', ['get', 'type'], 'end']}
-                  paint={{
-                    'circle-radius': 8,
-                    'circle-color': Colors.green,
-                    'circle-stroke-width': 2.5,
-                    'circle-stroke-color': Colors.white,
-                  }}
-                />
-              </GeoJSONSource>
-            </Map>
-          ) : (
-            <View style={styles.noRoute}>
-              <Text style={styles.noRouteIcon}>🗺️</Text>
-              <Text style={styles.noRouteText}>GPS 경로 데이터가 없습니다</Text>
-              <Text style={styles.noRouteSub}>다음 등산부터 경로가 기록됩니다</Text>
-            </View>
+                <GeoJSONSource id="hike-route" data={geojson}>
+                  <Layer
+                    id="hike-line"
+                    type="line"
+                    filter={['==', ['geometry-type'], 'LineString']}
+                    layout={{ 'line-cap': 'round', 'line-join': 'round' }}
+                    paint={{
+                      'line-color': Colors.orange,
+                      'line-width': 4,
+                      'line-opacity': 0.9,
+                    }}
+                  />
+                  <Layer
+                    id="hike-end"
+                    type="circle"
+                    filter={['==', ['get', 'type'], 'end']}
+                    paint={{
+                      'circle-radius': 8,
+                      'circle-color': Colors.green,
+                      'circle-stroke-width': 2.5,
+                      'circle-stroke-color': Colors.white,
+                    }}
+                  />
+                </GeoJSONSource>
+              </Map>
+            ) : (
+              <View style={styles.noRoute}>
+                <Text style={styles.noRouteIcon}>🗺️</Text>
+                <Text style={styles.noRouteText}>GPS 경로 데이터가 없습니다</Text>
+                <Text style={styles.noRouteSub}>다음 등산부터 경로가 기록됩니다</Text>
+              </View>
+            )}
+          </View>
+
+          {hike && (
+            <ElevationChart
+              track={hike.gps_track}
+              summitElevationM={hike.elevation_m}
+            />
           )}
-        </View>
+        </ScrollView>
       </View>
     </Modal>
   );
@@ -213,7 +223,9 @@ const styles = StyleSheet.create({
   statBorder: { borderLeftWidth: 1, borderColor: Colors.zinc100 },
   statVal: { fontSize: 16, fontWeight: '700', color: Colors.zinc950 },
   statLbl: { fontSize: 11, color: Colors.zinc500, marginTop: 2 },
-  mapWrap: { flex: 1 },
+  scrollArea: { flex: 1 },
+  scrollContent: { flexGrow: 1 },
+  mapWrap: { height: 240 },
   map: { flex: 1 },
   noRoute: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.zinc100 },
   noRouteIcon: { fontSize: 48, marginBottom: 12 },
