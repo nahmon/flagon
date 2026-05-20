@@ -175,6 +175,14 @@ const strings = {
     bookmarkAdded: '버킷리스트에 추가됨',
     bookmarkRemoved: '버킷리스트에서 제거됨',
     bookmark: '버킷리스트',
+
+    // Streak
+    streakTitle: '연속 등산',
+    streakWeeks: (n: number) => `${n}주 연속`,
+    streakBest: (n: number) => `최고 ${n}주`,
+    streakThisWeek: '이번 주',
+    streakNone: '아직 등산 기록이 없습니다',
+    streakWeekGrid: '최근 8주',
   },
 
   en: {
@@ -351,6 +359,14 @@ const strings = {
     bookmarkAdded: 'Added to bucket list',
     bookmarkRemoved: 'Removed from bucket list',
     bookmark: 'Bucket List',
+
+    // Streak
+    streakTitle: 'Hiking Streak',
+    streakWeeks: (n: number) => `${n}-week streak`,
+    streakBest: (n: number) => `Best: ${n} wks`,
+    streakThisWeek: 'This week',
+    streakNone: 'No hikes recorded yet',
+    streakWeekGrid: 'Last 8 weeks',
   },
 
   ja: {
@@ -527,6 +543,14 @@ const strings = {
     bookmarkAdded: 'バケットリストに追加',
     bookmarkRemoved: 'バケットリストから削除',
     bookmark: 'バケットリスト',
+
+    // Streak
+    streakTitle: '登山ストリーク',
+    streakWeeks: (n: number) => `${n}週連続`,
+    streakBest: (n: number) => `最高${n}週`,
+    streakThisWeek: '今週',
+    streakNone: 'まだ登山記録がありません',
+    streakWeekGrid: '直近8週間',
   },
 } as const;
 
