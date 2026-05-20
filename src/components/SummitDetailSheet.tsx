@@ -6,6 +6,7 @@ import {
 import { Colors } from '../constants';
 import { SummitWithFlag } from '../types';
 import { fetchSummitFlagHistory, FlagHistoryEntry } from '../services/flags';
+import WeatherCard from './WeatherCard';
 
 function relativeTime(dateStr: string): string {
   const diffH = Math.floor((Date.now() - new Date(dateStr).getTime()) / 3_600_000);
@@ -68,6 +69,8 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
             <Text style={styles.closeBtnText}>✕</Text>
           </TouchableOpacity>
         </View>
+
+        {summit ? <WeatherCard summit={summit} /> : null}
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>현재 깃발</Text>

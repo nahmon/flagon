@@ -162,6 +162,11 @@ const strings = {
     filterHigh: '1500m 이상',
     filterReset: '초기화',
     filterActive: (n: number) => `필터 ${n}개 적용 중`,
+
+    // Weather widget
+    weather: '날씨',
+    wind: '풍속',
+    weatherUnavailable: '날씨 정보를 불러올 수 없습니다',
   },
 
   en: {
@@ -325,6 +330,11 @@ const strings = {
     filterHigh: '> 1500m',
     filterReset: 'Reset',
     filterActive: (n: number) => `${n} filter${n > 1 ? 's' : ''} active`,
+
+    // Weather widget
+    weather: 'Weather',
+    wind: 'Wind',
+    weatherUnavailable: 'Weather unavailable',
   },
 
   ja: {
@@ -488,6 +498,11 @@ const strings = {
     filterHigh: '1500m以上',
     filterReset: 'リセット',
     filterActive: (n: number) => `${n}件のフィルター適用中`,
+
+    // Weather widget
+    weather: '天気',
+    wind: '風速',
+    weatherUnavailable: '天気情報を取得できません',
   },
 } as const;
 
