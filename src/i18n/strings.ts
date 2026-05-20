@@ -167,6 +167,14 @@ const strings = {
     weather: '날씨',
     wind: '풍속',
     weatherUnavailable: '날씨 정보를 불러올 수 없습니다',
+
+    // Bucket list
+    bucketList: '가고 싶은 정상',
+    bucketListEmpty: '아직 저장한 정상이 없습니다',
+    bucketListAdd: '정상 상세에서 ★ 버튼으로 추가하세요',
+    bookmarkAdded: '버킷리스트에 추가됨',
+    bookmarkRemoved: '버킷리스트에서 제거됨',
+    bookmark: '버킷리스트',
   },
 
   en: {
@@ -335,6 +343,14 @@ const strings = {
     weather: 'Weather',
     wind: 'Wind',
     weatherUnavailable: 'Weather unavailable',
+
+    // Bucket list
+    bucketList: 'Bucket List',
+    bucketListEmpty: 'No summits saved yet',
+    bucketListAdd: 'Tap ★ on any summit detail to save',
+    bookmarkAdded: 'Added to bucket list',
+    bookmarkRemoved: 'Removed from bucket list',
+    bookmark: 'Bucket List',
   },
 
   ja: {
@@ -503,6 +519,14 @@ const strings = {
     weather: '天気',
     wind: '風速',
     weatherUnavailable: '天気情報を取得できません',
+
+    // Bucket list
+    bucketList: '行きたい山頂',
+    bucketListEmpty: 'まだ保存した山頂はありません',
+    bucketListAdd: '山頂詳細の★ボタンで追加できます',
+    bookmarkAdded: 'バケットリストに追加',
+    bookmarkRemoved: 'バケットリストから削除',
+    bookmark: 'バケットリスト',
   },
 } as const;
 

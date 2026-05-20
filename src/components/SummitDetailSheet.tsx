@@ -1,12 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
   Modal, View, Text, FlatList, TouchableOpacity,
-  StyleSheet, ActivityIndicator,
+  StyleSheet, ActivityIndicator, ToastAndroid, Platform, Alert,
 } from 'react-native';
 import { Colors } from '../constants';
 import { SummitWithFlag } from '../types';
 import { fetchSummitFlagHistory, FlagHistoryEntry } from '../services/flags';
 import WeatherCard from './WeatherCard';
+import { isWishlisted, addToWishList, removeFromWishList } from '../services/wishlist';
+import { useLang } from '../contexts/LangContext';
+import { t } from '../i18n/strings';
 
 function relativeTime(dateStr: string): string {
   const diffH = Math.floor((Date.now() - new Date(dateStr).getTime()) / 3_600_000);
@@ -27,17 +30,47 @@ interface Props {
 }
 
 export default function SummitDetailSheet({ summit, onClose }: Props) {
+  const { lang } = useLang();
+  const s = t(lang);
   const [history, setHistory] = useState<FlagHistoryEntry[]>([]);
   const [loading, setLoading] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
 
   useEffect(() => {
-    if (!summit) { setHistory([]); return; }
+    if (!summit) { setHistory([]); setBookmarked(false); return; }
     setLoading(true);
     fetchSummitFlagHistory(summit.id)
       .then(setHistory)
       .catch(console.error)
       .finally(() => setLoading(false));
+    isWishlisted(summit.id).then(setBookmarked).catch(() => {});
   }, [summit?.id]);
+
+  const handleBookmark = useCallback(async () => {
+    if (!summit) return;
+    const next = !bookmarked;
+    setBookmarked(next);
+    if (next) {
+      await addToWishList({
+        id: summit.id,
+        name_ko: summit.name_ko,
+        name_en: summit.name_en ?? null,
+        name_ja: summit.name_ja ?? null,
+        elevation_m: summit.elevation_m,
+        mountain_group: summit.mountain_group ?? null,
+      });
+      if (Platform.OS === 'android') {
+        ToastAndroid.show(s.bookmarkAdded, ToastAndroid.SHORT);
+      } else {
+        Alert.alert('', s.bookmarkAdded);
+      }
+    } else {
+      await removeFromWishList(summit.id);
+      if (Platform.OS === 'android') {
+        ToastAndroid.show(s.bookmarkRemoved, ToastAndroid.SHORT);
+      }
+    }
+  }, [summit, bookmarked, s]);
 
   const flag = summit?.active_flag;
   const expiryDays = flag?.expires_at ? daysUntil(flag.expires_at) : null;
@@ -65,9 +98,18 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
               ) : null}
             </View>
           </View>
-          <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-            <Text style={styles.closeBtnText}>✕</Text>
-          </TouchableOpacity>
+          <View style={styles.headerActions}>
+            <TouchableOpacity
+              style={[styles.bookmarkBtn, bookmarked && styles.bookmarkBtnActive]}
+              onPress={handleBookmark}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.bookmarkIcon, bookmarked && styles.bookmarkIconActive]}>★</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
+              <Text style={styles.closeBtnText}>✕</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {summit ? <WeatherCard summit={summit} /> : null}
@@ -141,6 +183,14 @@ const styles = StyleSheet.create({
   elevBadge: { backgroundColor: Colors.green, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4 },
   elevText: { fontSize: 13, fontWeight: '700', color: Colors.white },
   mountainGroup: { fontSize: 13, color: Colors.zinc500 },
+  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  bookmarkBtn: {
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: Colors.zinc100, alignItems: 'center', justifyContent: 'center',
+  },
+  bookmarkBtnActive: { backgroundColor: Colors.orange },
+  bookmarkIcon: { fontSize: 18, color: Colors.zinc500 },
+  bookmarkIconActive: { color: Colors.white },
   closeBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.zinc100, alignItems: 'center', justifyContent: 'center' },
   closeBtnText: { fontSize: 12, color: Colors.zinc800, fontWeight: '700' },
   section: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 4 },

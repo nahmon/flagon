@@ -7,6 +7,7 @@ import { Crew } from '../../src/types';
 import RecentHikesList from '../../src/components/RecentHikesList';
 import AchievementGrid from '../../src/components/AchievementGrid';
 import StatsCard from '../../src/components/StatsCard';
+import WishListModal from '../../src/components/WishListModal';
 import { useLang } from '../../src/contexts/LangContext';
 import { t } from '../../src/i18n/strings';
 
@@ -154,6 +155,7 @@ export default function ProfileScreen() {
   const [codeCopied, setCodeCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showCrewPicker, setShowCrewPicker] = useState(false);
+  const [showWishList, setShowWishList] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('');
   const [savingName, setSavingName] = useState(false);
@@ -303,12 +305,19 @@ export default function ProfileScreen() {
         {userId && <AchievementGrid userId={userId} />}
         {userId && <RecentHikesList userId={userId} />}
 
+        <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowWishList(true)} activeOpacity={0.8}>
+          <Text style={styles.wishListIcon}>★</Text>
+          <Text style={styles.wishListLabel}>{s.bucketList}</Text>
+          <Text style={styles.wishListArrow}>→</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
           <Text style={styles.signOutText}>{s.logout}</Text>
         </TouchableOpacity>
       </ScrollView>
 
       <CrewPickerModal visible={showCrewPicker} onClose={() => setShowCrewPicker(false)} onJoined={loadProfile} />
+      <WishListModal visible={showWishList} onClose={() => setShowWishList(false)} />
     </View>
   );
 }
@@ -369,6 +378,18 @@ const styles = StyleSheet.create({
   joinBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.zinc100, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14 },
   joinBannerText: { flex: 1, fontSize: 15, color: Colors.zinc800, fontWeight: '500' },
   joinArrow: { fontSize: 18, color: Colors.zinc500 },
+  wishListBtn: {
+    flexDirection: 'row', alignItems: 'center',
+    marginHorizontal: 20, marginTop: 16,
+    backgroundColor: Colors.white, borderRadius: 14,
+    paddingHorizontal: 18, paddingVertical: 16,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06, shadowRadius: 4, elevation: 2,
+    gap: 12,
+  },
+  wishListIcon: { fontSize: 20, color: Colors.orange },
+  wishListLabel: { flex: 1, fontSize: 15, fontWeight: '600', color: Colors.zinc950 },
+  wishListArrow: { fontSize: 16, color: Colors.zinc500 },
   signOutBtn: { marginHorizontal: 20, marginTop: 24, paddingVertical: 14, backgroundColor: Colors.zinc100, borderRadius: 12, alignItems: 'center' },
   signOutText: { fontSize: 15, color: Colors.zinc800, fontWeight: '600' },
 });
