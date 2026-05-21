@@ -49,6 +49,11 @@ export const FLAG = {
 const MAPBOX_TOKEN = process.env.EXPO_PUBLIC_MAPBOX_TOKEN ?? '';
 export const MAP = {
   STYLE_URL: `https://api.mapbox.com/styles/v1/mapbox/outdoors-v12?access_token=${MAPBOX_TOKEN}`,
+  STYLE_URLS: {
+    outdoors: `https://api.mapbox.com/styles/v1/mapbox/outdoors-v12?access_token=${MAPBOX_TOKEN}`,
+    satellite: `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12?access_token=${MAPBOX_TOKEN}`,
+    streets: `https://api.mapbox.com/styles/v1/mapbox/streets-v12?access_token=${MAPBOX_TOKEN}`,
+  },
   DEFAULT_CENTER: { lat: 37.5665, lng: 126.9780 }, // 서울
   DEFAULT_ZOOM: 11,
   SUMMIT_VISIBLE_ZOOM: 10,

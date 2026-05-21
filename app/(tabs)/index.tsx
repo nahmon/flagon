@@ -8,8 +8,10 @@ import SummitFilterSheet, {
   DEFAULT_FILTERS,
   countActiveFilters,
 } from '../../src/components/SummitFilterSheet';
+import MapStyleToggle from '../../src/components/MapStyleToggle';
 import * as Location from 'expo-location';
 import { Colors, MAP, GPS } from '../../src/constants';
+import { type MapStyleKey, loadMapStyle, saveMapStyle } from '../../src/services/mapStyle';
 import { SummitWithFlag } from '../../src/types';
 import { fetchSummitsNear, summitsToGeoJSON } from '../../src/services/summits';
 import { plantFlag, getUserCrewId } from '../../src/services/flags';
@@ -40,6 +42,16 @@ export default function MapScreen() {
   const [detailSummit, setDetailSummit] = useState<SummitWithFlag | null>(null);
   const [filters, setFilters] = useState<SummitFilters>(DEFAULT_FILTERS);
   const [filterSheetVisible, setFilterSheetVisible] = useState(false);
+  const [mapStyle, setMapStyle] = useState<MapStyleKey>('outdoors');
+
+  useEffect(() => {
+    loadMapStyle().then(setMapStyle).catch(() => {});
+  }, []);
+
+  const handleMapStyleToggle = useCallback((next: MapStyleKey) => {
+    setMapStyle(next);
+    saveMapStyle(next).catch(() => {});
+  }, []);
 
   useEffect(() => {
     getUserCrewId().then(setUserCrewId).catch(() => {});
@@ -208,7 +220,7 @@ export default function MapScreen() {
 
   return (
     <View style={styles.container}>
-      <Map style={styles.map} mapStyle={MAP.STYLE_URL} onPress={handleMapPress}>
+      <Map style={styles.map} mapStyle={MAP.STYLE_URLS[mapStyle]} onPress={handleMapPress}>
         <Camera
           ref={cameraRef}
           initialViewState={{ center: SEOUL, zoom: MAP.DEFAULT_ZOOM }}
@@ -319,6 +331,8 @@ export default function MapScreen() {
         onFiltersChange={setFilters}
         onClose={() => setFilterSheetVisible(false)}
       />
+
+      <MapStyleToggle current={mapStyle} onToggle={handleMapStyleToggle} topOffset={166} />
 
       {/* Summit tap info card */}
       {selectedSummit && (phase === 'idle' || phase === 'hiking') ? (
