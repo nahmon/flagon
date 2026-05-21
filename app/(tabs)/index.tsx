@@ -9,6 +9,7 @@ import SummitFilterSheet, {
   countActiveFilters,
 } from '../../src/components/SummitFilterSheet';
 import MapStyleToggle from '../../src/components/MapStyleToggle';
+import NearBySummitsList from '../../src/components/NearBySummitsList';
 import * as Location from 'expo-location';
 import { Colors, MAP, GPS } from '../../src/constants';
 import { type MapStyleKey, loadMapStyle, saveMapStyle } from '../../src/services/mapStyle';
@@ -43,6 +44,8 @@ export default function MapScreen() {
   const [filters, setFilters] = useState<SummitFilters>(DEFAULT_FILTERS);
   const [filterSheetVisible, setFilterSheetVisible] = useState(false);
   const [mapStyle, setMapStyle] = useState<MapStyleKey>('outdoors');
+  const [nearbyListVisible, setNearbyListVisible] = useState(false);
+  const [userPos, setUserPos] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     loadMapStyle().then(setMapStyle).catch(() => {});
@@ -98,6 +101,7 @@ export default function MapScreen() {
         const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
         lat = loc.coords.latitude;
         lng = loc.coords.longitude;
+        if (mounted) setUserPos({ lat, lng });
         cameraRef.current?.flyTo({ center: [lng, lat], zoom: 12, duration: 800 });
       }
 
@@ -333,6 +337,27 @@ export default function MapScreen() {
       />
 
       <MapStyleToggle current={mapStyle} onToggle={handleMapStyleToggle} topOffset={166} />
+
+      <TouchableOpacity
+        style={styles.listBtn}
+        onPress={() => setNearbyListVisible(true)}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.listBtnIcon}>☰</Text>
+      </TouchableOpacity>
+
+      <NearBySummitsList
+        visible={nearbyListVisible}
+        onClose={() => setNearbyListVisible(false)}
+        summits={filteredSummits}
+        userLat={userPos?.lat}
+        userLng={userPos?.lng}
+        onSelectSummit={(summit) => {
+          const [lng, lat] = summit.location.coordinates;
+          cameraRef.current?.flyTo({ center: [lng, lat], zoom: 14, duration: 600 });
+          setDetailSummit(summit);
+        }}
+      />
 
       {/* Summit tap info card */}
       {selectedSummit && (phase === 'idle' || phase === 'hiking') ? (
@@ -594,6 +619,29 @@ const styles = StyleSheet.create({
   filterBtnIconActive: {
     color: Colors.white,
     fontSize: 13,
+    fontWeight: '700',
+  },
+
+  listBtn: {
+    position: 'absolute',
+    top: 162,
+    right: 12,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
+    zIndex: 10,
+  },
+  listBtnIcon: {
+    fontSize: 18,
+    color: Colors.zinc800,
     fontWeight: '700',
   },
 

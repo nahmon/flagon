@@ -186,6 +186,11 @@ const strings = {
     streakThisWeek: '이번 주',
     streakNone: '아직 등산 기록이 없습니다',
     streakWeekGrid: '최근 8주',
+
+    // Nearby summits list
+    nearbySummits: '주변 정상',
+    sortNearest: '가까운 순',
+    sortHighest: '높은 순',
   },
 
   en: {
@@ -373,6 +378,11 @@ const strings = {
     streakThisWeek: 'This week',
     streakNone: 'No hikes recorded yet',
     streakWeekGrid: 'Last 8 weeks',
+
+    // Nearby summits list
+    nearbySummits: 'Nearby Summits',
+    sortNearest: 'Nearest',
+    sortHighest: 'Highest',
   },
 
   ja: {
@@ -560,6 +570,11 @@ const strings = {
     streakThisWeek: '今週',
     streakNone: 'まだ登山記録がありません',
     streakWeekGrid: '直近8週間',
+
+    // Nearby summits list
+    nearbySummits: '近くの山頂',
+    sortNearest: '近い順',
+    sortHighest: '高い順',
   },
 } as const;
 
