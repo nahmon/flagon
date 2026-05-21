@@ -87,6 +87,9 @@ const strings = {
     rank: '순위',
     crewName: '크루명',
     activeFlagCount: '활성 깃발',
+    periodWeek: '이번 주',
+    periodMonth: '이번 달',
+    periodAlltime: '전체',
 
     // Profile / Crew screen
     myCrew: '내 크루',
@@ -271,6 +274,9 @@ const strings = {
     rank: 'Rank',
     crewName: 'Crew',
     activeFlagCount: 'Active Flags',
+    periodWeek: 'This Week',
+    periodMonth: 'This Month',
+    periodAlltime: 'All Time',
 
     // Profile / Crew screen
     myCrew: 'My Crew',
@@ -455,6 +461,9 @@ const strings = {
     rank: '順位',
     crewName: 'クルー名',
     activeFlagCount: '有効な旗',
+    periodWeek: '今週',
+    periodMonth: '今月',
+    periodAlltime: '全期間',
 
     // Profile / Crew screen
     myCrew: 'マイクルー',

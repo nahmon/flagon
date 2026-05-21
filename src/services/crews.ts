@@ -22,6 +22,55 @@ export async function fetchLeaderboard(): Promise<CrewLeaderboardEntry[]> {
   return (data ?? []) as CrewLeaderboardEntry[];
 }
 
+export type LeaderboardPeriod = 'week' | 'month' | 'alltime';
+
+interface RawPeriodFlag {
+  crew_id: string;
+  planted_at: string;
+  crews: { id: string; name: string; name_ko: string | null; color_hex: string; icon_type: string } | null;
+}
+
+export async function fetchLeaderboardByPeriod(period: LeaderboardPeriod): Promise<CrewLeaderboardEntry[]> {
+  if (period === 'alltime') return fetchLeaderboard();
+
+  const since = new Date();
+  if (period === 'week') since.setDate(since.getDate() - 7);
+  else since.setMonth(since.getMonth() - 1);
+
+  const { data, error } = await supabase
+    .from('flags')
+    .select('crew_id, planted_at, crews(id, name, name_ko, color_hex, icon_type)')
+    .gte('planted_at', since.toISOString())
+    .not('crew_id', 'is', null);
+
+  if (error) throw error;
+
+  const crewMap = new Map<string, CrewLeaderboardEntry>();
+  for (const row of (data ?? []) as unknown as RawPeriodFlag[]) {
+    if (!row.crew_id || !row.crews) continue;
+    const crew = row.crews;
+    const entry = crewMap.get(row.crew_id);
+    if (entry) {
+      entry.flag_count++;
+      if (!entry.last_flag_at || row.planted_at > entry.last_flag_at) {
+        entry.last_flag_at = row.planted_at;
+      }
+    } else {
+      crewMap.set(row.crew_id, {
+        id: crew.id,
+        name: crew.name,
+        name_ko: crew.name_ko,
+        color_hex: crew.color_hex,
+        icon_type: crew.icon_type,
+        flag_count: 1,
+        last_flag_at: row.planted_at,
+      });
+    }
+  }
+
+  return Array.from(crewMap.values()).sort((a, b) => b.flag_count - a.flag_count);
+}
+
 export async function createCrew(
   name: string,
   nameKo: string,
