@@ -191,6 +191,11 @@ const strings = {
     nearbySummits: '주변 정상',
     sortNearest: '가까운 순',
     sortHighest: '높은 순',
+
+    // Mountain group progress
+    mountainGroups: '산 그룹 정복 현황',
+    mountainGroupsEmpty: '아직 깃발을 꽂은 정상이 없습니다',
+    mountainGroupProgress: (done: number, total: number) => `${done} / ${total} 정복`,
   },
 
   en: {
@@ -383,6 +388,11 @@ const strings = {
     nearbySummits: 'Nearby Summits',
     sortNearest: 'Nearest',
     sortHighest: 'Highest',
+
+    // Mountain group progress
+    mountainGroups: 'Mountain Group Progress',
+    mountainGroupsEmpty: 'No flags planted yet',
+    mountainGroupProgress: (done: number, total: number) => `${done} / ${total} conquered`,
   },
 
   ja: {
@@ -575,6 +585,11 @@ const strings = {
     nearbySummits: '近くの山頂',
     sortNearest: '近い順',
     sortHighest: '高い順',
+
+    // Mountain group progress
+    mountainGroups: '山グループ制覇状況',
+    mountainGroupsEmpty: 'まだ旗を立てた山頂はありません',
+    mountainGroupProgress: (done: number, total: number) => `${done} / ${total} 制覇`,
   },
 } as const;
 

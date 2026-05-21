@@ -9,6 +9,7 @@ import AchievementGrid from '../../src/components/AchievementGrid';
 import StatsCard from '../../src/components/StatsCard';
 import StreakCard from '../../src/components/StreakCard';
 import WishListModal from '../../src/components/WishListModal';
+import MountainGroupProgress from '../../src/components/MountainGroupProgress';
 import { useLang } from '../../src/contexts/LangContext';
 import { t } from '../../src/i18n/strings';
 
@@ -304,6 +305,7 @@ export default function ProfileScreen() {
 
         {userId && <StatsCard userId={userId} />}
         {userId && <StreakCard userId={userId} />}
+        {userId && <MountainGroupProgress userId={userId} />}
         {userId && <AchievementGrid userId={userId} />}
         {userId && <RecentHikesList userId={userId} />}
 
