@@ -205,6 +205,22 @@ const strings = {
     noteDelete: '메모 삭제',
     noteDeleteConfirmTitle: '메모 삭제',
     noteDeleteConfirmBody: '이 메모를 삭제하시겠습니까?',
+
+    // Summit ratings
+    rateThis: '이 정상 평가하기',
+    rating: '평점',
+    difficulty: '난이도',
+    views: '경치',
+    trail: '등산로 상태',
+    trailGood: '좋음',
+    trailFair: '보통',
+    trailPoor: '나쁨',
+    submitRating: '평가 등록',
+    editRating: '평가 수정',
+    ratingsCount: (n: number) => `${n}명 평가`,
+    noRatings: '아직 평가 없음',
+    ratingSubmitted: '평가가 등록되었습니다!',
+    rateBtn: '⭐ 평가',
   },
 
   en: {
@@ -411,6 +427,22 @@ const strings = {
     noteDelete: 'Delete Note',
     noteDeleteConfirmTitle: 'Delete Note',
     noteDeleteConfirmBody: 'Delete this note?',
+
+    // Summit ratings
+    rateThis: 'Rate This Summit',
+    rating: 'Rating',
+    difficulty: 'Difficulty',
+    views: 'Views',
+    trail: 'Trail Condition',
+    trailGood: 'Good',
+    trailFair: 'Fair',
+    trailPoor: 'Poor',
+    submitRating: 'Submit Rating',
+    editRating: 'Edit Rating',
+    ratingsCount: (n: number) => `${n} ratings`,
+    noRatings: 'No ratings yet',
+    ratingSubmitted: 'Rating submitted!',
+    rateBtn: '⭐ Rate',
   },
 
   ja: {
@@ -617,6 +649,22 @@ const strings = {
     noteDelete: 'メモを削除',
     noteDeleteConfirmTitle: 'メモを削除',
     noteDeleteConfirmBody: 'このメモを削除しますか？',
+
+    // Summit ratings
+    rateThis: 'この山頂を評価する',
+    rating: '評価',
+    difficulty: '難易度',
+    views: '眺望',
+    trail: '登山道の状態',
+    trailGood: '良好',
+    trailFair: '普通',
+    trailPoor: '悪い',
+    submitRating: '評価を登録',
+    editRating: '評価を編集',
+    ratingsCount: (n: number) => `${n}件の評価`,
+    noRatings: 'まだ評価なし',
+    ratingSubmitted: '評価が登録されました！',
+    rateBtn: '⭐ 評価',
   },
 } as const;
 

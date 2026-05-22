@@ -93,6 +93,25 @@ export interface CrewMemberDetail {
   flag_count: number;
 }
 
+export interface SummitRating {
+  id: string;
+  summit_id: string;
+  user_id: string;
+  difficulty: 1 | 2 | 3 | 4 | 5;
+  views: 1 | 2 | 3 | 4 | 5;
+  trail_condition: 'good' | 'fair' | 'poor';
+  created_at: string;
+}
+
+export interface SummitRatingAggregate {
+  count: number;
+  avg_difficulty: number;
+  avg_views: number;
+  trail_good: number;
+  trail_fair: number;
+  trail_poor: number;
+}
+
 // Map marker with flag info
 export interface SummitWithFlag extends Summit {
   active_flag?: Flag & {

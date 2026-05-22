@@ -4,12 +4,14 @@ import {
   StyleSheet, ActivityIndicator, ToastAndroid, Platform, Alert,
 } from 'react-native';
 import { Colors } from '../constants';
-import { SummitWithFlag } from '../types';
+import { SummitWithFlag, SummitRating, SummitRatingAggregate } from '../types';
 import { fetchSummitFlagHistory, FlagHistoryEntry } from '../services/flags';
 import WeatherCard from './WeatherCard';
 import { isWishlisted, addToWishList, removeFromWishList } from '../services/wishlist';
 import { loadNote, SummitNote } from '../services/summitNotes';
 import SummitNoteModal from './SummitNoteModal';
+import SummitRatingModal from './SummitRatingModal';
+import { fetchSummitRatingAggregate, getUserRatingForSummit } from '../services/ratings';
 import { useLang } from '../contexts/LangContext';
 import { t, summitName } from '../i18n/strings';
 
@@ -39,9 +41,17 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
   const [bookmarked, setBookmarked] = useState(false);
   const [note, setNote] = useState<SummitNote | null>(null);
   const [noteModalVisible, setNoteModalVisible] = useState(false);
+  const [ratingModalVisible, setRatingModalVisible] = useState(false);
+  const [ratingAggregate, setRatingAggregate] = useState<SummitRatingAggregate | null>(null);
+  const [myRating, setMyRating] = useState<SummitRating | null>(null);
+
+  const loadRatings = useCallback((id: string) => {
+    fetchSummitRatingAggregate(id).then(setRatingAggregate).catch(() => {});
+    getUserRatingForSummit(id).then(setMyRating).catch(() => {});
+  }, []);
 
   useEffect(() => {
-    if (!summit) { setHistory([]); setBookmarked(false); setNote(null); return; }
+    if (!summit) { setHistory([]); setBookmarked(false); setNote(null); setRatingAggregate(null); setMyRating(null); return; }
     setLoading(true);
     fetchSummitFlagHistory(summit.id)
       .then(setHistory)
@@ -49,7 +59,8 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
       .finally(() => setLoading(false));
     isWishlisted(summit.id).then(setBookmarked).catch(() => {});
     loadNote(summit.id).then(setNote).catch(() => {});
-  }, [summit?.id]);
+    loadRatings(summit.id);
+  }, [summit?.id, loadRatings]);
 
   const handleBookmark = useCallback(async () => {
     if (!summit) return;
@@ -131,7 +142,43 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
           </TouchableOpacity>
         )}
 
+        <View style={styles.ratingBar}>
+          {ratingAggregate ? (
+            <View style={styles.ratingInfo}>
+              <Text style={styles.ratingText}>
+                {'⭐'} {s.difficulty} {ratingAggregate.avg_difficulty.toFixed(1)}
+                {'  '}
+                {'🏔'} {s.views} {ratingAggregate.avg_views.toFixed(1)}
+                {'  '}
+                <Text style={styles.ratingCount}>{s.ratingsCount(ratingAggregate.count)}</Text>
+              </Text>
+            </View>
+          ) : (
+            <Text style={styles.noRating}>{s.noRatings}</Text>
+          )}
+          <TouchableOpacity
+            style={[styles.rateBtn, !!myRating && styles.rateBtnDone]}
+            onPress={() => setRatingModalVisible(true)}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.rateBtnTxt, !!myRating && styles.rateBtnTxtDone]}>
+              {myRating ? s.editRating : s.rateBtn}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         {summit ? <WeatherCard summit={summit} /> : null}
+
+        {summit && (
+          <SummitRatingModal
+            visible={ratingModalVisible}
+            summitId={summit.id}
+            summitName={summitName(summit, lang)}
+            existing={myRating}
+            onClose={() => setRatingModalVisible(false)}
+            onSaved={() => loadRatings(summit.id)}
+          />
+        )}
 
         {summit && (
           <SummitNoteModal
@@ -245,6 +292,23 @@ const styles = StyleSheet.create({
   activePillText: { fontSize: 10, fontWeight: '700', color: Colors.white },
   separator: { height: 6 },
   emptyText: { textAlign: 'center', color: Colors.zinc500, fontSize: 14, marginTop: 24 },
+  ratingBar: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 20, paddingVertical: 10,
+    backgroundColor: Colors.white, marginHorizontal: 20, borderRadius: 12,
+    marginBottom: 8,
+  },
+  ratingInfo: { flex: 1, marginRight: 12 },
+  ratingText: { fontSize: 13, color: Colors.zinc800, fontWeight: '500' },
+  ratingCount: { fontSize: 12, color: Colors.zinc500, fontWeight: '400' },
+  noRating: { fontSize: 13, color: Colors.zinc500, flex: 1 },
+  rateBtn: {
+    paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
+    backgroundColor: Colors.zinc100,
+  },
+  rateBtnDone: { backgroundColor: Colors.greenLight },
+  rateBtnTxt: { fontSize: 13, fontWeight: '600', color: Colors.zinc800 },
+  rateBtnTxtDone: { color: Colors.white },
   noteActive: { backgroundColor: Colors.greenLight },
   noteIcon: { fontSize: 16 },
   notePreview: {
