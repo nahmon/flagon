@@ -90,6 +90,11 @@ const strings = {
     periodWeek: '이번 주',
     periodMonth: '이번 달',
     periodAlltime: '전체',
+    tabCrews: '크루',
+    tabSummits: '정상',
+    hotSummitsTitle: '핫 정상 TOP 20',
+    noHotSummits: '아직 정복된 정상이 없습니다',
+    totalConquests: (n: number) => `${n}회 정복`,
 
     // Profile / Crew screen
     myCrew: '내 크루',
@@ -312,6 +317,11 @@ const strings = {
     periodWeek: 'This Week',
     periodMonth: 'This Month',
     periodAlltime: 'All Time',
+    tabCrews: 'Crews',
+    tabSummits: 'Summits',
+    hotSummitsTitle: 'Top 20 Hot Summits',
+    noHotSummits: 'No summits conquered yet',
+    totalConquests: (n: number) => `${n} conquests`,
 
     // Profile / Crew screen
     myCrew: 'My Crew',
@@ -534,6 +544,11 @@ const strings = {
     periodWeek: '今週',
     periodMonth: '今月',
     periodAlltime: '全期間',
+    tabCrews: 'クルー',
+    tabSummits: '山頂',
+    hotSummitsTitle: 'ホット山頂 TOP 20',
+    noHotSummits: 'まだ山頂が征服されていません',
+    totalConquests: (n: number) => `${n}回征服`,
 
     // Profile / Crew screen
     myCrew: 'マイクルー',

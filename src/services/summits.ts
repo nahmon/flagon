@@ -2,6 +2,46 @@ import { supabase } from './supabase';
 import { SummitWithFlag } from '../types';
 import { Lang, summitName } from '../i18n/strings';
 
+export interface HotSummit {
+  id: string;
+  name_ko: string;
+  name_en: string | null;
+  name_ja: string | null;
+  elevation_m: number;
+  mountain_group: string | null;
+  flag_count: number;
+}
+
+export async function fetchHotSummits(limit = 20): Promise<HotSummit[]> {
+  const { data, error } = await supabase
+    .from('flags')
+    .select('summit_id, summits!inner(id, name_ko, name_en, name_ja, elevation_m, mountain_group)');
+  if (error) throw error;
+
+  const map = new Map<string, HotSummit>();
+  for (const row of (data ?? []) as Array<{ summit_id: string; summits: { id: string; name_ko: string; name_en: string | null; name_ja: string | null; elevation_m: number; mountain_group: string | null } }>) {
+    const s = row.summits;
+    const existing = map.get(row.summit_id);
+    if (existing) {
+      existing.flag_count++;
+    } else {
+      map.set(row.summit_id, {
+        id: s.id,
+        name_ko: s.name_ko,
+        name_en: s.name_en,
+        name_ja: s.name_ja,
+        elevation_m: s.elevation_m,
+        mountain_group: s.mountain_group,
+        flag_count: 1,
+      });
+    }
+  }
+
+  return Array.from(map.values())
+    .sort((a, b) => b.flag_count - a.flag_count)
+    .slice(0, limit);
+}
+
 type SummitsNearRow = {
   id: string;
   name_ko: string;
