@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import {
   Modal, View, Text, FlatList, TouchableOpacity,
-  StyleSheet, ActivityIndicator, ToastAndroid, Platform, Alert,
+  StyleSheet, ActivityIndicator, ToastAndroid, Platform, Alert, Share,
 } from 'react-native';
 import { Colors } from '../constants';
 import { SummitWithFlag, SummitRating, SummitRatingAggregate } from '../types';
@@ -88,6 +88,16 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
     }
   }, [summit, bookmarked, s]);
 
+  const handleShare = useCallback(async () => {
+    if (!summit) return;
+    const name = summitName(summit, lang);
+    const crew = summit.active_flag?.crew?.name_ko ?? null;
+    const message = crew
+      ? `${s.shareFlagPlanted(name)}${crew}`
+      : `🏔 ${name} (${summit.elevation_m}m) — FlagOn`;
+    await Share.share({ message });
+  }, [summit, lang, s]);
+
   const flag = summit?.active_flag;
   const expiryDays = flag?.expires_at ? daysUntil(flag.expires_at) : null;
 
@@ -121,6 +131,13 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
               activeOpacity={0.7}
             >
               <Text style={styles.noteIcon}>{note ? '📝' : '✏️'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.bookmarkBtn}
+              onPress={handleShare}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.shareIcon}>↑</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.bookmarkBtn, bookmarked && styles.bookmarkBtnActive]}
@@ -266,6 +283,7 @@ const styles = StyleSheet.create({
   },
   bookmarkBtnActive: { backgroundColor: Colors.orange },
   bookmarkIcon: { fontSize: 18, color: Colors.zinc500 },
+  shareIcon: { fontSize: 18, fontWeight: '700', color: Colors.zinc500 },
   bookmarkIconActive: { color: Colors.white },
   closeBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: Colors.zinc100, alignItems: 'center', justifyContent: 'center' },
   closeBtnText: { fontSize: 12, color: Colors.zinc800, fontWeight: '700' },
