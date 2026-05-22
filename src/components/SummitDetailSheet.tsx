@@ -8,8 +8,10 @@ import { SummitWithFlag } from '../types';
 import { fetchSummitFlagHistory, FlagHistoryEntry } from '../services/flags';
 import WeatherCard from './WeatherCard';
 import { isWishlisted, addToWishList, removeFromWishList } from '../services/wishlist';
+import { loadNote, SummitNote } from '../services/summitNotes';
+import SummitNoteModal from './SummitNoteModal';
 import { useLang } from '../contexts/LangContext';
-import { t } from '../i18n/strings';
+import { t, summitName } from '../i18n/strings';
 
 function relativeTime(dateStr: string): string {
   const diffH = Math.floor((Date.now() - new Date(dateStr).getTime()) / 3_600_000);
@@ -35,15 +37,18 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
   const [history, setHistory] = useState<FlagHistoryEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
+  const [note, setNote] = useState<SummitNote | null>(null);
+  const [noteModalVisible, setNoteModalVisible] = useState(false);
 
   useEffect(() => {
-    if (!summit) { setHistory([]); setBookmarked(false); return; }
+    if (!summit) { setHistory([]); setBookmarked(false); setNote(null); return; }
     setLoading(true);
     fetchSummitFlagHistory(summit.id)
       .then(setHistory)
       .catch(console.error)
       .finally(() => setLoading(false));
     isWishlisted(summit.id).then(setBookmarked).catch(() => {});
+    loadNote(summit.id).then(setNote).catch(() => {});
   }, [summit?.id]);
 
   const handleBookmark = useCallback(async () => {
@@ -100,6 +105,13 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
           </View>
           <View style={styles.headerActions}>
             <TouchableOpacity
+              style={[styles.bookmarkBtn, !!note && styles.noteActive]}
+              onPress={() => setNoteModalVisible(true)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.noteIcon}>{note ? '📝' : '✏️'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               style={[styles.bookmarkBtn, bookmarked && styles.bookmarkBtnActive]}
               onPress={handleBookmark}
               activeOpacity={0.7}
@@ -112,7 +124,24 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
           </View>
         </View>
 
+        {note && (
+          <TouchableOpacity style={styles.notePreview} onPress={() => setNoteModalVisible(true)} activeOpacity={0.8}>
+            <Text style={styles.notePreviewLabel}>{s.myNote}</Text>
+            <Text style={styles.notePreviewText} numberOfLines={2}>{note.text}</Text>
+          </TouchableOpacity>
+        )}
+
         {summit ? <WeatherCard summit={summit} /> : null}
+
+        {summit && (
+          <SummitNoteModal
+            visible={noteModalVisible}
+            summitId={summit.id}
+            summitName={summitName(summit, lang)}
+            onClose={() => setNoteModalVisible(false)}
+            onSaved={setNote}
+          />
+        )}
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>현재 깃발</Text>
@@ -216,4 +245,13 @@ const styles = StyleSheet.create({
   activePillText: { fontSize: 10, fontWeight: '700', color: Colors.white },
   separator: { height: 6 },
   emptyText: { textAlign: 'center', color: Colors.zinc500, fontSize: 14, marginTop: 24 },
+  noteActive: { backgroundColor: Colors.greenLight },
+  noteIcon: { fontSize: 16 },
+  notePreview: {
+    marginHorizontal: 20, marginTop: 4, marginBottom: 4,
+    backgroundColor: '#FFFBEB', borderRadius: 12, padding: 12,
+    borderLeftWidth: 3, borderLeftColor: Colors.orange,
+  },
+  notePreviewLabel: { fontSize: 10, fontWeight: '700', color: Colors.orange, letterSpacing: 0.6, textTransform: 'uppercase', marginBottom: 4 },
+  notePreviewText: { fontSize: 13, color: Colors.zinc800, lineHeight: 18 },
 });

@@ -196,6 +196,15 @@ const strings = {
     mountainGroups: '산 그룹 정복 현황',
     mountainGroupsEmpty: '아직 깃발을 꽂은 정상이 없습니다',
     mountainGroupProgress: (done: number, total: number) => `${done} / ${total} 정복`,
+
+    // Summit notes
+    myNote: '나의 메모',
+    addNote: '메모 추가',
+    editNote: '메모 수정',
+    notePlaceholder: '이 정상에 대한 기억, 루트, 날씨 등을 기록해 보세요...',
+    noteDelete: '메모 삭제',
+    noteDeleteConfirmTitle: '메모 삭제',
+    noteDeleteConfirmBody: '이 메모를 삭제하시겠습니까?',
   },
 
   en: {
@@ -393,6 +402,15 @@ const strings = {
     mountainGroups: 'Mountain Group Progress',
     mountainGroupsEmpty: 'No flags planted yet',
     mountainGroupProgress: (done: number, total: number) => `${done} / ${total} conquered`,
+
+    // Summit notes
+    myNote: 'My Note',
+    addNote: 'Add Note',
+    editNote: 'Edit Note',
+    notePlaceholder: 'Jot down memories, trail conditions, weather...',
+    noteDelete: 'Delete Note',
+    noteDeleteConfirmTitle: 'Delete Note',
+    noteDeleteConfirmBody: 'Delete this note?',
   },
 
   ja: {
@@ -590,6 +608,15 @@ const strings = {
     mountainGroups: '山グループ制覇状況',
     mountainGroupsEmpty: 'まだ旗を立てた山頂はありません',
     mountainGroupProgress: (done: number, total: number) => `${done} / ${total} 制覇`,
+
+    // Summit notes
+    myNote: 'マイメモ',
+    addNote: 'メモを追加',
+    editNote: 'メモを編集',
+    notePlaceholder: '思い出、ルート、天気などを記録しよう...',
+    noteDelete: 'メモを削除',
+    noteDeleteConfirmTitle: 'メモを削除',
+    noteDeleteConfirmBody: 'このメモを削除しますか？',
   },
 } as const;
 
