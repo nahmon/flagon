@@ -4,6 +4,7 @@ import { Colors } from '../../src/constants';
 import { supabase } from '../../src/services/supabase';
 import { useLang } from '../../src/contexts/LangContext';
 import { t, summitName, type Lang } from '../../src/i18n/strings';
+import DailyChallengeCard from '../../src/components/DailyChallengeCard';
 
 interface FeedItem {
   id: string;
@@ -149,6 +150,7 @@ export default function FeedScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <FeedRow item={item} />}
         contentContainerStyle={styles.list}
+        ListHeaderComponent={<DailyChallengeCard />}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.green} />}
         ListEmptyComponent={

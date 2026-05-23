@@ -232,6 +232,13 @@ const strings = {
     conquestTimelineEmpty: '아직 정복한 정상이 없습니다',
     conquestTimelineBtn: '🏆 나의 정복 기록',
     conquestCount: (n: number) => `${n}회`,
+
+    // Daily challenge
+    dailyChallenge: '오늘의 도전',
+    resets: '리셋까지',
+    conqueredToday: '오늘 정복',
+    challengeHint: '지도에서 정상을 찾아 깃발을 꽂아보세요!',
+    challengeUnavailable: '오늘의 도전을 불러올 수 없습니다',
   },
 
   en: {
@@ -465,6 +472,13 @@ const strings = {
     conquestTimelineEmpty: 'No summits conquered yet',
     conquestTimelineBtn: '🏆 My Conquest History',
     conquestCount: (n: number) => `${n}×`,
+
+    // Daily challenge
+    dailyChallenge: "Today's Challenge",
+    resets: 'Resets in',
+    conqueredToday: 'Today',
+    challengeHint: 'Find the summit on the map and plant your flag!',
+    challengeUnavailable: "Today's challenge is unavailable",
   },
 
   ja: {
@@ -698,6 +712,13 @@ const strings = {
     conquestTimelineEmpty: 'まだ山頂を征服していません',
     conquestTimelineBtn: '🏆 征服記録',
     conquestCount: (n: number) => `${n}回`,
+
+    // Daily challenge
+    dailyChallenge: '本日のチャレンジ',
+    resets: 'リセットまで',
+    conqueredToday: '本日の制覇',
+    challengeHint: '地図で山頂を見つけて旗を立てよう！',
+    challengeUnavailable: '本日のチャレンジを読み込めません',
   },
 } as const;
 
