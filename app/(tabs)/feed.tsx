@@ -179,8 +179,8 @@ export default function FeedScreen() {
       <Text style={styles.header}>{s.activityFeed}</Text>
       <FlatList
         data={items}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <FeedRow item={item} />}
+        keyExtractor={(item: FeedItem) => item.id}
+        renderItem={({ item }: { item: FeedItem }) => <FeedRow item={item} />}
         contentContainerStyle={styles.list}
         ListHeaderComponent={<DailyChallengeCard />}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   rowRight: { alignItems: 'center', gap: 6 },
   kudosBtn: { alignItems: 'center' },
   kudosEmoji: { fontSize: 20 },
-  kudosCount: { fontSize: 11, fontWeight: '600', color: Colors.zinc400 },
+  kudosCount: { fontSize: 11, fontWeight: '600', color: Colors.zinc500 },
   kudosCountActive: { color: Colors.orange ?? '#F97316' },
   flagEmoji: { fontSize: 20 },
   separator: { height: 1, backgroundColor: Colors.zinc100 },

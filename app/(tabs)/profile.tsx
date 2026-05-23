@@ -91,8 +91,8 @@ function CrewPickerModal({ visible, onClose, onJoined }: {
           loading ? <ActivityIndicator style={{ marginTop: 40 }} color={Colors.green} /> : (
             <FlatList
               data={crews}
-              keyExtractor={(c) => c.id}
-              renderItem={({ item }) => (
+              keyExtractor={(c: Crew) => c.id}
+              renderItem={({ item }: { item: Crew }) => (
                 <TouchableOpacity style={modal.crewRow} onPress={() => handleJoin(item.id)} disabled={busy}>
                   <View style={[modal.crewDot, { backgroundColor: item.color_hex }]} />
                   <View style={{ flex: 1 }}>
@@ -128,7 +128,7 @@ function CrewPickerModal({ visible, onClose, onJoined }: {
             <TextInput
               style={modal.input}
               value={inviteCode}
-              onChangeText={(v) => { setInviteCode(v); setCodeError(''); }}
+              onChangeText={(v: string) => { setInviteCode(v); setCodeError(''); }}
               placeholder={s.enterInviteCode}
               placeholderTextColor={Colors.zinc500}
               autoCapitalize="none"
@@ -194,7 +194,7 @@ export default function ProfileScreen() {
         .update({ display_name: nameInput.trim() })
         .eq('id', userId);
       if (error) throw error;
-      setProfile((p) => p ? { ...p, display_name: nameInput.trim() } : p);
+      setProfile((p: UserProfile | null) => p ? { ...p, display_name: nameInput.trim() } : p);
       setEditingName(false);
     } catch (e: any) {
       Alert.alert(s.saveFailed, e.message);

@@ -66,8 +66,8 @@ export default function RootLayout() {
 
     init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session: Session | null) => {
-      setAppState((prev) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: unknown, session: Session | null) => {
+      setAppState((prev: AppState) => {
         if (prev === 'onboarding') return prev;
         return session ? 'app' : 'auth';
       });
@@ -78,7 +78,7 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    const t = setTimeout(() => setAppState((p) => p === 'loading' ? 'auth' : p), 5000);
+    const t = setTimeout(() => setAppState((p: AppState) => p === 'loading' ? 'auth' : p), 5000);
     return () => clearTimeout(t);
   }, []);
 

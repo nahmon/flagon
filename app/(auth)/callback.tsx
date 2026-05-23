@@ -10,7 +10,7 @@ export default function AuthCallbackScreen() {
 
   useEffect(() => {
     if (code) {
-      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
+      supabase.auth.exchangeCodeForSession(code).then(({ error }: { error: unknown }) => {
         if (error) console.error('[callback] exchange failed', error);
         // Root layout's onAuthStateChange will handle redirect to (tabs)
       });
