@@ -226,6 +226,12 @@ const strings = {
     noRatings: '아직 평가 없음',
     ratingSubmitted: '평가가 등록되었습니다!',
     rateBtn: '⭐ 평가',
+
+    // Conquest timeline
+    conquestTimeline: '나의 정복 기록',
+    conquestTimelineEmpty: '아직 정복한 정상이 없습니다',
+    conquestTimelineBtn: '🏆 나의 정복 기록',
+    conquestCount: (n: number) => `${n}회`,
   },
 
   en: {
@@ -453,6 +459,12 @@ const strings = {
     noRatings: 'No ratings yet',
     ratingSubmitted: 'Rating submitted!',
     rateBtn: '⭐ Rate',
+
+    // Conquest timeline
+    conquestTimeline: 'Conquest History',
+    conquestTimelineEmpty: 'No summits conquered yet',
+    conquestTimelineBtn: '🏆 My Conquest History',
+    conquestCount: (n: number) => `${n}×`,
   },
 
   ja: {
@@ -680,6 +692,12 @@ const strings = {
     noRatings: 'まだ評価なし',
     ratingSubmitted: '評価が登録されました！',
     rateBtn: '⭐ 評価',
+
+    // Conquest timeline
+    conquestTimeline: '征服記録',
+    conquestTimelineEmpty: 'まだ山頂を征服していません',
+    conquestTimelineBtn: '🏆 征服記録',
+    conquestCount: (n: number) => `${n}回`,
   },
 } as const;
 

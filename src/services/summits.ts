@@ -19,7 +19,7 @@ export async function fetchHotSummits(limit = 20): Promise<HotSummit[]> {
   if (error) throw error;
 
   const map = new Map<string, HotSummit>();
-  for (const row of (data ?? []) as Array<{ summit_id: string; summits: { id: string; name_ko: string; name_en: string | null; name_ja: string | null; elevation_m: number; mountain_group: string | null } }>) {
+  for (const row of (data ?? []) as unknown as Array<{ summit_id: string; summits: { id: string; name_ko: string; name_en: string | null; name_ja: string | null; elevation_m: number; mountain_group: string | null } }>) {
     const s = row.summits;
     const existing = map.get(row.summit_id);
     if (existing) {
