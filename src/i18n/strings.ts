@@ -97,6 +97,11 @@ const strings = {
     hotSummitsTitle: '핫 정상 TOP 20',
     noHotSummits: '아직 정복된 정상이 없습니다',
     totalConquests: (n: number) => `${n}회 정복`,
+    tabHikers: '등산인',
+    topHiker: '1위 등산인',
+    noHikers: '아직 등산 기록이 없습니다',
+    totalFlagsCount: (n: number) => `총 깃발 ${n}개`,
+    hikerSolo: '소속 크루 없음',
 
     // Profile / Crew screen
     myCrew: '내 크루',
@@ -339,6 +344,11 @@ const strings = {
     hotSummitsTitle: 'Top 20 Hot Summits',
     noHotSummits: 'No summits conquered yet',
     totalConquests: (n: number) => `${n} conquests`,
+    tabHikers: 'Hikers',
+    topHiker: '#1 Hiker',
+    noHikers: 'No hikes recorded yet',
+    totalFlagsCount: (n: number) => `${n} flag${n !== 1 ? 's' : ''} total`,
+    hikerSolo: 'Solo hiker',
 
     // Profile / Crew screen
     myCrew: 'My Crew',
@@ -581,6 +591,11 @@ const strings = {
     hotSummitsTitle: 'ホット山頂 TOP 20',
     noHotSummits: 'まだ山頂が征服されていません',
     totalConquests: (n: number) => `${n}回征服`,
+    tabHikers: '登山者',
+    topHiker: '1位登山者',
+    noHikers: 'まだ登山記録がありません',
+    totalFlagsCount: (n: number) => `合計${n}本の旗`,
+    hikerSolo: 'ソロ登山者',
 
     // Profile / Crew screen
     myCrew: 'マイクルー',

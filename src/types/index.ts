@@ -112,6 +112,15 @@ export interface SummitRatingAggregate {
   trail_poor: number;
 }
 
+export interface HikerLeaderboardEntry {
+  user_id: string;
+  display_name: string | null;
+  crew_name: string | null;
+  crew_color: string | null;
+  total_flags: number;
+  last_flag_at: string | null;
+}
+
 // Map marker with flag info
 export interface SummitWithFlag extends Summit {
   active_flag?: Flag & {
