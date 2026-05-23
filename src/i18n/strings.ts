@@ -75,6 +75,8 @@ const strings = {
     flagExpiredFeed: '깃발이 만료되었습니다',
     crewActivity: '크루 활동',
     hikerLabel: (id: string) => `산악인 #${id}`,
+    kudos: '응원',
+    kudosCount: (n: number) => `${n}`,
 
     // Leaderboard screen
     leaderboard: '리더보드',
@@ -315,6 +317,8 @@ const strings = {
     flagExpiredFeed: 'flag expired',
     crewActivity: 'Crew Activity',
     hikerLabel: (id: string) => `Hiker #${id}`,
+    kudos: 'Fire',
+    kudosCount: (n: number) => `${n}`,
 
     // Leaderboard screen
     leaderboard: 'Leaderboard',
@@ -555,6 +559,8 @@ const strings = {
     flagExpiredFeed: '旗が期限切れになりました',
     crewActivity: 'クルー活動',
     hikerLabel: (id: string) => `登山者 #${id}`,
+    kudos: '応援',
+    kudosCount: (n: number) => `${n}`,
 
     // Leaderboard screen
     leaderboard: 'リーダーボード',

@@ -1,10 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
-import { FlatList, StyleSheet, Text, View, ActivityIndicator, RefreshControl } from 'react-native';
+import { Animated, FlatList, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, RefreshControl } from 'react-native';
 import { Colors } from '../../src/constants';
 import { supabase } from '../../src/services/supabase';
 import { useLang } from '../../src/contexts/LangContext';
 import { t, summitName, type Lang } from '../../src/i18n/strings';
 import DailyChallengeCard from '../../src/components/DailyChallengeCard';
+import { toggleKudos, getKudosCount, hasGivenKudos } from '../../src/services/kudos';
 
 interface FeedItem {
   id: string;
@@ -62,6 +63,36 @@ async function fetchFeed(): Promise<FeedItem[]> {
   }));
 }
 
+function KudosButton({ itemId }: { itemId: string }) {
+  const [count, setCount] = useState(0);
+  const [given, setGiven] = useState(false);
+  const scale = new Animated.Value(1);
+
+  useEffect(() => {
+    Promise.all([getKudosCount(itemId), hasGivenKudos(itemId)]).then(([c, g]) => {
+      setCount(c);
+      setGiven(g);
+    });
+  }, [itemId]);
+
+  const onPress = async () => {
+    Animated.sequence([
+      Animated.timing(scale, { toValue: 1.4, duration: 100, useNativeDriver: true }),
+      Animated.timing(scale, { toValue: 1, duration: 100, useNativeDriver: true }),
+    ]).start();
+    const result = await toggleKudos(itemId);
+    setCount(result.count);
+    setGiven(result.given);
+  };
+
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.kudosBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+      <Animated.Text style={[styles.kudosEmoji, { transform: [{ scale }], opacity: given ? 1 : 0.35 }]}>🔥</Animated.Text>
+      {count > 0 && <Text style={[styles.kudosCount, given && styles.kudosCountActive]}>{count}</Text>}
+    </TouchableOpacity>
+  );
+}
+
 function FeedRow({ item }: { item: FeedItem }) {
   const { lang } = useLang();
   const s = t(lang);
@@ -94,7 +125,8 @@ function FeedRow({ item }: { item: FeedItem }) {
           </View>
         )}
       </View>
-      <View style={styles.flagBadge}>
+      <View style={styles.rowRight}>
+        <KudosButton itemId={item.id} />
         <Text style={styles.flagEmoji}>🚩</Text>
       </View>
     </View>
@@ -210,7 +242,11 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   crewText: { fontSize: 11, fontWeight: '600', color: Colors.white },
-  flagBadge: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
+  rowRight: { alignItems: 'center', gap: 6 },
+  kudosBtn: { alignItems: 'center' },
+  kudosEmoji: { fontSize: 20 },
+  kudosCount: { fontSize: 11, fontWeight: '600', color: Colors.zinc400 },
+  kudosCountActive: { color: Colors.orange ?? '#F97316' },
   flagEmoji: { fontSize: 20 },
   separator: { height: 1, backgroundColor: Colors.zinc100 },
   empty: { alignItems: 'center', paddingTop: 80, gap: 8 },
