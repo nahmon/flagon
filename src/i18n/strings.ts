@@ -255,6 +255,15 @@ const strings = {
     noRecentConquests: '아직 정복한 정상이 없습니다',
     badgesEarned: (n: number) => `배지 ${n}개`,
     viewProfile: '프로필 보기',
+
+    // Crew territory
+    territory: '크루 영토',
+    territoryBtn: '🗺 크루 영토 현황',
+    territoryTotal: (n: number) => `${n}개 정상 점령 중`,
+    territoryEmpty: '현재 보유한 깃발이 없습니다',
+    atRisk: '위험',
+    expiresHours: (n: number) => `${n}시간 후 만료`,
+    plantedBy: (name: string) => `${name}이(가) 꽂음`,
   },
 
   en: {
@@ -511,6 +520,15 @@ const strings = {
     noRecentConquests: 'No summits conquered yet',
     badgesEarned: (n: number) => `${n} badge${n !== 1 ? 's' : ''}`,
     viewProfile: 'View Profile',
+
+    // Crew territory
+    territory: 'Crew Territory',
+    territoryBtn: '🗺 Crew Territory',
+    territoryTotal: (n: number) => `Holding ${n} summit${n !== 1 ? 's' : ''}`,
+    territoryEmpty: 'No active flags held',
+    atRisk: 'At risk',
+    expiresHours: (n: number) => `Expires in ${n}h`,
+    plantedBy: (name: string) => `Planted by ${name}`,
   },
 
   ja: {
@@ -767,6 +785,15 @@ const strings = {
     noRecentConquests: 'まだ征服した山頂はありません',
     badgesEarned: (n: number) => `バッジ${n}個`,
     viewProfile: 'プロフィールを見る',
+
+    // Crew territory
+    territory: 'クルー領地',
+    territoryBtn: '🗺 クルー領地',
+    territoryTotal: (n: number) => `${n}山頂を制覇中`,
+    territoryEmpty: '現在保有している旗はありません',
+    atRisk: '危険',
+    expiresHours: (n: number) => `${n}時間後に期限切れ`,
+    plantedBy: (name: string) => `${name}が設置`,
   },
 } as const;
 

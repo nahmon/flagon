@@ -11,6 +11,7 @@ import StreakCard from '../../src/components/StreakCard';
 import WishListModal from '../../src/components/WishListModal';
 import MountainGroupProgress from '../../src/components/MountainGroupProgress';
 import ConquestTimeline from '../../src/components/ConquestTimeline';
+import CrewTerritoryModal from '../../src/components/CrewTerritoryModal';
 import { useLang } from '../../src/contexts/LangContext';
 import { t } from '../../src/i18n/strings';
 
@@ -160,6 +161,7 @@ export default function ProfileScreen() {
   const [showCrewPicker, setShowCrewPicker] = useState(false);
   const [showWishList, setShowWishList] = useState(false);
   const [showConquests, setShowConquests] = useState(false);
+  const [showTerritory, setShowTerritory] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('');
   const [savingName, setSavingName] = useState(false);
@@ -317,6 +319,14 @@ export default function ProfileScreen() {
           <Text style={styles.wishListArrow}>→</Text>
         </TouchableOpacity>
 
+        {profile?.crew_id && (
+          <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowTerritory(true)} activeOpacity={0.8}>
+            <Text style={styles.wishListIcon}>🗺</Text>
+            <Text style={styles.wishListLabel}>{s.territory}</Text>
+            <Text style={styles.wishListArrow}>→</Text>
+          </TouchableOpacity>
+        )}
+
         <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowWishList(true)} activeOpacity={0.8}>
           <Text style={styles.wishListIcon}>★</Text>
           <Text style={styles.wishListLabel}>{s.bucketList}</Text>
@@ -332,6 +342,14 @@ export default function ProfileScreen() {
       <WishListModal visible={showWishList} onClose={() => setShowWishList(false)} />
       {userId && (
         <ConquestTimeline visible={showConquests} userId={userId} onClose={() => setShowConquests(false)} />
+      )}
+      {profile?.crew_id && (
+        <CrewTerritoryModal
+          visible={showTerritory}
+          crewId={profile.crew_id}
+          crewName={profile.crew_name_ko ?? profile.crew_name ?? ''}
+          onClose={() => setShowTerritory(false)}
+        />
       )}
     </View>
   );
