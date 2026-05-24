@@ -246,6 +246,15 @@ const strings = {
     conqueredToday: '오늘 정복',
     challengeHint: '지도에서 정상을 찾아 깃발을 꽂아보세요!',
     challengeUnavailable: '오늘의 도전을 불러올 수 없습니다',
+
+    // Hiker profile modal
+    hikerProfile: '등산인 프로필',
+    uniqueSummits: '정상 수',
+    highestPeak: '최고 정상',
+    recentConquests: '최근 정복',
+    noRecentConquests: '아직 정복한 정상이 없습니다',
+    badgesEarned: (n: number) => `배지 ${n}개`,
+    viewProfile: '프로필 보기',
   },
 
   en: {
@@ -493,6 +502,15 @@ const strings = {
     conqueredToday: 'Today',
     challengeHint: 'Find the summit on the map and plant your flag!',
     challengeUnavailable: "Today's challenge is unavailable",
+
+    // Hiker profile modal
+    hikerProfile: 'Hiker Profile',
+    uniqueSummits: 'Summits',
+    highestPeak: 'Highest Peak',
+    recentConquests: 'Recent Conquests',
+    noRecentConquests: 'No summits conquered yet',
+    badgesEarned: (n: number) => `${n} badge${n !== 1 ? 's' : ''}`,
+    viewProfile: 'View Profile',
   },
 
   ja: {
@@ -740,6 +758,15 @@ const strings = {
     conqueredToday: '本日の制覇',
     challengeHint: '地図で山頂を見つけて旗を立てよう！',
     challengeUnavailable: '本日のチャレンジを読み込めません',
+
+    // Hiker profile modal
+    hikerProfile: '登山者プロフィール',
+    uniqueSummits: '山頂数',
+    highestPeak: '最高峰',
+    recentConquests: '最近の征服',
+    noRecentConquests: 'まだ征服した山頂はありません',
+    badgesEarned: (n: number) => `バッジ${n}個`,
+    viewProfile: 'プロフィールを見る',
   },
 } as const;
 

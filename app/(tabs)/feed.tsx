@@ -6,6 +6,7 @@ import { useLang } from '../../src/contexts/LangContext';
 import { t, summitName, type Lang } from '../../src/i18n/strings';
 import DailyChallengeCard from '../../src/components/DailyChallengeCard';
 import { toggleKudos, getKudosCount, hasGivenKudos } from '../../src/services/kudos';
+import HikerProfileModal from '../../src/components/HikerProfileModal';
 
 interface FeedItem {
   id: string;
@@ -93,7 +94,7 @@ function KudosButton({ itemId }: { itemId: string }) {
   );
 }
 
-function FeedRow({ item }: { item: FeedItem }) {
+function FeedRow({ item, onAvatarPress }: { item: FeedItem; onAvatarPress: (uid: string) => void }) {
   const { lang } = useLang();
   const s = t(lang);
   const avatarBg = avatarColor(item.user_id);
@@ -103,9 +104,11 @@ function FeedRow({ item }: { item: FeedItem }) {
 
   return (
     <View style={styles.row}>
-      <View style={[styles.avatar, { backgroundColor: avatarBg }]}>
-        <Text style={styles.avatarText}>{initial}</Text>
-      </View>
+      <TouchableOpacity onPress={() => onAvatarPress(item.user_id)} activeOpacity={0.75}>
+        <View style={[styles.avatar, { backgroundColor: avatarBg }]}>
+          <Text style={styles.avatarText}>{initial}</Text>
+        </View>
+      </TouchableOpacity>
       <View style={styles.rowBody}>
         <View style={styles.rowTop}>
           <Text style={styles.userName}>{name}</Text>
@@ -139,6 +142,7 @@ export default function FeedScreen() {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedHiker, setSelectedHiker] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -180,7 +184,9 @@ export default function FeedScreen() {
       <FlatList
         data={items}
         keyExtractor={(item: FeedItem) => item.id}
-        renderItem={({ item }: { item: FeedItem }) => <FeedRow item={item} />}
+        renderItem={({ item }: { item: FeedItem }) => (
+          <FeedRow item={item} onAvatarPress={setSelectedHiker} />
+        )}
         contentContainerStyle={styles.list}
         ListHeaderComponent={<DailyChallengeCard />}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -192,6 +198,7 @@ export default function FeedScreen() {
           </View>
         }
       />
+      <HikerProfileModal userId={selectedHiker} onClose={() => setSelectedHiker(null)} />
     </View>
   );
 }

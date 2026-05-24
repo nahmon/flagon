@@ -66,3 +66,62 @@ export async function fetchTopHikers(limit = 20): Promise<HikerLeaderboardEntry[
     .sort((a, b) => b.total_flags - a.total_flags)
     .slice(0, limit);
 }
+
+export interface PublicProfile {
+  userId: string;
+  displayName: string | null;
+  crewName: string | null;
+  crewColor: string | null;
+  totalFlags: number;
+  uniqueSummits: number;
+  highestPeakM: number;
+  badgeCount: number;
+  recentConquests: Array<{ summitName: string; elevation: number; plantedAt: string }>;
+}
+
+export async function fetchPublicProfile(userId: string): Promise<PublicProfile> {
+  const { data: flagRows, error: flagErr } = await supabase
+    .from('flags')
+    .select('summit_id, planted_at, summits(name_ko, elevation_m), users(display_name), crews(name, name_ko, color_hex)')
+    .eq('user_id', userId)
+    .order('planted_at', { ascending: false });
+
+  if (flagErr) throw flagErr;
+
+  type FlagRow = {
+    summit_id: string;
+    planted_at: string;
+    summits: { name_ko: string; elevation_m: number } | null;
+    users: { display_name: string | null } | null;
+    crews: { name: string | null; name_ko: string | null; color_hex: string } | null;
+  };
+
+  const rows = (flagRows ?? []) as unknown as FlagRow[];
+  const uniqueSet = new Set(rows.map((r) => r.summit_id));
+  const highestPeakM = rows.reduce((max, r) => Math.max(max, r.summits?.elevation_m ?? 0), 0);
+  const first = rows[0];
+  const displayName = first?.users?.display_name ?? null;
+  const crewName = first?.crews?.name ?? first?.crews?.name_ko ?? null;
+  const crewColor = first?.crews?.color_hex ?? null;
+
+  const recentConquests = rows.slice(0, 5).map((r) => ({
+    summitName: r.summits?.name_ko ?? '—',
+    elevation: r.summits?.elevation_m ?? 0,
+    plantedAt: r.planted_at,
+  }));
+
+  const badgeThresholds = [1, 5, 10, 25, 50, 100];
+  const badgeCount = badgeThresholds.filter((t) => rows.length >= t).length;
+
+  return {
+    userId,
+    displayName,
+    crewName,
+    crewColor,
+    totalFlags: rows.length,
+    uniqueSummits: uniqueSet.size,
+    highestPeakM,
+    badgeCount,
+    recentConquests,
+  };
+}

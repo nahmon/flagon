@@ -7,6 +7,7 @@ import { fetchTopHikers } from '../../src/services/stats';
 import { supabase } from '../../src/services/supabase';
 import { CrewLeaderboardEntry, HikerLeaderboardEntry } from '../../src/types';
 import CrewDetailModal from '../../src/components/CrewDetailModal';
+import HikerProfileModal from '../../src/components/HikerProfileModal';
 import { useLang } from '../../src/contexts/LangContext';
 import { t, summitName, type Lang } from '../../src/i18n/strings';
 
@@ -38,14 +39,14 @@ function avatarColor(uid: string): string {
   return palette[uid.charCodeAt(0) % palette.length];
 }
 
-function HikerRow({ entry, rank, lang }: { entry: HikerLeaderboardEntry; rank: number; lang: Lang }) {
+function HikerRow({ entry, rank, lang, onPress }: { entry: HikerLeaderboardEntry; rank: number; lang: Lang; onPress: (uid: string) => void }) {
   const s = t(lang);
   const name = entry.display_name ?? `#${entry.user_id.slice(0, 6)}`;
   const initial = name.charAt(0).toUpperCase();
   const bg = entry.crew_color ?? avatarColor(entry.user_id);
   const ago = entry.last_flag_at ? Math.floor((Date.now() - new Date(entry.last_flag_at).getTime()) / 3_600_000) : null;
   return (
-    <View style={styles.row}>
+    <TouchableOpacity style={styles.row} onPress={() => onPress(entry.user_id)} activeOpacity={0.75}>
       <View style={styles.rankCell}><RankNum rank={rank} /></View>
       <View style={[styles.crewCircle, { backgroundColor: bg }]}>
         <Text style={styles.crewInitial}>{initial}</Text>
@@ -58,7 +59,7 @@ function HikerRow({ entry, rank, lang }: { entry: HikerLeaderboardEntry; rank: n
         <Text style={styles.flagCount}>{entry.total_flags}</Text>
         <Text style={styles.flagLabel}>{s.flags}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -182,6 +183,7 @@ export default function LeaderboardScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedCrew, setSelectedCrew] = useState<CrewLeaderboardEntry | null>(null);
+  const [selectedHiker, setSelectedHiker] = useState<string | null>(null);
 
   const loadCrews = useCallback(async (isRefresh = false, p?: LeaderboardPeriod) => {
     if (isRefresh) setRefreshing(true); else setLoading(true);
@@ -288,7 +290,7 @@ export default function LeaderboardScreen() {
           data={topHikers}
           keyExtractor={(e: HikerLeaderboardEntry) => e.user_id}
           renderItem={({ item, index }: { item: HikerLeaderboardEntry; index: number }) => (
-            <HikerRow entry={item} rank={index + 1} lang={lang} />
+            <HikerRow entry={item} rank={index + 1} lang={lang} onPress={setSelectedHiker} />
           )}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Colors.green} />}
@@ -297,6 +299,7 @@ export default function LeaderboardScreen() {
         />
       )}
       <CrewDetailModal crew={selectedCrew} onClose={() => setSelectedCrew(null)} />
+      <HikerProfileModal userId={selectedHiker} onClose={() => setSelectedHiker(null)} />
     </View>
   );
 }
