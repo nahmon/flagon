@@ -12,6 +12,7 @@ import WishListModal from '../../src/components/WishListModal';
 import MountainGroupProgress from '../../src/components/MountainGroupProgress';
 import ConquestTimeline from '../../src/components/ConquestTimeline';
 import CrewTerritoryModal from '../../src/components/CrewTerritoryModal';
+import MyFlagsModal from '../../src/components/MyFlagsModal';
 import { useLang } from '../../src/contexts/LangContext';
 import { t } from '../../src/i18n/strings';
 
@@ -162,6 +163,7 @@ export default function ProfileScreen() {
   const [showWishList, setShowWishList] = useState(false);
   const [showConquests, setShowConquests] = useState(false);
   const [showTerritory, setShowTerritory] = useState(false);
+  const [showMyFlags, setShowMyFlags] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('');
   const [savingName, setSavingName] = useState(false);
@@ -313,6 +315,12 @@ export default function ProfileScreen() {
         {userId && <AchievementGrid userId={userId} />}
         {userId && <RecentHikesList userId={userId} />}
 
+        <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowMyFlags(true)} activeOpacity={0.8}>
+          <Text style={styles.wishListIcon}>🚩</Text>
+          <Text style={styles.wishListLabel}>{s.myFlags}</Text>
+          <Text style={styles.wishListArrow}>→</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowConquests(true)} activeOpacity={0.8}>
           <Text style={styles.wishListIcon}>🏆</Text>
           <Text style={styles.wishListLabel}>{s.conquestTimelineBtn}</Text>
@@ -340,6 +348,7 @@ export default function ProfileScreen() {
 
       <CrewPickerModal visible={showCrewPicker} onClose={() => setShowCrewPicker(false)} onJoined={loadProfile} />
       <WishListModal visible={showWishList} onClose={() => setShowWishList(false)} />
+      <MyFlagsModal visible={showMyFlags} onClose={() => setShowMyFlags(false)} />
       {userId && (
         <ConquestTimeline visible={showConquests} userId={userId} onClose={() => setShowConquests(false)} />
       )}

@@ -264,6 +264,14 @@ const strings = {
     atRisk: '위험',
     expiresHours: (n: number) => `${n}시간 후 만료`,
     plantedBy: (name: string) => `${name}이(가) 꽂음`,
+
+    // My active flags dashboard
+    myFlags: '내 깃발',
+    myFlagsBtn: '🚩 내 깃발 현황',
+    myFlagsTotal: (n: number) => `활성 깃발 ${n}개`,
+    myFlagsEmpty: '현재 보유 중인 깃발이 없습니다',
+    myFlagsEmptyDesc: '정상에 올라 깃발을 꽂아보세요!',
+    plantedOn: (date: string) => `${date} 꽂음`,
   },
 
   en: {
@@ -529,6 +537,14 @@ const strings = {
     atRisk: 'At risk',
     expiresHours: (n: number) => `Expires in ${n}h`,
     plantedBy: (name: string) => `Planted by ${name}`,
+
+    // My active flags dashboard
+    myFlags: 'My Flags',
+    myFlagsBtn: '🚩 My Active Flags',
+    myFlagsTotal: (n: number) => `${n} active flag${n !== 1 ? 's' : ''}`,
+    myFlagsEmpty: 'No active flags',
+    myFlagsEmptyDesc: 'Hike to a summit and plant your flag!',
+    plantedOn: (date: string) => `Planted ${date}`,
   },
 
   ja: {
@@ -794,6 +810,14 @@ const strings = {
     atRisk: '危険',
     expiresHours: (n: number) => `${n}時間後に期限切れ`,
     plantedBy: (name: string) => `${name}が設置`,
+
+    // My active flags dashboard
+    myFlags: 'マイ旗',
+    myFlagsBtn: '🚩 マイ旗一覧',
+    myFlagsTotal: (n: number) => `有効な旗${n}本`,
+    myFlagsEmpty: '現在保有している旗はありません',
+    myFlagsEmptyDesc: '山頂に登って旗を立てよう！',
+    plantedOn: (date: string) => `${date}に設置`,
   },
 } as const;
 
