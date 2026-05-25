@@ -283,6 +283,11 @@ const strings = {
     stolenBy: (name: string) => `${name}에게 빼앗김`,
     iStole: (name: string) => `${name}에게서 빼앗음`,
     topRivals: '주요 라이벌',
+
+    // Mountain group detail
+    groupDetailConquered: '✓ 정복',
+    groupDetailPending: '미정복',
+    groupDetailEmpty: '정상 정보 없음',
   },
 
   en: {
@@ -567,6 +572,11 @@ const strings = {
     stolenBy: (name: string) => `Stolen by ${name}`,
     iStole: (name: string) => `Stolen from ${name}`,
     topRivals: 'Top Rivals',
+
+    // Mountain group detail
+    groupDetailConquered: '✓ Conquered',
+    groupDetailPending: 'Not yet',
+    groupDetailEmpty: 'No summits found',
   },
 
   ja: {
@@ -851,6 +861,11 @@ const strings = {
     stolenBy: (name: string) => `${name}に奪われた`,
     iStole: (name: string) => `${name}から奪った`,
     topRivals: 'トップライバル',
+
+    // Mountain group detail
+    groupDetailConquered: '✓ 制覇',
+    groupDetailPending: '未制覇',
+    groupDetailEmpty: '山頂情報なし',
   },
 } as const;
 

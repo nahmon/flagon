@@ -22,7 +22,8 @@ interface Props {
   onClose: () => void;
 }
 
-type GeoJSONFC = { type: 'FeatureCollection'; features: unknown[] };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type GeoJSONFC = { type: 'FeatureCollection'; features: any[] };
 function trackToGeoJSON(track: GpsPoint[]): GeoJSONFC {
   if (track.length < 2) return { type: 'FeatureCollection', features: [] };
   return {

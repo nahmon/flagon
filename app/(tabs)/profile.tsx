@@ -14,6 +14,7 @@ import ConquestTimeline from '../../src/components/ConquestTimeline';
 import CrewTerritoryModal from '../../src/components/CrewTerritoryModal';
 import MyFlagsModal from '../../src/components/MyFlagsModal';
 import RivalsModal from '../../src/components/RivalsModal';
+import MountainGroupDetailModal from '../../src/components/MountainGroupDetailModal';
 import { useLang } from '../../src/contexts/LangContext';
 import { t } from '../../src/i18n/strings';
 
@@ -166,6 +167,7 @@ export default function ProfileScreen() {
   const [showTerritory, setShowTerritory] = useState(false);
   const [showMyFlags, setShowMyFlags] = useState(false);
   const [showRivals, setShowRivals] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('');
   const [savingName, setSavingName] = useState(false);
@@ -313,7 +315,7 @@ export default function ProfileScreen() {
 
         {userId && <StatsCard userId={userId} />}
         {userId && <StreakCard userId={userId} />}
-        {userId && <MountainGroupProgress userId={userId} />}
+        {userId && <MountainGroupProgress userId={userId} onGroupPress={setSelectedGroup} />}
         {userId && <AchievementGrid userId={userId} />}
         {userId && <RecentHikesList userId={userId} />}
 
@@ -356,6 +358,13 @@ export default function ProfileScreen() {
 
       <CrewPickerModal visible={showCrewPicker} onClose={() => setShowCrewPicker(false)} onJoined={loadProfile} />
       <WishListModal visible={showWishList} onClose={() => setShowWishList(false)} />
+      {userId && (
+        <MountainGroupDetailModal
+          group={selectedGroup}
+          userId={userId}
+          onClose={() => setSelectedGroup(null)}
+        />
+      )}
       <MyFlagsModal visible={showMyFlags} onClose={() => setShowMyFlags(false)} />
       <RivalsModal visible={showRivals} onClose={() => setShowRivals(false)} />
       {userId && (

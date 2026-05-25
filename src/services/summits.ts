@@ -2,7 +2,8 @@ import { supabase } from './supabase';
 import { SummitWithFlag } from '../types';
 import { Lang, summitName } from '../i18n/strings';
 
-type GeoJSONFC = { type: 'FeatureCollection'; features: unknown[] };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type GeoJSONFC = { type: 'FeatureCollection'; features: any[] };
 
 export interface HotSummit {
   id: string;

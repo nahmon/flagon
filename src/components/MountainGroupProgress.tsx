@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Colors } from '../constants';
 import { fetchMountainGroupProgress, type MountainGroupEntry } from '../services/mountainGroups';
 import { useLang } from '../contexts/LangContext';
@@ -7,6 +7,7 @@ import { t } from '../i18n/strings';
 
 interface Props {
   userId: string;
+  onGroupPress?: (group: string) => void;
 }
 
 function ProgressBar({ pct, color }: { pct: number; color: string }) {
@@ -17,7 +18,7 @@ function ProgressBar({ pct, color }: { pct: number; color: string }) {
   );
 }
 
-export default function MountainGroupProgress({ userId }: Props) {
+export default function MountainGroupProgress({ userId, onGroupPress }: Props) {
   const { lang } = useLang();
   const s = t(lang);
   const [groups, setGroups] = useState<MountainGroupEntry[]>([]);
@@ -43,7 +44,12 @@ export default function MountainGroupProgress({ userId }: Props) {
           const isComplete = g.flagged === g.total && g.total > 0;
           const barColor = isComplete ? Colors.orange : Colors.green;
           return (
-            <View key={g.group} style={styles.row}>
+            <TouchableOpacity
+              key={g.group}
+              style={styles.row}
+              onPress={() => onGroupPress?.(g.group)}
+              activeOpacity={onGroupPress ? 0.7 : 1}
+            >
               <View style={styles.rowHeader}>
                 <Text style={styles.groupName} numberOfLines={1}>{g.group}</Text>
                 <Text style={[styles.count, isComplete && styles.countComplete]}>
@@ -51,7 +57,7 @@ export default function MountainGroupProgress({ userId }: Props) {
                 </Text>
               </View>
               <ProgressBar pct={pct} color={barColor} />
-            </View>
+            </TouchableOpacity>
           );
         })
       )}

@@ -33,7 +33,8 @@ export default function MapScreen() {
   const cameraRef = useRef<CameraRef>(null);
   const [locationGranted, setLocationGranted] = useState(false);
   const [summits, setSummits] = useState<SummitWithFlag[]>([]);
-  const [geojson, setGeojson] = useState<{ type: 'FeatureCollection'; features: unknown[] }>({ type: 'FeatureCollection', features: [] });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [geojson, setGeojson] = useState<{ type: 'FeatureCollection'; features: any[] }>({ type: 'FeatureCollection', features: [] });
   const [planting, setPlanting] = useState(false);
   const [selectedSummit, setSelectedSummit] = useState<SummitWithFlag | null>(null);
   const [userCrewId, setUserCrewId] = useState<string | null>(null);
