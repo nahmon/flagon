@@ -6,6 +6,8 @@ export interface Badge {
   label: string;
   desc: string;
   earned: boolean;
+  progress: number;
+  max: number;
 }
 
 export interface AchievementStats {
@@ -37,6 +39,8 @@ export function computeBadges(stats: AchievementStats): Badge[] {
       label: '첫 깃발',
       desc: '첫 번째 정상 정복',
       earned: stats.totalFlags >= 1,
+      progress: Math.min(stats.totalFlags, 1),
+      max: 1,
     },
     {
       id: 'explorer',
@@ -44,6 +48,8 @@ export function computeBadges(stats: AchievementStats): Badge[] {
       label: '탐험가',
       desc: '3개 이상 다른 정상',
       earned: stats.distinctSummits >= 3,
+      progress: Math.min(stats.distinctSummits, 3),
+      max: 3,
     },
     {
       id: 'high_peak',
@@ -51,6 +57,8 @@ export function computeBadges(stats: AchievementStats): Badge[] {
       label: '고산 정복자',
       desc: '1000m 이상 정상 정복',
       earned: stats.hasHighPeak,
+      progress: stats.hasHighPeak ? 1 : 0,
+      max: 1,
     },
     {
       id: 'ten_flags',
@@ -58,6 +66,8 @@ export function computeBadges(stats: AchievementStats): Badge[] {
       label: '열 번의 정복',
       desc: '깃발 10개 달성',
       earned: stats.totalFlags >= 10,
+      progress: Math.min(stats.totalFlags, 10),
+      max: 10,
     },
     {
       id: 'wanderer',
@@ -65,6 +75,8 @@ export function computeBadges(stats: AchievementStats): Badge[] {
       label: '산악 탐험가',
       desc: '10개 이상 다른 정상',
       earned: stats.distinctSummits >= 10,
+      progress: Math.min(stats.distinctSummits, 10),
+      max: 10,
     },
     {
       id: 'flag_king',
@@ -72,6 +84,8 @@ export function computeBadges(stats: AchievementStats): Badge[] {
       label: '등산왕',
       desc: '깃발 50개 달성',
       earned: stats.totalFlags >= 50,
+      progress: Math.min(stats.totalFlags, 50),
+      max: 50,
     },
   ];
 }

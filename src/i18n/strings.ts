@@ -288,6 +288,15 @@ const strings = {
     groupDetailConquered: '✓ 정복',
     groupDetailPending: '미정복',
     groupDetailEmpty: '정상 정보 없음',
+
+    // Badge detail modal
+    badgeDetail: '배지 상세',
+    badgeEarned: '획득 완료! 🎉',
+    badgeLocked: '아직 획득하지 못했습니다',
+    badgeProgressLabel: '진행 현황',
+    badgeProgressOf: (cur: number, max: number) => `${cur} / ${max}`,
+    badgeShare: '공유하기',
+    badgeShareMsg: (icon: string, label: string) => `FlagOn에서 "${icon} ${label}" 배지를 획득했습니다!`,
   },
 
   en: {
@@ -577,6 +586,15 @@ const strings = {
     groupDetailConquered: '✓ Conquered',
     groupDetailPending: 'Not yet',
     groupDetailEmpty: 'No summits found',
+
+    // Badge detail modal
+    badgeDetail: 'Badge Details',
+    badgeEarned: 'Earned! 🎉',
+    badgeLocked: 'Not yet earned',
+    badgeProgressLabel: 'Progress',
+    badgeProgressOf: (cur: number, max: number) => `${cur} / ${max}`,
+    badgeShare: 'Share',
+    badgeShareMsg: (icon: string, label: string) => `I earned the "${icon} ${label}" badge on FlagOn!`,
   },
 
   ja: {
@@ -866,6 +884,15 @@ const strings = {
     groupDetailConquered: '✓ 制覇',
     groupDetailPending: '未制覇',
     groupDetailEmpty: '山頂情報なし',
+
+    // Badge detail modal
+    badgeDetail: 'バッジ詳細',
+    badgeEarned: '取得済み！🎉',
+    badgeLocked: 'まだ取得していません',
+    badgeProgressLabel: '進捗',
+    badgeProgressOf: (cur: number, max: number) => `${cur} / ${max}`,
+    badgeShare: 'シェア',
+    badgeShareMsg: (icon: string, label: string) => `FlagOnで「${icon} ${label}」バッジを取得しました！`,
   },
 } as const;
 

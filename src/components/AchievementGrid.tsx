@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Colors } from '../constants';
 import { fetchAchievementStats, computeBadges, Badge } from '../services/achievements';
+import BadgeDetailModal from './BadgeDetailModal';
 
-function BadgeCell({ badge }: { badge: Badge }) {
+function BadgeCell({ badge, onPress }: { badge: Badge; onPress: () => void }) {
   return (
-    <View style={[styles.cell, !badge.earned && styles.cellLocked]}>
+    <TouchableOpacity style={[styles.cell, !badge.earned && styles.cellLocked]} onPress={onPress} activeOpacity={0.75}>
       <Text style={[styles.icon, !badge.earned && styles.iconLocked]}>{badge.icon}</Text>
       <Text style={[styles.label, !badge.earned && styles.labelLocked]} numberOfLines={1}>
         {badge.label}
@@ -13,14 +14,19 @@ function BadgeCell({ badge }: { badge: Badge }) {
       <Text style={[styles.desc, !badge.earned && styles.descLocked]} numberOfLines={2}>
         {badge.desc}
       </Text>
-      {!badge.earned && <View style={styles.lockOverlay}><Text style={styles.lockIcon}>🔒</Text></View>}
-    </View>
+      {badge.earned ? (
+        <View style={styles.earnedDot} />
+      ) : (
+        <View style={styles.lockOverlay}><Text style={styles.lockIcon}>🔒</Text></View>
+      )}
+    </TouchableOpacity>
   );
 }
 
 export default function AchievementGrid({ userId }: { userId: string }) {
   const [badges, setBadges] = useState<Badge[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<Badge | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -48,10 +54,12 @@ export default function AchievementGrid({ userId }: { userId: string }) {
       ) : (
         <View style={styles.grid}>
           {(badges ?? []).map((badge: Badge) => (
-            <BadgeCell key={badge.id} badge={badge} />
+            <BadgeCell key={badge.id} badge={badge} onPress={() => setSelected(badge)} />
           ))}
         </View>
       )}
+
+      <BadgeDetailModal badge={selected} onClose={() => setSelected(null)} />
     </View>
   );
 }
@@ -122,6 +130,15 @@ const styles = StyleSheet.create({
   },
   descLocked: {
     color: Colors.zinc200,
+  },
+  earnedDot: {
+    position: 'absolute',
+    top: 7,
+    right: 7,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: Colors.green,
   },
   lockOverlay: {
     position: 'absolute',
