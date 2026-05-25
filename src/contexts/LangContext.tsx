@@ -18,7 +18,7 @@ export function LangProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>('ko');
 
   useEffect(() => {
-    AsyncStorage.getItem(LANG_KEY).then((v) => {
+    AsyncStorage.getItem(LANG_KEY).then((v: string | null) => {
       if (v === 'ko' || v === 'en' || v === 'ja') setLangState(v);
     });
   }, []);

@@ -53,7 +53,7 @@ export default function StreakCard({ userId }: { userId: string }) {
           <View style={styles.gridSection}>
             <Text style={styles.gridLabel}>{s.streakWeekGrid}</Text>
             <View style={styles.dotRow}>
-              {info.last8Weeks.map((w, i) => (
+              {info.last8Weeks.map((w: { key: string; hiked: boolean }, i: number) => (
                 <WeekDot key={w.key} hiked={w.hiked} isCurrentWeek={i === 7} />
               ))}
             </View>

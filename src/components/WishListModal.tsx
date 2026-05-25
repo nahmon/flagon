@@ -35,7 +35,7 @@ export default function WishListModal({ visible, onClose }: Props) {
 
   const handleRemove = useCallback(async (id: string) => {
     await removeFromWishList(id);
-    setItems((prev) => prev.filter((i) => i.id !== id));
+    setItems((prev: WishItem[]) => prev.filter((i: WishItem) => i.id !== id));
   }, []);
 
   const displayName = (item: WishItem) => {
@@ -65,9 +65,9 @@ export default function WishListModal({ visible, onClose }: Props) {
         ) : (
           <FlatList
             data={items}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item: WishItem) => item.id}
             contentContainerStyle={styles.list}
-            renderItem={({ item }) => (
+            renderItem={({ item }: { item: WishItem }) => (
               <View style={styles.row}>
                 <View style={styles.flagPole}>
                   <Text style={styles.flagIcon}>🚩</Text>

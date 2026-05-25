@@ -13,6 +13,7 @@ import MountainGroupProgress from '../../src/components/MountainGroupProgress';
 import ConquestTimeline from '../../src/components/ConquestTimeline';
 import CrewTerritoryModal from '../../src/components/CrewTerritoryModal';
 import MyFlagsModal from '../../src/components/MyFlagsModal';
+import RivalsModal from '../../src/components/RivalsModal';
 import { useLang } from '../../src/contexts/LangContext';
 import { t } from '../../src/i18n/strings';
 
@@ -164,6 +165,7 @@ export default function ProfileScreen() {
   const [showConquests, setShowConquests] = useState(false);
   const [showTerritory, setShowTerritory] = useState(false);
   const [showMyFlags, setShowMyFlags] = useState(false);
+  const [showRivals, setShowRivals] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('');
   const [savingName, setSavingName] = useState(false);
@@ -321,6 +323,12 @@ export default function ProfileScreen() {
           <Text style={styles.wishListArrow}>→</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowRivals(true)} activeOpacity={0.8}>
+          <Text style={styles.wishListIcon}>⚔️</Text>
+          <Text style={styles.wishListLabel}>{s.rivals}</Text>
+          <Text style={styles.wishListArrow}>→</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowConquests(true)} activeOpacity={0.8}>
           <Text style={styles.wishListIcon}>🏆</Text>
           <Text style={styles.wishListLabel}>{s.conquestTimelineBtn}</Text>
@@ -349,6 +357,7 @@ export default function ProfileScreen() {
       <CrewPickerModal visible={showCrewPicker} onClose={() => setShowCrewPicker(false)} onJoined={loadProfile} />
       <WishListModal visible={showWishList} onClose={() => setShowWishList(false)} />
       <MyFlagsModal visible={showMyFlags} onClose={() => setShowMyFlags(false)} />
+      <RivalsModal visible={showRivals} onClose={() => setShowRivals(false)} />
       {userId && (
         <ConquestTimeline visible={showConquests} userId={userId} onClose={() => setShowConquests(false)} />
       )}

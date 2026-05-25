@@ -52,7 +52,7 @@ export default function TabLayout() {
           name="index"
           options={{
             title: '지도',
-            tabBarIcon: ({ color, size, focused }) =>
+            tabBarIcon: ({ color, size, focused }: { color: string; size: number; focused: boolean }) =>
               icon(focused, 'map', 'map-outline')({ color, size }),
           }}
         />
@@ -60,7 +60,7 @@ export default function TabLayout() {
           name="feed"
           options={{
             title: '피드',
-            tabBarIcon: ({ color, size, focused }) =>
+            tabBarIcon: ({ color, size, focused }: { color: string; size: number; focused: boolean }) =>
               icon(focused, 'flash', 'flash-outline')({ color, size }),
           }}
         />
@@ -68,7 +68,7 @@ export default function TabLayout() {
           name="leaderboard"
           options={{
             title: '랭킹',
-            tabBarIcon: ({ color, size, focused }) =>
+            tabBarIcon: ({ color, size, focused }: { color: string; size: number; focused: boolean }) =>
               icon(focused, 'podium', 'podium-outline')({ color, size }),
           }}
         />
@@ -76,7 +76,7 @@ export default function TabLayout() {
           name="profile"
           options={{
             title: '내 정보',
-            tabBarIcon: ({ color, size, focused }) =>
+            tabBarIcon: ({ color, size, focused }: { color: string; size: number; focused: boolean }) =>
               icon(focused, 'person', 'person-outline')({ color, size }),
           }}
         />
@@ -84,7 +84,7 @@ export default function TabLayout() {
           name="settings"
           options={{
             title: '설정',
-            tabBarIcon: ({ color, size, focused }) =>
+            tabBarIcon: ({ color, size, focused }: { color: string; size: number; focused: boolean }) =>
               icon(focused, 'settings', 'settings-outline')({ color, size }),
           }}
         />

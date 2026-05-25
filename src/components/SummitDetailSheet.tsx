@@ -237,9 +237,9 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
         ) : (
           <FlatList
             data={history}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item: FlagHistoryEntry) => item.id}
             contentContainerStyle={styles.historyList}
-            renderItem={({ item }) => (
+            renderItem={({ item }: { item: FlagHistoryEntry }) => (
               <View style={styles.historyRow}>
                 <View style={[styles.historyDot, { backgroundColor: item.crew_color_hex ?? Colors.zinc200 }]} />
                 <View style={styles.historyBody}>

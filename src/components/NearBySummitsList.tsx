@@ -71,10 +71,10 @@ export default function NearBySummitsList({
 
         <FlatList
           data={sorted}
-          keyExtractor={(item) => item.summit.id}
+          keyExtractor={(item: { summit: SummitWithFlag; dist: number }) => item.summit.id}
           contentContainerStyle={styles.list}
           ItemSeparatorComponent={() => <View style={styles.sep} />}
-          renderItem={({ item }) => {
+          renderItem={({ item }: { item: { summit: SummitWithFlag; dist: number } }) => {
             const { summit, dist } = item;
             const hasFlag = !!summit.active_flag;
             const flagColor = summit.active_flag?.crew?.color_hex ?? Colors.orange;

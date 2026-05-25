@@ -85,8 +85,8 @@ export default function CrewDetailModal({ crew, onClose }: Props) {
         ) : (
           <FlatList<CrewMemberDetail>
             data={members}
-            keyExtractor={(m) => m.user_id}
-            renderItem={({ item, index }) => (
+            keyExtractor={(m: CrewMemberDetail) => m.user_id}
+            renderItem={({ item, index }: { item: CrewMemberDetail; index: number }) => (
               <MemberRow member={item} rank={index + 1} />
             )}
             ItemSeparatorComponent={() => <View style={styles.separator} />}

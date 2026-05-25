@@ -2,6 +2,8 @@ import { supabase } from './supabase';
 import { SummitWithFlag } from '../types';
 import { Lang, summitName } from '../i18n/strings';
 
+type GeoJSONFC = { type: 'FeatureCollection'; features: unknown[] };
+
 export interface HotSummit {
   id: string;
   name_ko: string;
@@ -116,7 +118,7 @@ export function summitsToGeoJSON(
   summits: SummitWithFlag[],
   userCrewId?: string | null,
   lang: Lang = 'ko',
-): GeoJSON.FeatureCollection {
+): GeoJSONFC {
   return {
     type: 'FeatureCollection',
     features: summits.map((s) => ({

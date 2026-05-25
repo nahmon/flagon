@@ -74,7 +74,7 @@ export default function OnboardingScreen() {
       <Animated.FlatList
         ref={flatRef}
         data={SLIDES}
-        keyExtractor={(s) => s.id}
+        keyExtractor={(s: Slide) => s.id}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
@@ -84,7 +84,7 @@ export default function OnboardingScreen() {
         )}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewConfig}
-        renderItem={({ item }) => (
+        renderItem={({ item }: { item: Slide }) => (
           <View style={styles.slide}>
             <View style={styles.iconWrap}>
               <Ionicons name={item.icon} size={72} color={Colors.white} />

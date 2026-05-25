@@ -22,7 +22,8 @@ interface Props {
   onClose: () => void;
 }
 
-function trackToGeoJSON(track: GpsPoint[]): GeoJSON.FeatureCollection {
+type GeoJSONFC = { type: 'FeatureCollection'; features: unknown[] };
+function trackToGeoJSON(track: GpsPoint[]): GeoJSONFC {
   if (track.length < 2) return { type: 'FeatureCollection', features: [] };
   return {
     type: 'FeatureCollection',

@@ -9,7 +9,7 @@ export type HikePhase =
   | 'verified'      // 20분 체류 완료 — 깃발 꽂기 가능
   | 'planted';      // 깃발 꽂기 완료
 
-interface HikeState {
+export interface HikeState {
   phase: HikePhase;
   track: GpsPoint[];
   currentLat: number | null;
@@ -33,7 +33,7 @@ interface HikeState {
 
 const STAY_REQUIRED_MS = GPS.MIN_STAY_MINUTES * 60 * 1000;
 
-export const useHikeStore = create<HikeState>((set, get) => ({
+export const useHikeStore = create<HikeState>((set: (partial: Partial<HikeState> | ((s: HikeState) => Partial<HikeState>)) => void, get: () => HikeState) => ({
   phase: 'idle',
   track: [],
   currentLat: null,
@@ -44,26 +44,26 @@ export const useHikeStore = create<HikeState>((set, get) => ({
   stayElapsedMs: 0,
   verifiedAt: null,
 
-  setLocation: (lat, lng, point) =>
-    set((s) => ({
+  setLocation: (lat: number, lng: number, point: GpsPoint) =>
+    set((s: HikeState) => ({
       currentLat: lat,
       currentLng: lng,
       phase: s.phase === 'idle' ? 'hiking' : s.phase,
       track: [...s.track, point],
     })),
 
-  setSummitProximity: (summit, distanceM) =>
+  setSummitProximity: (summit: Summit | null, distanceM: number | null) =>
     set({ nearestSummit: summit, nearestDistanceM: distanceM }),
 
-  enterSummitRadius: (summit) =>
-    set((s) => ({
+  enterSummitRadius: (summit: Summit) =>
+    set((s: HikeState) => ({
       nearestSummit: summit,
       phase: s.phase === 'hiking' || s.phase === 'idle' ? 'near_summit' : s.phase,
       stayStartedAt: s.stayStartedAt ?? Date.now(),
     })),
 
   exitSummitRadius: () =>
-    set((s) => {
+    set((s: HikeState) => {
       if (s.phase !== 'near_summit') return {};
       const elapsed = s.stayStartedAt ? Date.now() - s.stayStartedAt : 0;
       return {

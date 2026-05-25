@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { AppState } from 'react-native';
-import { useHikeStore } from '../stores/hikeStore';
+import { useHikeStore, type HikeState } from '../stores/hikeStore';
 import { startTracking, nearestSummit, isAtSummit } from '../services/gps';
 import { requestNotificationPermission, notifySummitNear, notifySummitVerified } from '../services/notifications';
 import { SummitWithFlag } from '../types';
@@ -15,7 +15,7 @@ export function useHiking(summits: SummitWithFlag[]) {
   useEffect(() => { requestNotificationPermission(); }, []);
 
   // Notify when verified
-  const phase = useHikeStore((s) => s.phase);
+  const phase = useHikeStore((s: HikeState) => s.phase);
   const nearestSummitRef = useRef(useHikeStore.getState().nearestSummit);
   useEffect(() => {
     nearestSummitRef.current = useHikeStore.getState().nearestSummit;
@@ -64,7 +64,7 @@ export function useHiking(summits: SummitWithFlag[]) {
 
   // Pause/resume timer on app background
   useEffect(() => {
-    const sub = AppState.addEventListener('change', (state) => {
+    const sub = AppState.addEventListener('change', (state: string) => {
       const hike = useHikeStore.getState();
       if (state !== 'active' && hike.phase === 'near_summit') {
         hike.exitSummitRadius();

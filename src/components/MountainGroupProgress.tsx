@@ -38,7 +38,7 @@ export default function MountainGroupProgress({ userId }: Props) {
       ) : groups.length === 0 ? (
         <Text style={styles.empty}>{s.mountainGroupsEmpty}</Text>
       ) : (
-        groups.map((g) => {
+        groups.map((g: MountainGroupEntry) => {
           const pct = g.total > 0 ? (g.flagged / g.total) * 100 : 0;
           const isComplete = g.flagged === g.total && g.total > 0;
           const barColor = isComplete ? Colors.orange : Colors.green;

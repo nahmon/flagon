@@ -272,6 +272,17 @@ const strings = {
     myFlagsEmpty: '현재 보유 중인 깃발이 없습니다',
     myFlagsEmptyDesc: '정상에 올라 깃발을 꽂아보세요!',
     plantedOn: (date: string) => `${date} 꽂음`,
+
+    // Rivals
+    rivals: '⚔️ 경쟁 현황',
+    rivalsBtn: '⚔️ 경쟁 현황',
+    stolenFromMe: '빼앗긴 깃발',
+    iStoleFrom: '빼앗은 깃발',
+    noStolen: '빼앗긴 깃발이 없습니다',
+    noSteals: '빼앗은 깃발이 없습니다',
+    stolenBy: (name: string) => `${name}에게 빼앗김`,
+    iStole: (name: string) => `${name}에게서 빼앗음`,
+    topRivals: '주요 라이벌',
   },
 
   en: {
@@ -545,6 +556,17 @@ const strings = {
     myFlagsEmpty: 'No active flags',
     myFlagsEmptyDesc: 'Hike to a summit and plant your flag!',
     plantedOn: (date: string) => `Planted ${date}`,
+
+    // Rivals
+    rivals: '⚔️ Rivals',
+    rivalsBtn: '⚔️ Rivals',
+    stolenFromMe: 'Stolen From Me',
+    iStoleFrom: 'I Stole From',
+    noStolen: 'No flags stolen from you yet',
+    noSteals: 'No flags stolen yet',
+    stolenBy: (name: string) => `Stolen by ${name}`,
+    iStole: (name: string) => `Stolen from ${name}`,
+    topRivals: 'Top Rivals',
   },
 
   ja: {
@@ -818,6 +840,17 @@ const strings = {
     myFlagsEmpty: '現在保有している旗はありません',
     myFlagsEmptyDesc: '山頂に登って旗を立てよう！',
     plantedOn: (date: string) => `${date}に設置`,
+
+    // Rivals
+    rivals: '⚔️ ライバル',
+    rivalsBtn: '⚔️ ライバル',
+    stolenFromMe: '奪われた旗',
+    iStoleFrom: '奪った旗',
+    noStolen: '旗を奪われたことはありません',
+    noSteals: '奪った旗はありません',
+    stolenBy: (name: string) => `${name}に奪われた`,
+    iStole: (name: string) => `${name}から奪った`,
+    topRivals: 'トップライバル',
   },
 } as const;
 

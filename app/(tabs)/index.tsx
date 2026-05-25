@@ -18,7 +18,7 @@ import { fetchSummitsNear, summitsToGeoJSON } from '../../src/services/summits';
 import { plantFlag, getUserCrewId } from '../../src/services/flags';
 import { supabase } from '../../src/services/supabase';
 import { saveHike } from '../../src/services/hikes';
-import { useHikeStore, stayProgressPct } from '../../src/stores/hikeStore';
+import { useHikeStore, stayProgressPct, type HikeState } from '../../src/stores/hikeStore';
 import { useHiking } from '../../src/hooks/useHiking';
 import { requestLocationPermission, distanceMeters } from '../../src/services/gps';
 import { cacheSummits, loadCachedSummits } from '../../src/services/offlineCache';
@@ -33,7 +33,7 @@ export default function MapScreen() {
   const cameraRef = useRef<CameraRef>(null);
   const [locationGranted, setLocationGranted] = useState(false);
   const [summits, setSummits] = useState<SummitWithFlag[]>([]);
-  const [geojson, setGeojson] = useState<GeoJSON.FeatureCollection>({ type: 'FeatureCollection', features: [] });
+  const [geojson, setGeojson] = useState<{ type: 'FeatureCollection'; features: unknown[] }>({ type: 'FeatureCollection', features: [] });
   const [planting, setPlanting] = useState(false);
   const [selectedSummit, setSelectedSummit] = useState<SummitWithFlag | null>(null);
   const [userCrewId, setUserCrewId] = useState<string | null>(null);
@@ -61,7 +61,7 @@ export default function MapScreen() {
   }, []);
 
   // Apply client-side filters before rendering
-  const filteredSummits = useMemo(() => summits.filter((summit) => {
+  const filteredSummits = useMemo(() => summits.filter((summit: SummitWithFlag) => {
     if (filters.flagStatus === 'unclaimed' && summit.active_flag) return false;
     if (filters.flagStatus === 'own' && summit.active_flag?.crew_id !== userCrewId) return false;
     if (filters.flagStatus === 'other') {
@@ -81,10 +81,10 @@ export default function MapScreen() {
   }, [filteredSummits, userCrewId, lang]);
 
   const hike = useHiking(summits);
-  const phase = useHikeStore((s) => s.phase);
-  const nearestSummit = useHikeStore((s) => s.nearestSummit);
-  const stayStartedAt = useHikeStore((s) => s.stayStartedAt);
-  const stayElapsedMs = useHikeStore((s) => s.stayElapsedMs);
+  const phase = useHikeStore((s: HikeState) => s.phase);
+  const nearestSummit = useHikeStore((s: HikeState) => s.nearestSummit);
+  const stayStartedAt = useHikeStore((s: HikeState) => s.stayStartedAt);
+  const stayElapsedMs = useHikeStore((s: HikeState) => s.stayElapsedMs);
 
   // Load summits on mount
   useEffect(() => {
@@ -224,7 +224,7 @@ export default function MapScreen() {
 
   return (
     <View style={styles.container}>
-      <Map style={styles.map} mapStyle={MAP.STYLE_URLS[mapStyle]} onPress={handleMapPress}>
+      <Map style={styles.map} mapStyle={MAP.STYLE_URLS[mapStyle as keyof typeof MAP.STYLE_URLS]} onPress={handleMapPress}>
         <Camera
           ref={cameraRef}
           initialViewState={{ center: SEOUL, zoom: MAP.DEFAULT_ZOOM }}

@@ -112,9 +112,9 @@ export default function ConquestTimeline({ visible, userId, onClose }: {
         ) : (
           <SectionList<ConquestEntry, Section>
             sections={sections}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <EntryRow entry={item} />}
-            renderSectionHeader={({ section }) => (
+            keyExtractor={(item: ConquestEntry) => item.id}
+            renderItem={({ item }: { item: ConquestEntry }) => <EntryRow entry={item} />}
+            renderSectionHeader={({ section }: { section: Section }) => (
               <View style={styles.sectionHead}>
                 <Text style={styles.sectionTitle}>{section.title}</Text>
                 <Text style={styles.sectionCount}>{s.conquestCount(section.count)}</Text>

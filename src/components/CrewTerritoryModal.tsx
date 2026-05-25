@@ -116,10 +116,10 @@ export default function CrewTerritoryModal({ visible, crewId, crewName, onClose 
         ) : (
           <FlatList<CrewActiveFlag>
             data={flags}
-            keyExtractor={(f) => f.id}
+            keyExtractor={(f: CrewActiveFlag) => f.id}
             contentContainerStyle={styles.list}
             ItemSeparatorComponent={() => <View style={styles.sep} />}
-            renderItem={({ item }) => <FlagRow flag={item} />}
+            renderItem={({ item }: { item: CrewActiveFlag }) => <FlagRow flag={item} />}
           />
         )}
       </View>

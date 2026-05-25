@@ -62,8 +62,8 @@ export default function RecentHikesList({ userId }: { userId: string }) {
       ) : (
         <FlatList
           data={hikes}
-          keyExtractor={(h) => h.id}
-          renderItem={({ item }) => <HikeRow hike={item} onPress={() => setSelected(item)} />}
+          keyExtractor={(h: HikeRecord) => h.id}
+          renderItem={({ item }: { item: HikeRecord }) => <HikeRow hike={item} onPress={() => setSelected(item)} />}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           scrollEnabled={false}
         />

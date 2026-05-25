@@ -159,5 +159,5 @@ export async function deliverPendingNotifications(): Promise<void> {
   await supabase
     .from('notifications')
     .update({ read_at: new Date().toISOString() })
-    .in('id', data.map(n => n.id));
+    .in('id', data.map((n: { id: string }) => n.id));
 }

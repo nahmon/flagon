@@ -100,14 +100,14 @@ export default function CrewSetupModal({ onComplete }: Props) {
           ) : (
             <FlatList
               data={crews}
-              keyExtractor={c => c.id}
+              keyExtractor={(c: Crew) => c.id}
               contentContainerStyle={styles.list}
               ListEmptyComponent={
                 <Text style={styles.empty}>
                   아직 크루가 없어요.{'\n'}첫 번째 크루를 만들어보세요!
                 </Text>
               }
-              renderItem={({ item }) => (
+              renderItem={({ item }: { item: Crew }) => (
                 <TouchableOpacity
                   style={styles.crewRow}
                   onPress={() => handleJoin(item.id)}

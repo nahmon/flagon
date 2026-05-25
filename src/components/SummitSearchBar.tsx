@@ -75,9 +75,9 @@ export default function SummitSearchBar({ summits, onSelect }: Props) {
         <Animated.View style={[styles.resultsList, { maxHeight: listHeight }]}>
           <FlatList
             data={results}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item: SummitWithFlag) => item.id}
             keyboardShouldPersistTaps="handled"
-            renderItem={({ item }) => (
+            renderItem={({ item }: { item: SummitWithFlag }) => (
               <TouchableOpacity
                 style={styles.resultItem}
                 onPress={() => handleSelect(item)}

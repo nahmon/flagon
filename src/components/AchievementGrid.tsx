@@ -31,7 +31,7 @@ export default function AchievementGrid({ userId }: { userId: string }) {
     return () => { mounted = false; };
   }, [userId]);
 
-  const earned = badges?.filter((b) => b.earned).length ?? 0;
+  const earned = badges?.filter((b: Badge) => b.earned).length ?? 0;
   const total = badges?.length ?? 0;
 
   return (
@@ -47,7 +47,7 @@ export default function AchievementGrid({ userId }: { userId: string }) {
         <ActivityIndicator color={Colors.green} style={{ marginVertical: 20 }} />
       ) : (
         <View style={styles.grid}>
-          {(badges ?? []).map((badge) => (
+          {(badges ?? []).map((badge: Badge) => (
             <BadgeCell key={badge.id} badge={badge} />
           ))}
         </View>
