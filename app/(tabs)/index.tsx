@@ -47,6 +47,7 @@ export default function MapScreen() {
   const [mapStyle, setMapStyle] = useState<MapStyleKey>('outdoors');
   const [nearbyListVisible, setNearbyListVisible] = useState(false);
   const [userPos, setUserPos] = useState<{ lat: number; lng: number } | null>(null);
+  const [heatmapOn, setHeatmapOn] = useState(false);
 
   useEffect(() => {
     loadMapStyle().then(setMapStyle).catch(() => {});
@@ -80,6 +81,18 @@ export default function MapScreen() {
   useEffect(() => {
     setGeojson(summitsToGeoJSON(filteredSummits, userCrewId, lang));
   }, [filteredSummits, userCrewId, lang]);
+
+  // Heatmap GeoJSON — all summits, weight = flagged ? hot : cool
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const heatmapGeojson = useMemo<{ type: 'FeatureCollection'; features: any[] }>(() => ({
+    type: 'FeatureCollection',
+    features: summits.map((s) => ({
+      type: 'Feature',
+      id: s.id,
+      geometry: { type: 'Point', coordinates: s.location.coordinates },
+      properties: { weight: s.active_flag ? 2.5 : 0.4 },
+    })),
+  }), [summits]);
 
   const hike = useHiking(summits);
   const phase = useHikeStore((s: HikeState) => s.phase);
@@ -310,6 +323,29 @@ export default function MapScreen() {
             }}
           />
         </GeoJSONSource>
+
+        {heatmapOn && (
+          <GeoJSONSource id="heatmap-src" data={heatmapGeojson}>
+            <Layer
+              id="heatmap-layer"
+              type="heatmap"
+              paint={{
+                'heatmap-weight': ['get', 'weight'],
+                'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 9, 15, 14, 35],
+                'heatmap-intensity': 1.2,
+                'heatmap-color': [
+                  'interpolate', ['linear'], ['heatmap-density'],
+                  0, 'rgba(33,102,172,0)',
+                  0.25, 'rgba(103,169,207,0.6)',
+                  0.5, 'rgba(253,219,99,0.75)',
+                  0.75, 'rgba(239,138,58,0.85)',
+                  1, 'rgba(178,24,43,0.95)',
+                ],
+                'heatmap-opacity': 0.85,
+              }}
+            />
+          </GeoJSONSource>
+        )}
       </Map>
 
       {isOffline && (
@@ -345,6 +381,14 @@ export default function MapScreen() {
         activeOpacity={0.8}
       >
         <Text style={styles.listBtnIcon}>☰</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.heatmapBtn, heatmapOn && styles.heatmapBtnActive]}
+        onPress={() => setHeatmapOn((v) => !v)}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.heatmapBtnIcon}>🔥</Text>
       </TouchableOpacity>
 
       <NearBySummitsList
@@ -675,4 +719,28 @@ const styles = StyleSheet.create({
   detailBtnText: { fontSize: 13, fontWeight: '600', color: Colors.green },
   cardClose: { position: 'absolute', top: -8, right: -8, width: 24, height: 24, borderRadius: 12, backgroundColor: Colors.zinc200, alignItems: 'center', justifyContent: 'center' },
   cardCloseText: { fontSize: 10, color: Colors.zinc800, fontWeight: '700' },
+
+  heatmapBtn: {
+    position: 'absolute',
+    top: 214,
+    right: 12,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
+    zIndex: 10,
+  },
+  heatmapBtnActive: {
+    backgroundColor: Colors.orange,
+  },
+  heatmapBtnIcon: {
+    fontSize: 20,
+  },
 });
