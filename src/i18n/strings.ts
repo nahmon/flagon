@@ -309,6 +309,18 @@ const strings = {
     tipDeleteBody: '이 팁을 삭제하시겠습니까?',
     delete: '삭제',
     anonymousUser: '탐험가',
+
+    // 3-day weather forecast
+    forecastTitle: '3일 예보',
+    forecastToday: '오늘',
+    forecastTomorrow: '내일',
+    forecastDayAfter: '모레',
+    forecastHigh: '최고',
+    forecastLow: '최저',
+    forecastPrecip: '강수',
+    forecastWind: '바람',
+    forecastUnavailable: '예보를 불러올 수 없습니다',
+    forecastTap: '3일 예보 보기 →',
   },
 
   en: {
@@ -619,6 +631,18 @@ const strings = {
     tipDeleteBody: 'Are you sure you want to delete this tip?',
     delete: 'Delete',
     anonymousUser: 'Explorer',
+
+    // 3-day weather forecast
+    forecastTitle: '3-Day Forecast',
+    forecastToday: 'Today',
+    forecastTomorrow: 'Tomorrow',
+    forecastDayAfter: 'Day After',
+    forecastHigh: 'High',
+    forecastLow: 'Low',
+    forecastPrecip: 'Rain',
+    forecastWind: 'Wind',
+    forecastUnavailable: 'Forecast unavailable',
+    forecastTap: '3-day forecast →',
   },
 
   ja: {
@@ -929,6 +953,18 @@ const strings = {
     tipDeleteBody: 'このヒントを削除しますか？',
     delete: '削除',
     anonymousUser: '探検家',
+
+    // 3-day weather forecast
+    forecastTitle: '3日間予報',
+    forecastToday: '今日',
+    forecastTomorrow: '明日',
+    forecastDayAfter: '明後日',
+    forecastHigh: '最高',
+    forecastLow: '最低',
+    forecastPrecip: '降水',
+    forecastWind: '風',
+    forecastUnavailable: '予報を取得できません',
+    forecastTap: '3日間予報を見る →',
   },
 } as const;
 

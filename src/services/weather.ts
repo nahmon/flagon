@@ -6,6 +6,15 @@ export interface WeatherData {
   weathercode: number;
 }
 
+export interface DayForecast {
+  date: string;
+  weathercode: number;
+  tempMax: number;
+  tempMin: number;
+  precipProbability: number;
+  windspeedMax: number;
+}
+
 interface Condition {
   emoji: string;
   ko: string;
@@ -39,4 +48,32 @@ export async function fetchSummitWeather(lat: number, lng: number): Promise<Weat
   if (!res.ok) throw new Error(`Weather API ${res.status}`);
   const json: { current_weather: WeatherData } = await res.json();
   return json.current_weather;
+}
+
+export async function fetchSummitForecast(lat: number, lng: number): Promise<DayForecast[]> {
+  const url =
+    `https://api.open-meteo.com/v1/forecast` +
+    `?latitude=${lat.toFixed(4)}&longitude=${lng.toFixed(4)}` +
+    `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max` +
+    `&wind_speed_unit=kmh&timezone=auto&forecast_days=3`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Weather API ${res.status}`);
+  interface DailyRaw {
+    time: string[];
+    weathercode: number[];
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+    precipitation_probability_max: number[];
+    windspeed_10m_max: number[];
+  }
+  const json: { daily: DailyRaw } = await res.json();
+  const d = json.daily;
+  return d.time.map((date, i) => ({
+    date,
+    weathercode: d.weathercode[i],
+    tempMax: d.temperature_2m_max[i],
+    tempMin: d.temperature_2m_min[i],
+    precipProbability: d.precipitation_probability_max[i] ?? 0,
+    windspeedMax: d.windspeed_10m_max[i],
+  }));
 }
