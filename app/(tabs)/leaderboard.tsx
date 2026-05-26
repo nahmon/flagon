@@ -177,6 +177,7 @@ export default function LeaderboardScreen() {
   const s = t(lang);
   const [viewMode, setViewMode] = useState<ViewMode>('crews');
   const [period, setPeriod] = useState<LeaderboardPeriod>('alltime');
+  const [hikerPeriod, setHikerPeriod] = useState<LeaderboardPeriod>('alltime');
   const [entries, setEntries] = useState<CrewLeaderboardEntry[]>([]);
   const [hotSummits, setHotSummits] = useState<HotSummit[]>([]);
   const [topHikers, setTopHikers] = useState<HikerLeaderboardEntry[]>([]);
@@ -211,10 +212,10 @@ export default function LeaderboardScreen() {
     }
   }, []);
 
-  const loadHikers = useCallback(async (isRefresh = false) => {
+  const loadHikers = useCallback(async (isRefresh = false, p?: LeaderboardPeriod) => {
     if (isRefresh) setRefreshing(true); else setLoading(true);
     try {
-      const data = await fetchTopHikers(20);
+      const data = await fetchTopHikers(20, p ?? hikerPeriod);
       setTopHikers(data);
     } catch (e) {
       console.error('[leaderboard:hikers]', e);
@@ -222,7 +223,7 @@ export default function LeaderboardScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [hikerPeriod]);
 
   useEffect(() => {
     if (viewMode === 'crews') loadCrews();
@@ -243,6 +244,7 @@ export default function LeaderboardScreen() {
   }, [viewMode, loadCrews, loadSummits, loadHikers]);
 
   const handlePeriod = (p: LeaderboardPeriod) => { setPeriod(p); loadCrews(false, p); };
+  const handleHikerPeriod = (p: LeaderboardPeriod) => { setHikerPeriod(p); loadHikers(false, p); };
   const handleRefresh = () => {
     if (viewMode === 'crews') return loadCrews(true);
     if (viewMode === 'summits') return loadSummits(true);
@@ -257,6 +259,7 @@ export default function LeaderboardScreen() {
         </View>
         <ViewToggle mode={viewMode} lang={lang} onChange={setViewMode} />
         {viewMode === 'crews' && <PeriodToggle period={period} lang={lang} onChange={handlePeriod} />}
+        {viewMode === 'hikers' && <PeriodToggle period={hikerPeriod} lang={lang} onChange={handleHikerPeriod} />}
         {viewMode === 'crews' && !loading && entries.length > 0 && <HeroCard top={entries[0]} lang={lang} />}
         {viewMode === 'summits' && !loading && hotSummits.length > 0 && <HotSummitHero top={hotSummits[0]} lang={lang} />}
         {viewMode === 'hikers' && !loading && topHikers.length > 0 && <TopHikerHero top={topHikers[0]} lang={lang} />}

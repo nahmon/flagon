@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { HikerLeaderboardEntry } from '../types';
+import type { LeaderboardPeriod } from './crews';
 
 export interface UserStats {
   totalFlags: number;
@@ -33,11 +34,23 @@ interface RawFlagRow {
   crews: { name: string | null; name_ko: string | null; color_hex: string } | null;
 }
 
-export async function fetchTopHikers(limit = 20): Promise<HikerLeaderboardEntry[]> {
-  const { data, error } = await supabase
+function periodStart(period: LeaderboardPeriod): string | null {
+  if (period === 'alltime') return null;
+  const now = new Date();
+  if (period === 'week') now.setDate(now.getDate() - 7);
+  else now.setDate(now.getDate() - 30);
+  return now.toISOString();
+}
+
+export async function fetchTopHikers(limit = 20, period: LeaderboardPeriod = 'alltime'): Promise<HikerLeaderboardEntry[]> {
+  let query = supabase
     .from('flags')
     .select('user_id, planted_at, users(display_name), crews(name, name_ko, color_hex)');
 
+  const since = periodStart(period);
+  if (since) query = query.gte('planted_at', since);
+
+  const { data, error } = await query;
   if (error) throw error;
 
   const rows = (data ?? []) as unknown as RawFlagRow[];
