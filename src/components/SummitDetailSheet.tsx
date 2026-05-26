@@ -11,7 +11,9 @@ import { isWishlisted, addToWishList, removeFromWishList } from '../services/wis
 import { loadNote, SummitNote } from '../services/summitNotes';
 import SummitNoteModal from './SummitNoteModal';
 import SummitRatingModal from './SummitRatingModal';
+import SummitTipsModal from './SummitTipsModal';
 import { fetchSummitRatingAggregate, getUserRatingForSummit } from '../services/ratings';
+import { loadTips } from '../services/summitTips';
 import { useLang } from '../contexts/LangContext';
 import { t, summitName } from '../i18n/strings';
 
@@ -44,6 +46,8 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
   const [ratingAggregate, setRatingAggregate] = useState<SummitRatingAggregate | null>(null);
   const [myRating, setMyRating] = useState<SummitRating | null>(null);
+  const [tipsModalVisible, setTipsModalVisible] = useState(false);
+  const [tipCount, setTipCount] = useState(0);
 
   const loadRatings = useCallback((id: string) => {
     fetchSummitRatingAggregate(id).then(setRatingAggregate).catch(() => {});
@@ -51,7 +55,7 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
   }, []);
 
   useEffect(() => {
-    if (!summit) { setHistory([]); setBookmarked(false); setNote(null); setRatingAggregate(null); setMyRating(null); return; }
+    if (!summit) { setHistory([]); setBookmarked(false); setNote(null); setRatingAggregate(null); setMyRating(null); setTipCount(0); return; }
     setLoading(true);
     fetchSummitFlagHistory(summit.id)
       .then(setHistory)
@@ -60,6 +64,7 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
     isWishlisted(summit.id).then(setBookmarked).catch(() => {});
     loadNote(summit.id).then(setNote).catch(() => {});
     loadRatings(summit.id);
+    loadTips(summit.id).then(tips => setTipCount(tips.length)).catch(() => {});
   }, [summit?.id, loadRatings]);
 
   const handleBookmark = useCallback(async () => {
@@ -126,6 +131,13 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
           </View>
           <View style={styles.headerActions}>
             <TouchableOpacity
+              style={[styles.bookmarkBtn, tipsModalVisible && styles.noteActive]}
+              onPress={() => setTipsModalVisible(true)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.noteIcon}>💬</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               style={[styles.bookmarkBtn, !!note && styles.noteActive]}
               onPress={() => setNoteModalVisible(true)}
               activeOpacity={0.7}
@@ -185,6 +197,21 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
         </View>
 
         {summit ? <WeatherCard summit={summit} /> : null}
+
+        <TouchableOpacity style={styles.tipsBar} onPress={() => setTipsModalVisible(true)} activeOpacity={0.7}>
+          <Text style={styles.tipsBtnTxt}>{s.tipsBtn(tipCount)}</Text>
+          <Text style={styles.tipsArrow}>›</Text>
+        </TouchableOpacity>
+
+        {summit && (
+          <SummitTipsModal
+            visible={tipsModalVisible}
+            summitId={summit.id}
+            summitName={summitName(summit, lang)}
+            onClose={() => setTipsModalVisible(false)}
+            onCountChange={setTipCount}
+          />
+        )}
 
         {summit && (
           <SummitRatingModal
@@ -336,4 +363,11 @@ const styles = StyleSheet.create({
   },
   notePreviewLabel: { fontSize: 10, fontWeight: '700', color: Colors.orange, letterSpacing: 0.6, textTransform: 'uppercase', marginBottom: 4 },
   notePreviewText: { fontSize: 13, color: Colors.zinc800, lineHeight: 18 },
+  tipsBar: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    marginHorizontal: 20, marginBottom: 8, paddingHorizontal: 16, paddingVertical: 11,
+    backgroundColor: Colors.white, borderRadius: 12,
+  },
+  tipsBtnTxt: { fontSize: 14, fontWeight: '600', color: Colors.zinc800 },
+  tipsArrow: { fontSize: 18, color: Colors.zinc500, fontWeight: '300' },
 });

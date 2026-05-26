@@ -297,6 +297,18 @@ const strings = {
     badgeProgressOf: (cur: number, max: number) => `${cur} / ${max}`,
     badgeShare: '공유하기',
     badgeShareMsg: (icon: string, label: string) => `FlagOn에서 "${icon} ${label}" 배지를 획득했습니다!`,
+
+    // Summit community tips
+    tipsTitle: '등산 팁',
+    tipsBtn: (n: number) => n > 0 ? `💬 팁 ${n}` : '💬 팁',
+    tipPlaceholder: '이 정상에 대한 팁을 남겨보세요 (날씨, 경로, 주의사항...)',
+    tipSend: '↑',
+    tipsEmpty: '아직 팁이 없습니다',
+    tipsEmptyDesc: '이 정상에 대한 첫 번째 팁을 남겨보세요!',
+    tipDeleteTitle: '팁 삭제',
+    tipDeleteBody: '이 팁을 삭제하시겠습니까?',
+    delete: '삭제',
+    anonymousUser: '탐험가',
   },
 
   en: {
@@ -595,6 +607,18 @@ const strings = {
     badgeProgressOf: (cur: number, max: number) => `${cur} / ${max}`,
     badgeShare: 'Share',
     badgeShareMsg: (icon: string, label: string) => `I earned the "${icon} ${label}" badge on FlagOn!`,
+
+    // Summit community tips
+    tipsTitle: 'Trail Tips',
+    tipsBtn: (n: number) => n > 0 ? `💬 Tips ${n}` : '💬 Tips',
+    tipPlaceholder: 'Share a tip about this summit (weather, route, hazards...)',
+    tipSend: '↑',
+    tipsEmpty: 'No tips yet',
+    tipsEmptyDesc: 'Be the first to share a trail tip!',
+    tipDeleteTitle: 'Delete Tip',
+    tipDeleteBody: 'Are you sure you want to delete this tip?',
+    delete: 'Delete',
+    anonymousUser: 'Explorer',
   },
 
   ja: {
@@ -893,6 +917,18 @@ const strings = {
     badgeProgressOf: (cur: number, max: number) => `${cur} / ${max}`,
     badgeShare: 'シェア',
     badgeShareMsg: (icon: string, label: string) => `FlagOnで「${icon} ${label}」バッジを取得しました！`,
+
+    // Summit community tips
+    tipsTitle: '登山ヒント',
+    tipsBtn: (n: number) => n > 0 ? `💬 ヒント ${n}` : '💬 ヒント',
+    tipPlaceholder: 'この山頂についてヒントを書こう (天気、ルート、注意点...)',
+    tipSend: '↑',
+    tipsEmpty: 'まだヒントがありません',
+    tipsEmptyDesc: '最初の登山ヒントを残しましょう！',
+    tipDeleteTitle: 'ヒントを削除',
+    tipDeleteBody: 'このヒントを削除しますか？',
+    delete: '削除',
+    anonymousUser: '探検家',
   },
 } as const;
 
