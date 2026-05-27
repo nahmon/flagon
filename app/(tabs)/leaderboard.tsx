@@ -8,6 +8,8 @@ import { supabase } from '../../src/services/supabase';
 import { CrewLeaderboardEntry, HikerLeaderboardEntry } from '../../src/types';
 import CrewDetailModal from '../../src/components/CrewDetailModal';
 import HikerProfileModal from '../../src/components/HikerProfileModal';
+import LevelBadge from '../../src/components/LevelBadge';
+import { approximateXpFromFlagCount, xpProgress } from '../../src/services/xp';
 import { useLang } from '../../src/contexts/LangContext';
 import { t, summitName, type Lang } from '../../src/i18n/strings';
 
@@ -45,6 +47,7 @@ function HikerRow({ entry, rank, lang, onPress }: { entry: HikerLeaderboardEntry
   const initial = name.charAt(0).toUpperCase();
   const bg = entry.crew_color ?? avatarColor(entry.user_id);
   const ago = entry.last_flag_at ? Math.floor((Date.now() - new Date(entry.last_flag_at).getTime()) / 3_600_000) : null;
+  const { current: levelInfo } = xpProgress(approximateXpFromFlagCount(entry.total_flags));
   return (
     <TouchableOpacity style={styles.row} onPress={() => onPress(entry.user_id)} activeOpacity={0.75}>
       <View style={styles.rankCell}><RankNum rank={rank} /></View>
@@ -52,7 +55,10 @@ function HikerRow({ entry, rank, lang, onPress }: { entry: HikerLeaderboardEntry
         <Text style={styles.crewInitial}>{initial}</Text>
       </View>
       <View style={styles.rowBody}>
-        <Text style={styles.rowName}>{name}</Text>
+        <View style={styles.nameRow}>
+          <Text style={styles.rowName}>{name}</Text>
+          <LevelBadge info={levelInfo} lang={lang} variant="compact" size="sm" />
+        </View>
         <Text style={styles.rowSub}>{entry.crew_name ?? s.hikerSolo}{ago !== null ? ` · ${ago < 1 ? s.justNow : s.hoursAgo(ago)}` : ''}</Text>
       </View>
       <View style={styles.flagCell}>
@@ -374,6 +380,7 @@ const styles = StyleSheet.create({
   summitIcon: { width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.zinc100, alignItems: 'center', justifyContent: 'center' },
   summitIconText: { fontSize: 22 },
   rowBody: { flex: 1 },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' },
   rowName: { fontSize: 15, fontWeight: '600', color: '#1F2421' },
   rowSub: { fontSize: 12, color: Colors.zinc500, marginTop: 1 },
   flagCell: { alignItems: 'flex-end' },

@@ -15,6 +15,9 @@ import CrewTerritoryModal from '../../src/components/CrewTerritoryModal';
 import MyFlagsModal from '../../src/components/MyFlagsModal';
 import RivalsModal from '../../src/components/RivalsModal';
 import MountainGroupDetailModal from '../../src/components/MountainGroupDetailModal';
+import LevelBadge from '../../src/components/LevelBadge';
+import { fetchUserConquests, type ConquestEntry } from '../../src/services/conquests';
+import { xpForFlag, xpProgress, type XpProgress } from '../../src/services/xp';
 import { useLang } from '../../src/contexts/LangContext';
 import { t } from '../../src/i18n/strings';
 
@@ -171,6 +174,7 @@ export default function ProfileScreen() {
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('');
   const [savingName, setSavingName] = useState(false);
+  const [xpData, setXpData] = useState<XpProgress | null>(null);
 
   const loadProfile = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -186,6 +190,9 @@ export default function ProfileScreen() {
       } else {
         setCrewInviteCode(null);
       }
+      const conquests: ConquestEntry[] = await fetchUserConquests(user.id);
+      const totalXp = conquests.reduce((acc, c) => acc + xpForFlag(c.elevation_m), 0);
+      setXpData(xpProgress(totalXp));
     } catch (e) {
       console.error('[profile]', e);
     } finally {
@@ -314,6 +321,21 @@ export default function ProfileScreen() {
         </View>
 
         {userId && <StatsCard userId={userId} />}
+        {xpData && (
+          <View style={styles.xpCard}>
+            <Text style={styles.xpSectionTitle}>{s.xpSection}</Text>
+            <View style={styles.xpRow}>
+              <LevelBadge info={xpData.current} lang={lang} variant="full" size="md" />
+              <Text style={styles.xpPoints}>{s.xpPoints(xpData.xp)}</Text>
+            </View>
+            <View style={styles.xpBarBg}>
+              <View style={[styles.xpBarFill, { width: `${Math.round(xpData.fraction * 100)}%` as `${number}%`, backgroundColor: xpData.current.color }]} />
+            </View>
+            <Text style={styles.xpSub}>
+              {xpData.next ? s.xpToNext(xpData.xpNeeded) : s.xpMaxLevel}
+            </Text>
+          </View>
+        )}
         {userId && <StreakCard userId={userId} />}
         {userId && <MountainGroupProgress userId={userId} onGroupPress={setSelectedGroup} />}
         {userId && <AchievementGrid userId={userId} />}
@@ -452,6 +474,15 @@ const styles = StyleSheet.create({
   wishListArrow: { fontSize: 16, color: Colors.zinc500 },
   signOutBtn: { marginHorizontal: 20, marginTop: 24, paddingVertical: 14, backgroundColor: Colors.zinc100, borderRadius: 12, alignItems: 'center' },
   signOutText: { fontSize: 15, color: Colors.zinc800, fontWeight: '600' },
+
+  // XP / Level card
+  xpCard: { backgroundColor: Colors.white, marginTop: 16, paddingHorizontal: 20, paddingVertical: 16 },
+  xpSectionTitle: { fontSize: 14, fontWeight: '700', color: Colors.zinc500, marginBottom: 12, letterSpacing: 0.3 },
+  xpRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  xpPoints: { fontSize: 18, fontWeight: '800', color: Colors.zinc950 },
+  xpBarBg: { height: 8, backgroundColor: Colors.zinc100, borderRadius: 4, overflow: 'hidden', marginBottom: 8 },
+  xpBarFill: { height: 8, borderRadius: 4 },
+  xpSub: { fontSize: 12, color: Colors.zinc500, fontWeight: '500' },
 });
 
 const modal = StyleSheet.create({

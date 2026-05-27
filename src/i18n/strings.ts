@@ -341,6 +341,14 @@ const strings = {
     challengeSuccess: '도전장을 보냈습니다!',
     challengeError: '도전장 전송 실패',
     challengeNoCrew: '크루에 가입해야 도전장을 보낼 수 있습니다',
+
+    // XP & Levels
+    xpLevel: '레벨',
+    xpPoints: (n: number) => `${n} XP`,
+    xpToNext: (n: number) => `다음 레벨까지 ${n} XP`,
+    xpMaxLevel: '최고 레벨 달성!',
+    xpProgress: '경험치 진행도',
+    xpSection: '🏅 레벨 & 경험치',
   },
 
   en: {
@@ -683,6 +691,14 @@ const strings = {
     challengeSuccess: 'Challenge sent!',
     challengeError: 'Failed to send challenge',
     challengeNoCrew: 'Join a crew to send challenges',
+
+    // XP & Levels
+    xpLevel: 'Level',
+    xpPoints: (n: number) => `${n} XP`,
+    xpToNext: (n: number) => `${n} XP to next level`,
+    xpMaxLevel: 'Max level reached!',
+    xpProgress: 'XP Progress',
+    xpSection: '🏅 Level & XP',
   },
 
   ja: {
@@ -1025,6 +1041,14 @@ const strings = {
     challengeSuccess: '挑戦状を送りました！',
     challengeError: '挑戦状の送信に失敗しました',
     challengeNoCrew: 'クルーに参加して挑戦状を送りましょう',
+
+    // XP & Levels
+    xpLevel: 'レベル',
+    xpPoints: (n: number) => `${n} XP`,
+    xpToNext: (n: number) => `次のレベルまで${n} XP`,
+    xpMaxLevel: '最高レベル達成！',
+    xpProgress: 'XP進捗',
+    xpSection: '🏅 レベル・XP',
   },
 } as const;
 
