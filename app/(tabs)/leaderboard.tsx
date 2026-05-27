@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Colors } from '../../src/constants';
-import { fetchLeaderboardByPeriod, type LeaderboardPeriod } from '../../src/services/crews';
+import { fetchLeaderboardByPeriod, fetchUserProfile, type LeaderboardPeriod } from '../../src/services/crews';
 import { fetchHotSummits, type HotSummit } from '../../src/services/summits';
 import { fetchTopHikers } from '../../src/services/stats';
 import { supabase } from '../../src/services/supabase';
@@ -185,6 +185,26 @@ export default function LeaderboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedCrew, setSelectedCrew] = useState<CrewLeaderboardEntry | null>(null);
   const [selectedHiker, setSelectedHiker] = useState<string | null>(null);
+  const [myCrew, setMyCrew] = useState<CrewLeaderboardEntry | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then((res: { data: { user: { id: string } | null } }) => {
+      const user = res.data.user;
+      if (!user) return;
+      fetchUserProfile(user.id).then((profile) => {
+        if (!profile?.crew_id) return;
+        setMyCrew({
+          id: profile.crew_id,
+          name: profile.crew_name ?? '',
+          name_ko: profile.crew_name_ko,
+          color_hex: profile.crew_color_hex ?? Colors.green,
+          icon_type: 'ME',
+          flag_count: 0,
+          last_flag_at: null,
+        });
+      }).catch(() => null);
+    });
+  }, []);
 
   const loadCrews = useCallback(async (isRefresh = false, p?: LeaderboardPeriod) => {
     if (isRefresh) setRefreshing(true); else setLoading(true);
@@ -301,7 +321,7 @@ export default function LeaderboardScreen() {
           contentContainerStyle={topHikers.length === 0 ? { flex: 1 } : { paddingBottom: 32 }}
         />
       )}
-      <CrewDetailModal crew={selectedCrew} onClose={() => setSelectedCrew(null)} />
+      <CrewDetailModal crew={selectedCrew} myCrew={myCrew} onClose={() => setSelectedCrew(null)} />
       <HikerProfileModal userId={selectedHiker} onClose={() => setSelectedHiker(null)} />
     </View>
   );

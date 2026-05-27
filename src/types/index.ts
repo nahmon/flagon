@@ -121,6 +121,18 @@ export interface HikerLeaderboardEntry {
   last_flag_at: string | null;
 }
 
+export interface CrewChallenge {
+  id: string;
+  challenger_crew_id: string;
+  challenged_crew_id: string;
+  status: 'active' | 'completed';
+  starts_at: string;
+  ends_at: string;
+  created_at: string;
+  challenger_crew?: { id: string; name: string; name_ko: string | null; color_hex: string };
+  challenged_crew?: { id: string; name: string; name_ko: string | null; color_hex: string };
+}
+
 // Map marker with flag info
 export interface SummitWithFlag extends Summit {
   active_flag?: Flag & {
