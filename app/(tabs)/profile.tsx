@@ -16,6 +16,7 @@ import MyFlagsModal from '../../src/components/MyFlagsModal';
 import RivalsModal from '../../src/components/RivalsModal';
 import MountainGroupDetailModal from '../../src/components/MountainGroupDetailModal';
 import LevelBadge from '../../src/components/LevelBadge';
+import PersonalRecordsCard from '../../src/components/PersonalRecordsCard';
 import { fetchUserConquests, type ConquestEntry } from '../../src/services/conquests';
 import { xpForFlag, xpProgress, type XpProgress } from '../../src/services/xp';
 import { useLang } from '../../src/contexts/LangContext';
@@ -337,6 +338,7 @@ export default function ProfileScreen() {
           </View>
         )}
         {userId && <StreakCard userId={userId} />}
+        {userId && <PersonalRecordsCard userId={userId} />}
         {userId && <MountainGroupProgress userId={userId} onGroupPress={setSelectedGroup} />}
         {userId && <AchievementGrid userId={userId} />}
         {userId && <RecentHikesList userId={userId} />}

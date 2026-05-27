@@ -349,6 +349,17 @@ const strings = {
     xpMaxLevel: '최고 레벨 달성!',
     xpProgress: '경험치 진행도',
     xpSection: '🏅 레벨 & 경험치',
+
+    // Personal Records
+    prSection: '🏆 개인 기록',
+    prTotalConquests: '총 정복 수',
+    prTotalElevation: '총 누적 고도',
+    prHighestSummit: '최고 높이 정상',
+    prBestDay: '하루 최다 정복',
+    prBestDayCount: (n: number) => `${n}개`,
+    prFirstSummit: '첫 번째 정복',
+    prNoData: '아직 정복 기록이 없습니다',
+    prElevationM: (n: number) => `${n.toLocaleString()}m`,
   },
 
   en: {
@@ -699,6 +710,17 @@ const strings = {
     xpMaxLevel: 'Max level reached!',
     xpProgress: 'XP Progress',
     xpSection: '🏅 Level & XP',
+
+    // Personal Records
+    prSection: '🏆 Personal Records',
+    prTotalConquests: 'Total Conquests',
+    prTotalElevation: 'Total Elevation',
+    prHighestSummit: 'Highest Summit',
+    prBestDay: 'Best Day',
+    prBestDayCount: (n: number) => `${n} flags`,
+    prFirstSummit: 'First Conquest',
+    prNoData: 'No conquests yet',
+    prElevationM: (n: number) => `${n.toLocaleString()}m`,
   },
 
   ja: {
@@ -1049,6 +1071,17 @@ const strings = {
     xpMaxLevel: '最高レベル達成！',
     xpProgress: 'XP進捗',
     xpSection: '🏅 レベル・XP',
+
+    // Personal Records
+    prSection: '🏆 個人記録',
+    prTotalConquests: '総征服数',
+    prTotalElevation: '累積標高',
+    prHighestSummit: '最高峰',
+    prBestDay: '1日最多征服',
+    prBestDayCount: (n: number) => `${n}個`,
+    prFirstSummit: '初征服',
+    prNoData: 'まだ征服記録がありません',
+    prElevationM: (n: number) => `${n.toLocaleString()}m`,
   },
 } as const;
 
