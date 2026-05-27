@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Modal,
   ScrollView,
   StyleSheet,
@@ -10,6 +11,7 @@ import {
 } from 'react-native';
 import { Colors } from '../constants';
 import { fetchPublicProfile, PublicProfile } from '../services/stats';
+import { followUser, unfollowUser, isFollowing, fetchFollowCounts, FollowCounts } from '../services/follows';
 import { useLang } from '../contexts/LangContext';
 import { t } from '../i18n/strings';
 
@@ -46,17 +48,51 @@ export default function HikerProfileModal({ userId, onClose }: Props) {
   const [profile, setProfile] = useState<PublicProfile | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [following, setFollowing] = useState(false);
+  const [followCounts, setFollowCounts] = useState<FollowCounts>({ followers: 0, following: 0 });
+  const [followBusy, setFollowBusy] = useState(false);
 
   useEffect(() => {
     if (!userId) return;
     setLoading(true);
     setProfile(null);
     setError(null);
-    fetchPublicProfile(userId)
-      .then(setProfile)
+    setFollowing(false);
+    setFollowCounts({ followers: 0, following: 0 });
+
+    Promise.all([
+      fetchPublicProfile(userId),
+      isFollowing(userId),
+      fetchFollowCounts(userId),
+    ])
+      .then(([p, isF, counts]) => {
+        setProfile(p);
+        setFollowing(isF);
+        setFollowCounts(counts);
+      })
       .catch(() => setError(s.error))
       .finally(() => setLoading(false));
   }, [userId, s.error]);
+
+  const handleFollowToggle = async () => {
+    if (!userId || followBusy) return;
+    setFollowBusy(true);
+    try {
+      if (following) {
+        await unfollowUser(userId);
+        setFollowing(false);
+        setFollowCounts((c: FollowCounts) => ({ ...c, followers: Math.max(0, c.followers - 1) }));
+      } else {
+        await followUser(userId);
+        setFollowing(true);
+        setFollowCounts((c: FollowCounts) => ({ ...c, followers: c.followers + 1 }));
+      }
+    } catch {
+      Alert.alert(s.error, s.followError);
+    } finally {
+      setFollowBusy(false);
+    }
+  };
 
   const visible = !!userId;
   const bg = userId ? avatarColor(userId) : Colors.green;
@@ -84,11 +120,30 @@ export default function HikerProfileModal({ userId, onClose }: Props) {
                 <Text style={[styles.crewText, { color: Colors.zinc500 }]}>{s.hikerSolo}</Text>
               </View>
             )}
+            <View style={styles.followCountRow}>
+              <Text style={styles.followCountText}>{s.followersCount(followCounts.followers)}</Text>
+              <Text style={styles.followCountDot}>·</Text>
+              <Text style={styles.followCountText}>{s.followingCount(followCounts.following)}</Text>
+            </View>
           </View>
           <TouchableOpacity style={styles.closeBtn} onPress={onClose} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
             <Text style={styles.closeText}>✕</Text>
           </TouchableOpacity>
         </View>
+
+        {!loading && !error && profile && (
+          <View style={styles.followRow}>
+            <TouchableOpacity
+              style={[styles.followBtn, following && styles.followingBtn, followBusy && { opacity: 0.6 }]}
+              onPress={handleFollowToggle}
+              disabled={followBusy}
+            >
+              <Text style={[styles.followBtnText, following && styles.followingBtnText]}>
+                {following ? s.unfollow : s.follow}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         {loading && (
           <View style={styles.centered}>
@@ -139,19 +194,37 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: '70%',
+    maxHeight: '75%',
     paddingBottom: 32,
   },
   handle: { width: 40, height: 4, borderRadius: 2, backgroundColor: Colors.zinc200, alignSelf: 'center', marginTop: 10, marginBottom: 4 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 16, gap: 14 },
+  header: { flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 20, paddingVertical: 16, gap: 14 },
   avatar: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
   avatarText: { fontSize: 24, fontWeight: '800', color: Colors.white },
-  headerInfo: { flex: 1, gap: 6 },
+  headerInfo: { flex: 1, gap: 4 },
   name: { fontSize: 18, fontWeight: '700', color: Colors.zinc950 },
   crewBadge: { alignSelf: 'flex-start', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2 },
   crewText: { fontSize: 11, fontWeight: '600', color: Colors.white },
+  followCountRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
+  followCountText: { fontSize: 12, color: Colors.zinc500, fontWeight: '500' },
+  followCountDot: { fontSize: 12, color: Colors.zinc500 },
   closeBtn: { padding: 4 },
   closeText: { fontSize: 16, color: Colors.zinc500 },
+  followRow: { paddingHorizontal: 20, paddingBottom: 12 },
+  followBtn: {
+    backgroundColor: Colors.green,
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 28,
+    alignSelf: 'flex-start',
+  },
+  followingBtn: {
+    backgroundColor: Colors.zinc100,
+    borderWidth: 1,
+    borderColor: Colors.zinc200,
+  },
+  followBtnText: { fontSize: 14, fontWeight: '700', color: Colors.white },
+  followingBtnText: { color: Colors.zinc800 },
   centered: { paddingVertical: 40, alignItems: 'center' },
   errorText: { fontSize: 15, color: Colors.zinc500 },
   body: { paddingHorizontal: 20 },

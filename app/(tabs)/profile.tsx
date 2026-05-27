@@ -17,8 +17,10 @@ import RivalsModal from '../../src/components/RivalsModal';
 import MountainGroupDetailModal from '../../src/components/MountainGroupDetailModal';
 import LevelBadge from '../../src/components/LevelBadge';
 import PersonalRecordsCard from '../../src/components/PersonalRecordsCard';
+import FollowingListModal from '../../src/components/FollowingListModal';
 import { fetchUserConquests, type ConquestEntry } from '../../src/services/conquests';
 import { xpForFlag, xpProgress, type XpProgress } from '../../src/services/xp';
+import { fetchFollowCounts, type FollowCounts } from '../../src/services/follows';
 import { useLang } from '../../src/contexts/LangContext';
 import { t } from '../../src/i18n/strings';
 
@@ -171,6 +173,8 @@ export default function ProfileScreen() {
   const [showTerritory, setShowTerritory] = useState(false);
   const [showMyFlags, setShowMyFlags] = useState(false);
   const [showRivals, setShowRivals] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
+  const [followCounts, setFollowCounts] = useState<FollowCounts>({ followers: 0, following: 0 });
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('');
@@ -194,6 +198,8 @@ export default function ProfileScreen() {
       const conquests: ConquestEntry[] = await fetchUserConquests(user.id);
       const totalXp = conquests.reduce((acc, c) => acc + xpForFlag(c.elevation_m), 0);
       setXpData(xpProgress(totalXp));
+      const counts = await fetchFollowCounts(user.id);
+      setFollowCounts(counts);
     } catch (e) {
       console.error('[profile]', e);
     } finally {
@@ -277,8 +283,15 @@ export default function ProfileScreen() {
               <Text style={styles.displayName}>{profile?.display_name ?? 'User'} <Text style={styles.editHint}>✏</Text></Text>
             </TouchableOpacity>
           )}
-          <View style={styles.statChip}>
-            <Text style={styles.statChipText}>{s.flagCount(profile?.flag_count ?? 0)}</Text>
+          <View style={styles.headerStatsRow}>
+            <View style={styles.statChip}>
+              <Text style={styles.statChipText}>{s.flagCount(profile?.flag_count ?? 0)}</Text>
+            </View>
+            <TouchableOpacity style={styles.followChip} onPress={() => setShowFollowing(true)} activeOpacity={0.7}>
+              <Text style={styles.followChipText}>{s.followingCount(followCounts.following)}</Text>
+              <Text style={styles.followChipSep}>·</Text>
+              <Text style={styles.followChipText}>{s.followersCount(followCounts.followers)}</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -355,6 +368,12 @@ export default function ProfileScreen() {
           <Text style={styles.wishListArrow}>→</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowFollowing(true)} activeOpacity={0.8}>
+          <Text style={styles.wishListIcon}>👥</Text>
+          <Text style={styles.wishListLabel}>{s.followSection}</Text>
+          <Text style={styles.wishListArrow}>→</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowConquests(true)} activeOpacity={0.8}>
           <Text style={styles.wishListIcon}>🏆</Text>
           <Text style={styles.wishListLabel}>{s.conquestTimelineBtn}</Text>
@@ -402,6 +421,13 @@ export default function ProfileScreen() {
           onClose={() => setShowTerritory(false)}
         />
       )}
+      {userId && (
+        <FollowingListModal
+          visible={showFollowing}
+          userId={userId}
+          onClose={() => setShowFollowing(false)}
+        />
+      )}
     </View>
   );
 }
@@ -436,15 +462,25 @@ const styles = StyleSheet.create({
   nameSaveText: { fontSize: 13, fontWeight: '700', color: Colors.green },
   nameCancelBtn: { paddingHorizontal: 4, paddingVertical: 5 },
   nameCancelText: { fontSize: 13, color: 'rgba(255,255,255,0.7)' },
+  headerStatsRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6, flexWrap: 'wrap' },
   statChip: {
-    marginTop: 6,
     backgroundColor: 'rgba(255,255,255,0.18)',
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 4,
-    alignSelf: 'flex-start',
   },
   statChipText: { fontSize: 13, color: Colors.white, fontWeight: '600' },
+  followChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  followChipText: { fontSize: 12, color: 'rgba(255,255,255,0.85)', fontWeight: '500' },
+  followChipSep: { fontSize: 12, color: 'rgba(255,255,255,0.5)' },
   section: { backgroundColor: Colors.white, marginTop: 16, paddingHorizontal: 20, paddingVertical: 16 },
   sectionTitle: { fontSize: 12, fontWeight: '700', color: Colors.zinc500, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.8 },
   crewCard: { flexDirection: 'row', alignItems: 'center', gap: 12 },

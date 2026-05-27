@@ -360,6 +360,20 @@ const strings = {
     prFirstSummit: '첫 번째 정복',
     prNoData: '아직 정복 기록이 없습니다',
     prElevationM: (n: number) => `${n.toLocaleString()}m`,
+
+    // Social Follow
+    follow: '팔로우',
+    unfollow: '팔로잉',
+    followers: '팔로워',
+    following: '팔로잉',
+    followingList: '팔로잉 목록',
+    followSuccess: '팔로우했습니다',
+    unfollowSuccess: '팔로우를 취소했습니다',
+    followError: '팔로우 처리에 실패했습니다',
+    followersCount: (n: number) => `팔로워 ${n}명`,
+    followingCount: (n: number) => `팔로잉 ${n}명`,
+    noFollowing: '아직 팔로우한 산악인이 없습니다',
+    followSection: '👥 팔로잉',
   },
 
   en: {
@@ -721,6 +735,20 @@ const strings = {
     prFirstSummit: 'First Conquest',
     prNoData: 'No conquests yet',
     prElevationM: (n: number) => `${n.toLocaleString()}m`,
+
+    // Social Follow
+    follow: 'Follow',
+    unfollow: 'Following',
+    followers: 'Followers',
+    following: 'Following',
+    followingList: 'Following',
+    followSuccess: 'Now following',
+    unfollowSuccess: 'Unfollowed',
+    followError: 'Failed to update follow',
+    followersCount: (n: number) => `${n} follower${n === 1 ? '' : 's'}`,
+    followingCount: (n: number) => `${n} following`,
+    noFollowing: 'Not following anyone yet',
+    followSection: '👥 Following',
   },
 
   ja: {
@@ -1082,6 +1110,20 @@ const strings = {
     prFirstSummit: '初征服',
     prNoData: 'まだ征服記録がありません',
     prElevationM: (n: number) => `${n.toLocaleString()}m`,
+
+    // Social Follow
+    follow: 'フォロー',
+    unfollow: 'フォロー中',
+    followers: 'フォロワー',
+    following: 'フォロー中',
+    followingList: 'フォロー中',
+    followSuccess: 'フォローしました',
+    unfollowSuccess: 'フォローを解除しました',
+    followError: 'フォローの更新に失敗しました',
+    followersCount: (n: number) => `フォロワー${n}人`,
+    followingCount: (n: number) => `${n}人フォロー中`,
+    noFollowing: 'まだ誰もフォローしていません',
+    followSection: '👥 フォロー中',
   },
 } as const;
 
