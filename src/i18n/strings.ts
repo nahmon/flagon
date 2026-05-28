@@ -77,6 +77,11 @@ const strings = {
     hikerLabel: (id: string) => `산악인 #${id}`,
     kudos: '응원',
     kudosCount: (n: number) => `${n}`,
+    feedAll: '전체',
+    feedFollowing: '팔로잉',
+    feedCrew: '내 크루',
+    feedEmptyFollowing: '팔로우한 산악인의 활동이 없습니다',
+    feedEmptyCrew: '크루 활동이 없습니다',
 
     // Leaderboard screen
     leaderboard: '리더보드',
@@ -452,6 +457,11 @@ const strings = {
     hikerLabel: (id: string) => `Hiker #${id}`,
     kudos: 'Fire',
     kudosCount: (n: number) => `${n}`,
+    feedAll: 'All',
+    feedFollowing: 'Following',
+    feedCrew: 'My Crew',
+    feedEmptyFollowing: 'No activity from hikers you follow',
+    feedEmptyCrew: 'No crew activity yet',
 
     // Leaderboard screen
     leaderboard: 'Leaderboard',
@@ -827,6 +837,11 @@ const strings = {
     hikerLabel: (id: string) => `登山者 #${id}`,
     kudos: '応援',
     kudosCount: (n: number) => `${n}`,
+    feedAll: 'すべて',
+    feedFollowing: 'フォロー中',
+    feedCrew: '自分のクルー',
+    feedEmptyFollowing: 'フォロー中の登山者の活動がありません',
+    feedEmptyCrew: 'クルーの活動がありません',
 
     // Leaderboard screen
     leaderboard: 'リーダーボード',

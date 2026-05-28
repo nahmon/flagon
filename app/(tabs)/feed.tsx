@@ -1,139 +1,76 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Animated, FlatList, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, RefreshControl } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, RefreshControl } from 'react-native';
 import { Colors } from '../../src/constants';
 import { supabase } from '../../src/services/supabase';
+import { getUserCrewId } from '../../src/services/flags';
 import { useLang } from '../../src/contexts/LangContext';
-import { t, summitName, type Lang } from '../../src/i18n/strings';
+import { t } from '../../src/i18n/strings';
 import DailyChallengeCard from '../../src/components/DailyChallengeCard';
-import { toggleKudos, getKudosCount, hasGivenKudos } from '../../src/services/kudos';
 import HikerProfileModal from '../../src/components/HikerProfileModal';
+import FeedRow, { type FeedItem } from '../../src/components/FeedRow';
 
-interface FeedItem {
-  id: string;
-  planted_at: string;
-  user_id: string;
-  display_name: string | null;
-  summit: { name_ko: string; name_en: string | null; name_ja: string | null; elevation_m: number } | null;
-  crew: { name_ko: string | null; color_hex: string } | null;
+type FeedFilter = 'all' | 'following' | 'crew';
+
+interface UserCtx { id: string; crewId: string | null; followingIds: string[] }
+
+const BASE_SELECT = `id, planted_at, user_id,
+  planted_by:users(display_name),
+  summit:summits(name_ko, name_en, name_ja, elevation_m),
+  crew:crews(name_ko, color_hex)`;
+
+function toFeedItem(row: Record<string, unknown>): FeedItem {
+  const pb = row.planted_by as { display_name?: string | null } | null;
+  return {
+    id: row.id as string,
+    planted_at: row.planted_at as string,
+    user_id: row.user_id as string,
+    display_name: pb?.display_name ?? null,
+    summit: row.summit as FeedItem['summit'],
+    crew: row.crew as FeedItem['crew'],
+  };
 }
 
-function timeAgo(isoString: string, lang: Lang): string {
-  const s = t(lang);
-  const diff = Date.now() - new Date(isoString).getTime();
-  const mins = Math.floor(diff / 60_000);
-  if (mins < 1) return s.justNow;
-  if (mins < 60) return s.minutesAgo(mins);
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return s.hoursAgo(hours);
-  return s.daysAgo(Math.floor(hours / 24));
-}
-
-function avatarColor(uid: string): string {
-  const colors = [Colors.green, Colors.crewMe, Colors.crewNK, Colors.orange, Colors.greenLight];
-  return colors[uid.charCodeAt(0) % colors.length];
-}
-
-function avatarInitial(name: string | null, uid: string): string {
-  if (name && name.length > 0) return name.charAt(0).toUpperCase();
-  return uid.charAt(0).toUpperCase();
-}
-
-async function fetchFeed(): Promise<FeedItem[]> {
-  const { data, error } = await supabase
-    .from('flags')
-    .select(`
-      id,
-      planted_at,
-      user_id,
-      planted_by:users(display_name),
-      summit:summits(name_ko, name_en, name_ja, elevation_m),
-      crew:crews(name_ko, color_hex)
-    `)
+async function fetchFeed(filter: FeedFilter, ctx: UserCtx | null): Promise<FeedItem[]> {
+  if (filter === 'following') {
+    if (!ctx || ctx.followingIds.length === 0) return [];
+    const { data, error } = await supabase.from('flags')
+      .select(BASE_SELECT)
+      .eq('is_active', true)
+      .in('user_id', ctx.followingIds)
+      .order('planted_at', { ascending: false })
+      .limit(40);
+    if (error) throw error;
+    return (data ?? []).map((r) => toFeedItem(r as Record<string, unknown>));
+  }
+  if (filter === 'crew') {
+    if (!ctx?.crewId) return [];
+    const { data, error } = await supabase.from('flags')
+      .select(BASE_SELECT)
+      .eq('is_active', true)
+      .eq('crew_id', ctx.crewId)
+      .order('planted_at', { ascending: false })
+      .limit(40);
+    if (error) throw error;
+    return (data ?? []).map((r) => toFeedItem(r as Record<string, unknown>));
+  }
+  const { data, error } = await supabase.from('flags')
+    .select(BASE_SELECT)
     .eq('is_active', true)
     .order('planted_at', { ascending: false })
     .limit(40);
   if (error) throw error;
-
-  return (data ?? []).map((row: any) => ({
-    id: row.id,
-    planted_at: row.planted_at,
-    user_id: row.user_id,
-    display_name: row.planted_by?.display_name ?? null,
-    summit: row.summit ?? null,
-    crew: row.crew ?? null,
-  }));
+  return (data ?? []).map((r) => toFeedItem(r as Record<string, unknown>));
 }
 
-function KudosButton({ itemId }: { itemId: string }) {
-  const [count, setCount] = useState(0);
-  const [given, setGiven] = useState(false);
-  const scale = new Animated.Value(1);
-
-  useEffect(() => {
-    Promise.all([getKudosCount(itemId), hasGivenKudos(itemId)]).then(([c, g]) => {
-      setCount(c);
-      setGiven(g);
-    });
-  }, [itemId]);
-
-  const onPress = async () => {
-    Animated.sequence([
-      Animated.timing(scale, { toValue: 1.4, duration: 100, useNativeDriver: true }),
-      Animated.timing(scale, { toValue: 1, duration: 100, useNativeDriver: true }),
-    ]).start();
-    const result = await toggleKudos(itemId);
-    setCount(result.count);
-    setGiven(result.given);
-  };
-
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.kudosBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-      <Animated.Text style={[styles.kudosEmoji, { transform: [{ scale }], opacity: given ? 1 : 0.35 }]}>🔥</Animated.Text>
-      {count > 0 && <Text style={[styles.kudosCount, given && styles.kudosCountActive]}>{count}</Text>}
-    </TouchableOpacity>
-  );
-}
-
-function FeedRow({ item, onAvatarPress }: { item: FeedItem; onAvatarPress: (uid: string) => void }) {
-  const { lang } = useLang();
-  const s = t(lang);
-  const avatarBg = avatarColor(item.user_id);
-  const name = item.display_name ?? s.hikerLabel(item.user_id.slice(0, 6));
-  const initial = avatarInitial(item.display_name, item.user_id);
-  const sName = item.summit ? summitName(item.summit, lang) : s.unknownSummit;
-
-  return (
-    <View style={styles.row}>
-      <TouchableOpacity onPress={() => onAvatarPress(item.user_id)} activeOpacity={0.75}>
-        <View style={[styles.avatar, { backgroundColor: avatarBg }]}>
-          <Text style={styles.avatarText}>{initial}</Text>
-        </View>
-      </TouchableOpacity>
-      <View style={styles.rowBody}>
-        <View style={styles.rowTop}>
-          <Text style={styles.userName}>{name}</Text>
-          <Text style={styles.timeAgo}>{timeAgo(item.planted_at, lang)}</Text>
-        </View>
-        <Text style={styles.summitLine}>
-          <Text style={styles.summitName}>{sName}</Text>
-          {item.summit ? <Text style={styles.elevation}> {item.summit.elevation_m}m</Text> : null}
-        </Text>
-        {item.crew ? (
-          <View style={[styles.crewBadge, { backgroundColor: item.crew.color_hex }]}>
-            <Text style={styles.crewText}>{item.crew.name_ko ?? s.crew}</Text>
-          </View>
-        ) : (
-          <View style={[styles.crewBadge, { backgroundColor: Colors.zinc200 }]}>
-            <Text style={[styles.crewText, { color: Colors.zinc500 }]}>{s.solo}</Text>
-          </View>
-        )}
-      </View>
-      <View style={styles.rowRight}>
-        <KudosButton itemId={item.id} />
-        <Text style={styles.flagEmoji}>🚩</Text>
-      </View>
-    </View>
-  );
+async function loadUserCtx(): Promise<UserCtx | null> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const [crewId, followData] = await Promise.all([
+    getUserCrewId(),
+    supabase.from('user_follows').select('followee_id').eq('follower_id', user.id),
+  ]);
+  const followingIds = ((followData.data ?? []) as { followee_id: string }[]).map((f) => f.followee_id);
+  return { id: user.id, crewId, followingIds };
 }
 
 export default function FeedScreen() {
@@ -143,10 +80,16 @@ export default function FeedScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedHiker, setSelectedHiker] = useState<string | null>(null);
+  const [filter, setFilter] = useState<FeedFilter>('all');
+  const [userCtx, setUserCtx] = useState<UserCtx | null>(null);
+
+  useEffect(() => {
+    loadUserCtx().then(setUserCtx).catch(() => setUserCtx(null));
+  }, []);
 
   const load = useCallback(async () => {
     try {
-      const data = await fetchFeed();
+      const data = await fetchFeed(filter, userCtx);
       setItems(data);
     } catch (e) {
       console.error('[feed]', e);
@@ -154,50 +97,70 @@ export default function FeedScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [filter, userCtx]);
 
   useEffect(() => {
+    setLoading(true);
     load();
-    const channel = supabase
-      .channel('feed-flags')
+    if (filter !== 'all') return;
+    const ch = supabase.channel('feed-flags')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'flags' }, () => load())
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [load]);
+    return () => { supabase.removeChannel(ch); };
+  }, [load, filter]);
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    load();
-  }, [load]);
+  const onRefresh = useCallback(() => { setRefreshing(true); load(); }, [load]);
 
-  if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={Colors.green} />
-      </View>
-    );
-  }
+  const FILTERS: { key: FeedFilter; label: string }[] = [
+    { key: 'all', label: s.feedAll },
+    { key: 'following', label: s.feedFollowing },
+    { key: 'crew', label: s.feedCrew },
+  ];
+
+  const emptyText = filter === 'following' ? s.feedEmptyFollowing
+    : filter === 'crew' ? s.feedEmptyCrew
+    : s.noFeed;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>{s.activityFeed}</Text>
-      <FlatList
-        data={items}
-        keyExtractor={(item: FeedItem) => item.id}
-        renderItem={({ item }: { item: FeedItem }) => (
-          <FeedRow item={item} onAvatarPress={setSelectedHiker} />
-        )}
-        contentContainerStyle={styles.list}
-        ListHeaderComponent={<DailyChallengeCard />}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.green} />}
-        ListEmptyComponent={
-          <View style={styles.empty}>
-            <Text style={styles.emptyText}>{s.noFeed}</Text>
-            <Text style={styles.emptyHint}>{s.noFeedDesc}</Text>
-          </View>
-        }
-      />
+      <View style={styles.topBar}>
+        <Text style={styles.header}>{s.activityFeed}</Text>
+        <View style={styles.filterRow}>
+          {FILTERS.map((f) => (
+            <TouchableOpacity
+              key={f.key}
+              style={[styles.pill, filter === f.key && styles.pillActive]}
+              onPress={() => setFilter(f.key)}
+              activeOpacity={0.75}
+            >
+              <Text style={[styles.pillLabel, filter === f.key && styles.pillLabelActive]}>{f.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {loading ? (
+        <View style={styles.centered}><ActivityIndicator size="large" color={Colors.green} /></View>
+      ) : (
+        <FlatList
+          data={items}
+          keyExtractor={(item: FeedItem) => item.id}
+          renderItem={({ item }: { item: FeedItem }) => (
+            <FeedRow item={item} onAvatarPress={setSelectedHiker} />
+          )}
+          contentContainerStyle={styles.list}
+          ListHeaderComponent={filter === 'all' ? <DailyChallengeCard /> : null}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.green} />}
+          ListEmptyComponent={
+            <View style={styles.empty}>
+              <Text style={styles.emptyText}>{emptyText}</Text>
+              {filter === 'all' && <Text style={styles.emptyHint}>{s.noFeedDesc}</Text>}
+            </View>
+          }
+        />
+      )}
+
       <HikerProfileModal userId={selectedHiker} onClose={() => setSelectedHiker(null)} />
     </View>
   );
@@ -206,55 +169,35 @@ export default function FeedScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.cream },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  topBar: {
+    backgroundColor: Colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.zinc200,
+    paddingTop: 60,
+    paddingBottom: 12,
+  },
   header: {
     fontSize: 22,
     fontWeight: '700',
     color: Colors.zinc950,
     paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 16,
-    backgroundColor: Colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.zinc200,
+    paddingBottom: 12,
   },
-  list: { paddingVertical: 8 },
-  row: {
+  filterRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.white,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 12,
+    gap: 8,
+    paddingHorizontal: 20,
   },
-  avatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
+  pill: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: Colors.zinc100,
   },
-  avatarText: { fontSize: 18, fontWeight: '700', color: Colors.white },
-  rowBody: { flex: 1, gap: 4 },
-  rowTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  userName: { fontSize: 14, fontWeight: '600', color: Colors.zinc800 },
-  timeAgo: { fontSize: 12, color: Colors.zinc500 },
-  summitLine: { fontSize: 15 },
-  summitName: { fontWeight: '700', color: Colors.zinc950 },
-  elevation: { color: Colors.zinc500 },
-  crewBadge: {
-    alignSelf: 'flex-start',
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    marginTop: 2,
-  },
-  crewText: { fontSize: 11, fontWeight: '600', color: Colors.white },
-  rowRight: { alignItems: 'center', gap: 6 },
-  kudosBtn: { alignItems: 'center' },
-  kudosEmoji: { fontSize: 20 },
-  kudosCount: { fontSize: 11, fontWeight: '600', color: Colors.zinc500 },
-  kudosCountActive: { color: Colors.orange ?? '#F97316' },
-  flagEmoji: { fontSize: 20 },
+  pillActive: { backgroundColor: Colors.green },
+  pillLabel: { fontSize: 13, fontWeight: '600', color: Colors.zinc500 },
+  pillLabelActive: { color: Colors.white },
+  list: { paddingVertical: 8 },
   separator: { height: 1, backgroundColor: Colors.zinc100 },
   empty: { alignItems: 'center', paddingTop: 80, gap: 8 },
   emptyText: { fontSize: 17, fontWeight: '600', color: Colors.zinc800 },
