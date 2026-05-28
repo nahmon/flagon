@@ -379,6 +379,25 @@ const strings = {
     followingCount: (n: number) => `팔로잉 ${n}명`,
     noFollowing: '아직 팔로우한 산악인이 없습니다',
     followSection: '👥 팔로잉',
+
+    // Summit conditions
+    condTitle: '등산로 현황',
+    condBtn: (n: number) => n > 0 ? `⛅ 현황 ${n}` : '⛅ 현황',
+    condReport: '+ 현재 상태 신고',
+    condCancelReport: '취소',
+    condSelectType: '현재 상태를 선택하세요',
+    condClear: '맑음',
+    condMuddy: '진흙',
+    condSnowy: '눈',
+    condIcy: '빙판',
+    condDangerous: '위험',
+    condNotePlaceholder: '추가 정보 (선택사항, 최대 80자)',
+    condSubmit: '제출',
+    condExpiresIn: (h: number) => `${h}시간 후 만료`,
+    condDeleteTitle: '신고 삭제',
+    condDeleteBody: '이 현황 신고를 삭제하시겠습니까?',
+    condEmpty: '현황 신고 없음',
+    condEmptyDesc: '최근 48시간 내 현황 신고가 없습니다.\n첫 번째 신고를 남겨보세요!',
   },
 
   en: {
@@ -759,6 +778,25 @@ const strings = {
     followingCount: (n: number) => `${n} following`,
     noFollowing: 'Not following anyone yet',
     followSection: '👥 Following',
+
+    // Summit conditions
+    condTitle: 'Trail Conditions',
+    condBtn: (n: number) => n > 0 ? `⛅ Conditions ${n}` : '⛅ Conditions',
+    condReport: '+ Report Conditions',
+    condCancelReport: 'Cancel',
+    condSelectType: 'Select current conditions',
+    condClear: 'Clear',
+    condMuddy: 'Muddy',
+    condSnowy: 'Snowy',
+    condIcy: 'Icy',
+    condDangerous: 'Dangerous',
+    condNotePlaceholder: 'Optional note (max 80 chars)',
+    condSubmit: 'Submit',
+    condExpiresIn: (h: number) => `Expires in ${h}h`,
+    condDeleteTitle: 'Delete Report',
+    condDeleteBody: 'Delete this conditions report?',
+    condEmpty: 'No conditions reported',
+    condEmptyDesc: 'No reports in the last 48 hours.\nBe the first to report!',
   },
 
   ja: {
@@ -1139,6 +1177,25 @@ const strings = {
     followingCount: (n: number) => `${n}人フォロー中`,
     noFollowing: 'まだ誰もフォローしていません',
     followSection: '👥 フォロー中',
+
+    // Summit conditions
+    condTitle: '登山道の状況',
+    condBtn: (n: number) => n > 0 ? `⛅ 状況 ${n}` : '⛅ 状況',
+    condReport: '+ 状況を報告',
+    condCancelReport: 'キャンセル',
+    condSelectType: '現在の状況を選択',
+    condClear: '晴れ',
+    condMuddy: '泥濘',
+    condSnowy: '積雪',
+    condIcy: '凍結',
+    condDangerous: '危険',
+    condNotePlaceholder: '補足情報（任意、最大80文字）',
+    condSubmit: '送信',
+    condExpiresIn: (h: number) => `${h}時間後に失効`,
+    condDeleteTitle: '報告を削除',
+    condDeleteBody: 'この状況報告を削除しますか？',
+    condEmpty: '状況報告なし',
+    condEmptyDesc: '過去48時間の報告がありません。\n最初の報告を残しましょう！',
   },
 } as const;
 

@@ -12,8 +12,10 @@ import { loadNote, SummitNote } from '../services/summitNotes';
 import SummitNoteModal from './SummitNoteModal';
 import SummitRatingModal from './SummitRatingModal';
 import SummitTipsModal from './SummitTipsModal';
+import SummitConditionsModal from './SummitConditionsModal';
 import { fetchSummitRatingAggregate, getUserRatingForSummit } from '../services/ratings';
 import { loadTips } from '../services/summitTips';
+import { loadConditions, dominantCondition, CONDITION_META } from '../services/conditions';
 import { useLang } from '../contexts/LangContext';
 import { t, summitName } from '../i18n/strings';
 
@@ -48,14 +50,30 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
   const [myRating, setMyRating] = useState<SummitRating | null>(null);
   const [tipsModalVisible, setTipsModalVisible] = useState(false);
   const [tipCount, setTipCount] = useState(0);
+  const [conditionsModalVisible, setConditionsModalVisible] = useState(false);
+  const [conditionCount, setConditionCount] = useState(0);
+  const [conditionIcon, setConditionIcon] = useState<string | null>(null);
 
   const loadRatings = useCallback((id: string) => {
     fetchSummitRatingAggregate(id).then(setRatingAggregate).catch(() => {});
     getUserRatingForSummit(id).then(setMyRating).catch(() => {});
   }, []);
 
+  const loadConditionSummary = useCallback((id: string) => {
+    loadConditions(id).then(reports => {
+      setConditionCount(reports.length);
+      const dom = dominantCondition(reports);
+      setConditionIcon(dom ? CONDITION_META[dom].icon : null);
+    }).catch(() => {});
+  }, []);
+
   useEffect(() => {
-    if (!summit) { setHistory([]); setBookmarked(false); setNote(null); setRatingAggregate(null); setMyRating(null); setTipCount(0); return; }
+    if (!summit) {
+      setHistory([]); setBookmarked(false); setNote(null);
+      setRatingAggregate(null); setMyRating(null); setTipCount(0);
+      setConditionCount(0); setConditionIcon(null);
+      return;
+    }
     setLoading(true);
     fetchSummitFlagHistory(summit.id)
       .then(setHistory)
@@ -65,7 +83,8 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
     loadNote(summit.id).then(setNote).catch(() => {});
     loadRatings(summit.id);
     loadTips(summit.id).then(tips => setTipCount(tips.length)).catch(() => {});
-  }, [summit?.id, loadRatings]);
+    loadConditionSummary(summit.id);
+  }, [summit?.id, loadRatings, loadConditionSummary]);
 
   const handleBookmark = useCallback(async () => {
     if (!summit) return;
@@ -202,6 +221,26 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
           <Text style={styles.tipsBtnTxt}>{s.tipsBtn(tipCount)}</Text>
           <Text style={styles.tipsArrow}>›</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.tipsBar} onPress={() => setConditionsModalVisible(true)} activeOpacity={0.7}>
+          <Text style={styles.tipsBtnTxt}>
+            {conditionIcon ? `${conditionIcon} ` : ''}{s.condBtn(conditionCount)}
+          </Text>
+          <Text style={styles.tipsArrow}>›</Text>
+        </TouchableOpacity>
+
+        {summit && (
+          <SummitConditionsModal
+            visible={conditionsModalVisible}
+            summitId={summit.id}
+            summitName={summitName(summit, lang)}
+            onClose={() => setConditionsModalVisible(false)}
+            onCountChange={(n) => {
+              setConditionCount(n);
+              loadConditionSummary(summit.id);
+            }}
+          />
+        )}
 
         {summit && (
           <SummitTipsModal
