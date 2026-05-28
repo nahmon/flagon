@@ -10,6 +10,7 @@ import SummitFilterSheet, {
 } from '../../src/components/SummitFilterSheet';
 import MapStyleToggle from '../../src/components/MapStyleToggle';
 import NearBySummitsList from '../../src/components/NearBySummitsList';
+import HikeStatsHUD from '../../src/components/HikeStatsHUD';
 import * as Location from 'expo-location';
 import { Colors, MAP, GPS } from '../../src/constants';
 import { type MapStyleKey, loadMapStyle, saveMapStyle } from '../../src/services/mapStyle';
@@ -403,6 +404,8 @@ export default function MapScreen() {
           setDetailSummit(summit);
         }}
       />
+
+      <HikeStatsHUD />
 
       {/* Summit tap info card */}
       {selectedSummit && (phase === 'idle' || phase === 'hiking') ? (
