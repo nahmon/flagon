@@ -405,6 +405,10 @@ const strings = {
     hikeStatsPace: '페이스',
     hikeStatsPaceUnit: 'min/km',
     hikeStatsKm: (n: string) => `${n} km`,
+
+    // Flag expiry reminders
+    flagExpiryNotifTitle: (name: string) => `${name} 깃발이 곧 만료됩니다 🚩`,
+    flagExpiryNotifBody: '24시간 내에 깃발이 만료됩니다. 재정복하러 가세요!',
   },
 
   en: {
@@ -811,6 +815,10 @@ const strings = {
     hikeStatsPace: 'Pace',
     hikeStatsPaceUnit: 'min/km',
     hikeStatsKm: (n: string) => `${n} km`,
+
+    // Flag expiry reminders
+    flagExpiryNotifTitle: (name: string) => `${name} flag expiring soon 🚩`,
+    flagExpiryNotifBody: 'Your flag expires in 24 hours. Head back to reclaim it!',
   },
 
   ja: {
@@ -1217,6 +1225,10 @@ const strings = {
     hikeStatsPace: 'ペース',
     hikeStatsPaceUnit: 'min/km',
     hikeStatsKm: (n: string) => `${n} km`,
+
+    // Flag expiry reminders
+    flagExpiryNotifTitle: (name: string) => `${name}の旗がまもなく失効します 🚩`,
+    flagExpiryNotifBody: '24時間以内に旗が失効します。再征服しに行こう！',
   },
 } as const;
 

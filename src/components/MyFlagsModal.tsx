@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { Colors } from '../constants';
 import { fetchMyActiveFlags, MyActiveFlag } from '../services/myFlags';
+import { scheduleAllFlagExpiryNotifications } from '../services/notifications';
 import { useLang } from '../contexts/LangContext';
 import { t, summitName } from '../i18n/strings';
 
@@ -78,6 +79,7 @@ export default function MyFlagsModal({ visible, onClose }: Props) {
     try {
       const data = await fetchMyActiveFlags();
       setFlags(data);
+      scheduleAllFlagExpiryNotifications(data).catch(() => {});
     } catch {
       setFlags([]);
     } finally {

@@ -129,6 +129,42 @@ export async function notifySummitVerified(summitName: string): Promise<void> {
   });
 }
 
+const FLAG_EXPIRY_NOTIF_PREFIX = 'flag-expiry-';
+
+export async function scheduleAllFlagExpiryNotifications(
+  flags: Array<{ id: string; summit_name_ko: string; expires_at: string }>,
+): Promise<void> {
+  // Cancel all previously scheduled expiry reminders
+  const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+  await Promise.all(
+    scheduled
+      .filter(n => n.identifier.startsWith(FLAG_EXPIRY_NOTIF_PREFIX))
+      .map(n => Notifications.cancelScheduledNotificationAsync(n.identifier)),
+  );
+
+  const now = Date.now();
+  for (const flag of flags) {
+    const expiresMs = new Date(flag.expires_at).getTime();
+    const reminderMs = expiresMs - 24 * 60 * 60 * 1000; // 24h before expiry
+    if (reminderMs <= now) continue; // already within 24h window or expired — skip
+
+    await Notifications.scheduleNotificationAsync({
+      identifier: `${FLAG_EXPIRY_NOTIF_PREFIX}${flag.id}`,
+      content: {
+        title: `${flag.summit_name_ko} 깃발이 곧 만료됩니다 🚩`,
+        body: '24시간 내에 깃발이 만료됩니다. 재정복하러 가세요!',
+        sound: 'default',
+        data: { type: 'flag_expiry', flagId: flag.id },
+        ...(Platform.OS === 'android' && { channelId: CHANNEL_ID }),
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DATE,
+        date: new Date(reminderMs),
+      },
+    });
+  }
+}
+
 export async function deliverPendingNotifications(): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
