@@ -19,6 +19,7 @@ import LevelBadge from '../../src/components/LevelBadge';
 import PersonalRecordsCard from '../../src/components/PersonalRecordsCard';
 import FollowingListModal from '../../src/components/FollowingListModal';
 import { fetchUserConquests, type ConquestEntry } from '../../src/services/conquests';
+import { fetchStreak } from '../../src/services/streaks';
 import { xpForFlag, xpProgress, type XpProgress } from '../../src/services/xp';
 import { fetchFollowCounts, type FollowCounts } from '../../src/services/follows';
 import { useLang } from '../../src/contexts/LangContext';
@@ -180,6 +181,8 @@ export default function ProfileScreen() {
   const [nameInput, setNameInput] = useState('');
   const [savingName, setSavingName] = useState(false);
   const [xpData, setXpData] = useState<XpProgress | null>(null);
+  const [highestSummit, setHighestSummit] = useState<ConquestEntry | null>(null);
+  const [currentStreak, setCurrentStreak] = useState(0);
 
   const loadProfile = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -198,6 +201,12 @@ export default function ProfileScreen() {
       const conquests: ConquestEntry[] = await fetchUserConquests(user.id);
       const totalXp = conquests.reduce((acc, c) => acc + xpForFlag(c.elevation_m), 0);
       setXpData(xpProgress(totalXp));
+      const best = conquests.reduce<ConquestEntry | null>(
+        (max, c) => (!max || c.elevation_m > max.elevation_m ? c : max), null,
+      );
+      setHighestSummit(best);
+      const streakInfo = await fetchStreak(user.id);
+      setCurrentStreak(streakInfo.current);
       const counts = await fetchFollowCounts(user.id);
       setFollowCounts(counts);
     } catch (e) {
@@ -247,6 +256,57 @@ export default function ProfileScreen() {
     ]);
   };
 
+  const handleShareProfile = async () => {
+    if (!profile) return;
+    const name = profile.display_name ?? 'User';
+    const flags = profile.flag_count ?? 0;
+    const crew = profile.crew_name ?? profile.crew_name_ko ?? null;
+    const levelText = xpData
+      ? `${xpData.current.icon} ${xpData.current.name[lang]} (Lv.${xpData.current.level})`
+      : null;
+    const peakName = highestSummit
+      ? ((lang === 'en' ? highestSummit.summit_name_en : lang === 'ja' ? highestSummit.summit_name_ja : null) ?? highestSummit.summit_name_ko)
+      : null;
+    const elev = highestSummit?.elevation_m ?? null;
+
+    const rows: string[] = [];
+    if (lang === 'ko') {
+      rows.push('🏔️ FlagOn 산악 기록');
+      rows.push('─────────────────');
+      rows.push(`산악인: ${name}`);
+      if (levelText) rows.push(`레벨: ${levelText}`);
+      rows.push(`깃발 수: 🚩 ${flags}개`);
+      if (currentStreak > 0) rows.push(`연속: 🔥 ${currentStreak}주`);
+      if (peakName && elev) rows.push(`최고봉: ${peakName} (${elev}m)`);
+      if (crew) rows.push(`크루: ${crew}`);
+      rows.push('─────────────────');
+      rows.push('#FlagOn #등산 #정복');
+    } else if (lang === 'ja') {
+      rows.push('🏔️ FlagOn 登山記録');
+      rows.push('─────────────────');
+      rows.push(`登山家: ${name}`);
+      if (levelText) rows.push(`レベル: ${levelText}`);
+      rows.push(`旗の数: 🚩 ${flags}本`);
+      if (currentStreak > 0) rows.push(`連続: 🔥 ${currentStreak}週間`);
+      if (peakName && elev) rows.push(`最高峰: ${peakName} (${elev}m)`);
+      if (crew) rows.push(`クルー: ${crew}`);
+      rows.push('─────────────────');
+      rows.push('#FlagOn #登山 #制覇');
+    } else {
+      rows.push('🏔️ My FlagOn Hiking Card');
+      rows.push('─────────────────');
+      rows.push(`Hiker: ${name}`);
+      if (levelText) rows.push(`Level: ${levelText}`);
+      rows.push(`Flags Planted: 🚩 ${flags}`);
+      if (currentStreak > 0) rows.push(`Streak: 🔥 ${currentStreak} weeks`);
+      if (peakName && elev) rows.push(`Highest Peak: ${peakName} (${elev}m)`);
+      if (crew) rows.push(`Crew: ${crew}`);
+      rows.push('─────────────────');
+      rows.push('#FlagOn #Hiking #Summit');
+    }
+    await Share.share({ message: rows.join('\n'), title: '🏔️ FlagOn' });
+  };
+
   if (loading) return <View style={styles.center}><ActivityIndicator color={Colors.green} /></View>;
 
   return (
@@ -291,6 +351,9 @@ export default function ProfileScreen() {
               <Text style={styles.followChipText}>{s.followingCount(followCounts.following)}</Text>
               <Text style={styles.followChipSep}>·</Text>
               <Text style={styles.followChipText}>{s.followersCount(followCounts.followers)}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.shareChip} onPress={handleShareProfile} activeOpacity={0.7}>
+              <Text style={styles.shareChipText}>↑ {s.shareProfileBtn}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -481,6 +544,15 @@ const styles = StyleSheet.create({
   },
   followChipText: { fontSize: 12, color: 'rgba(255,255,255,0.85)', fontWeight: '500' },
   followChipSep: { fontSize: 12, color: 'rgba(255,255,255,0.5)' },
+  shareChip: {
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.30)',
+  },
+  shareChipText: { fontSize: 12, color: Colors.white, fontWeight: '700' },
   section: { backgroundColor: Colors.white, marginTop: 16, paddingHorizontal: 20, paddingVertical: 16 },
   sectionTitle: { fontSize: 12, fontWeight: '700', color: Colors.zinc500, marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.8 },
   crewCard: { flexDirection: 'row', alignItems: 'center', gap: 12 },

@@ -166,6 +166,7 @@ const strings = {
     yourInviteCode: '내 초대 코드',
     shareFlag: '공유하기',
     shareFlagPlanted: (summit: string) => `🚩 ${summit} 정복! FlagOn에서 나와 크루를 결성하자 — 초대 코드: `,
+    shareProfileBtn: '기록 공유',
     notifFlagPlantedCrew: (name: string, summit: string) => `${name}이(가) ${summit}에 깃발을 꽂았습니다!`,
     notifFlagPlantedSummit: (name: string, summit: string) => `${name}이(가) 당신이 오른 ${summit}을 점령했습니다`,
 
@@ -595,6 +596,7 @@ const strings = {
     yourInviteCode: 'Your Invite Code',
     shareFlag: 'Share',
     shareFlagPlanted: (summit: string) => `🚩 Conquered ${summit}! Join my FlagOn crew — invite code: `,
+    shareProfileBtn: 'Share Card',
     notifFlagPlantedCrew: (name: string, summit: string) => `${name} planted a flag on ${summit}!`,
     notifFlagPlantedSummit: (name: string, summit: string) => `${name} just claimed ${summit} — a peak you've summited`,
 
@@ -1024,6 +1026,7 @@ const strings = {
     yourInviteCode: '招待コード',
     shareFlag: 'シェア',
     shareFlagPlanted: (summit: string) => `🚩 ${summit}を征服！FlagOnでクルーを組もう — 招待コード: `,
+    shareProfileBtn: '記録シェア',
     notifFlagPlantedCrew: (name: string, summit: string) => `${name}が${summit}に旗を立てました！`,
     notifFlagPlantedSummit: (name: string, summit: string) => `${name}があなたが登った${summit}を制覇しました`,
 
