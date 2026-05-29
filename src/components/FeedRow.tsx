@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../constants';
 import { toggleKudos, getKudosCount, hasGivenKudos } from '../services/kudos';
+import { fetchCommentCount } from '../services/feedComments';
+import FeedCommentModal from './FeedCommentModal';
 import { useLang } from '../contexts/LangContext';
 import { t, summitName, type Lang } from '../i18n/strings';
 
@@ -30,10 +32,33 @@ export function avatarColor(uid: string): string {
   return colors[uid.charCodeAt(0) % colors.length];
 }
 
+function CommentButton({ itemId }: { itemId: string }) {
+  const [count, setCount] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    fetchCommentCount(itemId).then(setCount).catch(() => {});
+  }, [itemId]);
+
+  return (
+    <>
+      <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.kudosBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+        <Text style={styles.commentEmoji}>💬</Text>
+        {count > 0 && <Text style={styles.kudosCount}>{count}</Text>}
+      </TouchableOpacity>
+      <FeedCommentModal
+        visible={modalVisible}
+        flagId={itemId}
+        onClose={() => setModalVisible(false)}
+      />
+    </>
+  );
+}
+
 function KudosButton({ itemId }: { itemId: string }) {
   const [count, setCount] = useState(0);
   const [given, setGiven] = useState(false);
-  const scale = new Animated.Value(1);
+  const scale = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     Promise.all([getKudosCount(itemId), hasGivenKudos(itemId)]).then(([c, g]) => {
@@ -96,6 +121,7 @@ export default function FeedRow({ item, onAvatarPress }: { item: FeedItem; onAva
       </View>
       <View style={styles.rowRight}>
         <KudosButton itemId={item.id} />
+        <CommentButton itemId={item.id} />
         <Text style={styles.flagEmoji}>🚩</Text>
       </View>
     </View>
@@ -127,5 +153,6 @@ const styles = StyleSheet.create({
   kudosEmoji: { fontSize: 20 },
   kudosCount: { fontSize: 11, fontWeight: '600', color: Colors.zinc500 },
   kudosCountActive: { color: Colors.orange ?? '#F97316' },
+  commentEmoji: { fontSize: 20, opacity: 0.6 },
   flagEmoji: { fontSize: 20 },
 });

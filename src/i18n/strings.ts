@@ -409,6 +409,15 @@ const strings = {
     // Flag expiry reminders
     flagExpiryNotifTitle: (name: string) => `${name} 깃발이 곧 만료됩니다 🚩`,
     flagExpiryNotifBody: '24시간 내에 깃발이 만료됩니다. 재정복하러 가세요!',
+
+    // Feed comments
+    commentsTitle: '💬 댓글',
+    commentsEmpty: '아직 댓글이 없습니다. 첫 번째 댓글을 남겨보세요!',
+    commentPlaceholder: '댓글 입력 (최대 140자)...',
+    commentSend: '전송',
+    commentError: '댓글 전송에 실패했습니다',
+    commentDeleteTitle: '댓글 삭제',
+    commentDeleteBody: '이 댓글을 삭제하시겠습니까?',
   },
 
   en: {
@@ -819,6 +828,15 @@ const strings = {
     // Flag expiry reminders
     flagExpiryNotifTitle: (name: string) => `${name} flag expiring soon 🚩`,
     flagExpiryNotifBody: 'Your flag expires in 24 hours. Head back to reclaim it!',
+
+    // Feed comments
+    commentsTitle: '💬 Comments',
+    commentsEmpty: 'No comments yet. Be the first!',
+    commentPlaceholder: 'Add a comment (up to 140 chars)...',
+    commentSend: 'Send',
+    commentError: 'Failed to post comment',
+    commentDeleteTitle: 'Delete Comment',
+    commentDeleteBody: 'Delete this comment?',
   },
 
   ja: {
@@ -1229,6 +1247,15 @@ const strings = {
     // Flag expiry reminders
     flagExpiryNotifTitle: (name: string) => `${name}の旗がまもなく失効します 🚩`,
     flagExpiryNotifBody: '24時間以内に旗が失効します。再征服しに行こう！',
+
+    // Feed comments
+    commentsTitle: '💬 コメント',
+    commentsEmpty: 'まだコメントがありません。最初のコメントを残しましょう！',
+    commentPlaceholder: 'コメントを入力（最大140文字）...',
+    commentSend: '送信',
+    commentError: 'コメントの送信に失敗しました',
+    commentDeleteTitle: 'コメントを削除',
+    commentDeleteBody: 'このコメントを削除しますか？',
   },
 } as const;
 
