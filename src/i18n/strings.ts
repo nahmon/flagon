@@ -418,6 +418,16 @@ const strings = {
     commentError: '댓글 전송에 실패했습니다',
     commentDeleteTitle: '댓글 삭제',
     commentDeleteBody: '이 댓글을 삭제하시겠습니까?',
+
+    // Summit photo gallery
+    photosBtn: (n: number) => `📸 사진 (${n})`,
+    photosTitle: (name: string) => `📸 ${name} 사진`,
+    photosEmpty: '아직 사진이 없습니다. 첫 번째 사진을 올려보세요!',
+    photoUpload: '📷 사진 업로드',
+    photoPermissionDenied: '갤러리 접근 권한이 필요합니다. 기기 설정에서 허용해 주세요.',
+    photoError: '사진 업로드에 실패했습니다. 다시 시도해 주세요.',
+    photoDeleteTitle: '사진 삭제',
+    photoDeleteBody: '이 사진을 삭제하시겠습니까?',
   },
 
   en: {
@@ -837,6 +847,16 @@ const strings = {
     commentError: 'Failed to post comment',
     commentDeleteTitle: 'Delete Comment',
     commentDeleteBody: 'Delete this comment?',
+
+    // Summit photo gallery
+    photosBtn: (n: number) => `📸 Photos (${n})`,
+    photosTitle: (name: string) => `📸 ${name} Photos`,
+    photosEmpty: 'No photos yet. Be the first to share one!',
+    photoUpload: '📷 Upload Photo',
+    photoPermissionDenied: 'Gallery access is required. Please allow it in device settings.',
+    photoError: 'Failed to upload photo. Please try again.',
+    photoDeleteTitle: 'Delete Photo',
+    photoDeleteBody: 'Delete this photo?',
   },
 
   ja: {
@@ -1256,6 +1276,16 @@ const strings = {
     commentError: 'コメントの送信に失敗しました',
     commentDeleteTitle: 'コメントを削除',
     commentDeleteBody: 'このコメントを削除しますか？',
+
+    // Summit photo gallery
+    photosBtn: (n: number) => `📸 写真 (${n})`,
+    photosTitle: (name: string) => `📸 ${name} の写真`,
+    photosEmpty: 'まだ写真がありません。最初の写真を投稿しましょう！',
+    photoUpload: '📷 写真をアップロード',
+    photoPermissionDenied: 'ギャラリーへのアクセスが必要です。端末設定で許可してください。',
+    photoError: '写真のアップロードに失敗しました。もう一度お試しください。',
+    photoDeleteTitle: '写真を削除',
+    photoDeleteBody: 'この写真を削除しますか？',
   },
 } as const;
 

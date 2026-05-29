@@ -13,9 +13,11 @@ import SummitNoteModal from './SummitNoteModal';
 import SummitRatingModal from './SummitRatingModal';
 import SummitTipsModal from './SummitTipsModal';
 import SummitConditionsModal from './SummitConditionsModal';
+import SummitPhotoGallery from './SummitPhotoGallery';
 import { fetchSummitRatingAggregate, getUserRatingForSummit } from '../services/ratings';
 import { loadTips } from '../services/summitTips';
 import { loadConditions, dominantCondition, CONDITION_META } from '../services/conditions';
+import { fetchSummitPhotos } from '../services/summitPhotos';
 import { useLang } from '../contexts/LangContext';
 import { t, summitName } from '../i18n/strings';
 
@@ -53,6 +55,8 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
   const [conditionsModalVisible, setConditionsModalVisible] = useState(false);
   const [conditionCount, setConditionCount] = useState(0);
   const [conditionIcon, setConditionIcon] = useState<string | null>(null);
+  const [photoModalVisible, setPhotoModalVisible] = useState(false);
+  const [photoCount, setPhotoCount] = useState(0);
 
   const loadRatings = useCallback((id: string) => {
     fetchSummitRatingAggregate(id).then(setRatingAggregate).catch(() => {});
@@ -72,6 +76,7 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
       setHistory([]); setBookmarked(false); setNote(null);
       setRatingAggregate(null); setMyRating(null); setTipCount(0);
       setConditionCount(0); setConditionIcon(null);
+      setPhotoCount(0); setPhotoModalVisible(false);
       return;
     }
     setLoading(true);
@@ -84,6 +89,7 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
     loadRatings(summit.id);
     loadTips(summit.id).then(tips => setTipCount(tips.length)).catch(() => {});
     loadConditionSummary(summit.id);
+    fetchSummitPhotos(summit.id).then(p => setPhotoCount(p.length)).catch(() => {});
   }, [summit?.id, loadRatings, loadConditionSummary]);
 
   const handleBookmark = useCallback(async () => {
@@ -228,6 +234,21 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
           </Text>
           <Text style={styles.tipsArrow}>›</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.tipsBar} onPress={() => setPhotoModalVisible(true)} activeOpacity={0.7}>
+          <Text style={styles.tipsBtnTxt}>{s.photosBtn(photoCount)}</Text>
+          <Text style={styles.tipsArrow}>›</Text>
+        </TouchableOpacity>
+
+        {summit && (
+          <SummitPhotoGallery
+            visible={photoModalVisible}
+            summitId={summit.id}
+            summitName={summitName(summit, lang)}
+            onClose={() => setPhotoModalVisible(false)}
+            onCountChange={setPhotoCount}
+          />
+        )}
 
         {summit && (
           <SummitConditionsModal
