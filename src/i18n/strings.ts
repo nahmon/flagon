@@ -195,6 +195,18 @@ const strings = {
     bucketListAdd: '정상 상세에서 ★ 버튼으로 추가하세요',
     planHikeOn: '등산 날짜 선택',
     cancelPlan: '계획 취소',
+
+    // Hike buddy invite
+    buddyTitle: '등산 동행 초대',
+    buddyInvite: '초대하기',
+    buddyPending: '초대 완료',
+    buddyAccepted: '수락됨 ✓',
+    buddyDeclined: '거절됨',
+    buddyNoFollowing: '팔로잉한 등산객이 없습니다',
+    buddyNoFollowingSub: '다른 등산객을 팔로우하면 함께 등산할 수 있습니다',
+    buddyInviteError: '초대 전송에 실패했습니다',
+    buddyBtn: '👥 같이 등산',
+
     bookmarkAdded: '버킷리스트에 추가됨',
     bookmarkRemoved: '버킷리스트에서 제거됨',
     bookmark: '버킷리스트',
@@ -627,6 +639,18 @@ const strings = {
     bucketListAdd: 'Tap ★ on any summit detail to save',
     planHikeOn: 'Plan hike for',
     cancelPlan: 'Cancel plan',
+
+    // Hike buddy invite
+    buddyTitle: 'Invite Hiking Buddies',
+    buddyInvite: 'Invite',
+    buddyPending: 'Invited',
+    buddyAccepted: 'Joined ✓',
+    buddyDeclined: 'Declined',
+    buddyNoFollowing: 'No people you follow yet',
+    buddyNoFollowingSub: 'Follow other hikers to invite them on your planned hike',
+    buddyInviteError: 'Failed to send invite',
+    buddyBtn: '👥 Invite Buddy',
+
     bookmarkAdded: 'Added to bucket list',
     bookmarkRemoved: 'Removed from bucket list',
     bookmark: 'Bucket List',
@@ -1059,6 +1083,18 @@ const strings = {
     bucketListAdd: '山頂詳細の★ボタンで追加できます',
     planHikeOn: '登山予定日を選択',
     cancelPlan: '予定をキャンセル',
+
+    // Hike buddy invite
+    buddyTitle: '登山仲間を招待',
+    buddyInvite: '招待',
+    buddyPending: '招待済み',
+    buddyAccepted: '参加 ✓',
+    buddyDeclined: '辞退',
+    buddyNoFollowing: 'フォロー中のハイカーがいません',
+    buddyNoFollowingSub: '他のハイカーをフォローして一緒に登山しましょう',
+    buddyInviteError: '招待の送信に失敗しました',
+    buddyBtn: '👥 一緒に登山',
+
     bookmarkAdded: 'バケットリストに追加',
     bookmarkRemoved: 'バケットリストから削除',
     bookmark: 'バケットリスト',

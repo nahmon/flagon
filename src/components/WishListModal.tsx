@@ -8,6 +8,7 @@ import { WishItem, getWishList, removeFromWishList } from '../services/wishlist'
 import { useLang } from '../contexts/LangContext';
 import { t } from '../i18n/strings';
 import { PlannedHike, getPlannedHike, setPlannedHike, cancelPlannedHike } from '../services/plannedHike';
+import HikeBuddyModal from './HikeBuddyModal';
 
 interface Props {
   visible: boolean;
@@ -36,6 +37,7 @@ export default function WishListModal({ visible, onClose }: Props) {
   const [loading, setLoading] = useState(false);
   const [plans, setPlans] = useState<Record<string, PlannedHike>>({});
   const [planPickerId, setPlanPickerId] = useState<string | null>(null);
+  const [buddyModalId, setBuddyModalId] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -63,7 +65,7 @@ export default function WishListModal({ visible, onClose }: Props) {
     await cancelPlannedHike(id);
     await removeFromWishList(id);
     setItems((prev: WishItem[]) => prev.filter((i: WishItem) => i.id !== id));
-    setPlans((prev) => { const next = { ...prev }; delete next[id]; return next; });
+    setPlans((prev: Record<string, PlannedHike>) => { const next = { ...prev }; delete next[id]; return next; });
   }, []);
 
   const handlePlan = useCallback(async (item: WishItem, offset: number) => {
@@ -71,13 +73,13 @@ export default function WishListModal({ visible, onClose }: Props) {
     const name = lang === 'en' && item.name_en ? item.name_en
       : lang === 'ja' && item.name_ja ? item.name_ja : item.name_ko;
     await setPlannedHike(item.id, name, date);
-    setPlans((prev) => ({ ...prev, [item.id]: { summitId: item.id, date } }));
+    setPlans((prev: Record<string, PlannedHike>) => ({ ...prev, [item.id]: { summitId: item.id, date } }));
     setPlanPickerId(null);
   }, [lang]);
 
   const handleCancelPlan = useCallback(async (id: string) => {
     await cancelPlannedHike(id);
-    setPlans((prev) => { const next = { ...prev }; delete next[id]; return next; });
+    setPlans((prev: Record<string, PlannedHike>) => { const next = { ...prev }; delete next[id]; return next; });
     setPlanPickerId(null);
   }, []);
 
@@ -131,9 +133,18 @@ export default function WishListModal({ visible, onClose }: Props) {
                         {item.elevation_m}m{item.mountain_group ? ` · ${item.mountain_group}` : ''}
                       </Text>
                       {plan && (
-                        <Text style={styles.planBadge}>
-                          📅 {formatDate(plan.date, lang)}
-                        </Text>
+                        <View style={styles.planRow}>
+                          <Text style={styles.planBadge}>
+                            📅 {formatDate(plan.date, lang)}
+                          </Text>
+                          <TouchableOpacity
+                            style={styles.buddyIconBtn}
+                            onPress={() => setBuddyModalId(item.id)}
+                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                          >
+                            <Text style={styles.buddyIcon}>{s.buddyBtn}</Text>
+                          </TouchableOpacity>
+                        </View>
                       )}
                     </View>
                     <TouchableOpacity
@@ -186,6 +197,22 @@ export default function WishListModal({ visible, onClose }: Props) {
             }
           />
         )}
+
+        {(() => {
+          const buddyItem = buddyModalId ? (items.find((i: WishItem) => i.id === buddyModalId) ?? null) : null;
+          const buddyPlan = buddyModalId ? (plans[buddyModalId] ?? null) : null;
+          if (!buddyItem || !buddyPlan) return null;
+          const name = displayName(buddyItem);
+          return (
+            <HikeBuddyModal
+              visible
+              summitId={buddyItem.id}
+              summitName={name}
+              plannedDate={buddyPlan.date}
+              onClose={() => setBuddyModalId(null)}
+            />
+          );
+        })()}
       </View>
     </Modal>
   );
@@ -245,6 +272,9 @@ const styles = StyleSheet.create({
   chipText: { fontSize: 12, color: Colors.white, fontWeight: '700' },
   cancelPlanBtn: { marginTop: 8 },
   cancelPlanText: { fontSize: 12, color: Colors.zinc500 },
+  planRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 },
+  buddyIconBtn: { paddingVertical: 2 },
+  buddyIcon: { fontSize: 11, color: Colors.green, fontWeight: '700' },
   separator: { height: 8 },
   empty: { alignItems: 'center', paddingTop: 80, paddingHorizontal: 32 },
   emptyIcon: { fontSize: 52, marginBottom: 16 },
