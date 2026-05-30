@@ -453,6 +453,23 @@ const strings = {
     photoError: '사진 업로드에 실패했습니다. 다시 시도해 주세요.',
     photoDeleteTitle: '사진 삭제',
     photoDeleteBody: '이 사진을 삭제하시겠습니까?',
+
+    // Hike journal
+    journalTitle: '등산 일지',
+    journalMoodLabel: '오늘 기분은?',
+    journalRatingLabel: '등반 난이도',
+    journalNotesLabel: '메모',
+    journalNotesPlaceholder: '오늘 등산은 어땠나요? (최대 500자)',
+    journalSave: '저장',
+    journalSaved: '저장됨',
+    journalSaving: '저장 중...',
+    journalDelete: '일지 삭제',
+    journalDeleteTitle: '일지 삭제',
+    journalDeleteBody: '이 등산 일지를 삭제하시겠습니까?',
+    journalError: '일지 저장에 실패했습니다',
+    journalEmpty: '일지 없음',
+    journalBtn: '📓 일지 쓰기',
+    journalBtnDone: '📓 일지 작성됨',
   },
 
   en: {
@@ -907,6 +924,23 @@ const strings = {
     photoError: 'Failed to upload photo. Please try again.',
     photoDeleteTitle: 'Delete Photo',
     photoDeleteBody: 'Delete this photo?',
+
+    // Hike journal
+    journalTitle: 'Hike Journal',
+    journalMoodLabel: 'How did you feel?',
+    journalRatingLabel: 'Hike Rating',
+    journalNotesLabel: 'Notes',
+    journalNotesPlaceholder: 'How was the hike? (max 500 chars)',
+    journalSave: 'Save',
+    journalSaved: 'Saved',
+    journalSaving: 'Saving...',
+    journalDelete: 'Delete Journal',
+    journalDeleteTitle: 'Delete Journal',
+    journalDeleteBody: 'Delete this hike journal entry?',
+    journalError: 'Failed to save journal',
+    journalEmpty: 'No journal',
+    journalBtn: '📓 Write Journal',
+    journalBtnDone: '📓 Journal Written',
   },
 
   ja: {
@@ -1361,6 +1395,23 @@ const strings = {
     photoError: '写真のアップロードに失敗しました。もう一度お試しください。',
     photoDeleteTitle: '写真を削除',
     photoDeleteBody: 'この写真を削除しますか？',
+
+    // Hike journal
+    journalTitle: '登山日誌',
+    journalMoodLabel: '今日の気分は？',
+    journalRatingLabel: '登山の評価',
+    journalNotesLabel: 'メモ',
+    journalNotesPlaceholder: '今日の登山はいかがでしたか？（最大500文字）',
+    journalSave: '保存',
+    journalSaved: '保存済み',
+    journalSaving: '保存中...',
+    journalDelete: '日誌を削除',
+    journalDeleteTitle: '日誌を削除',
+    journalDeleteBody: 'この登山日誌を削除しますか？',
+    journalError: '日誌の保存に失敗しました',
+    journalEmpty: '日誌なし',
+    journalBtn: '📓 日誌を書く',
+    journalBtnDone: '📓 日誌作成済み',
   },
 } as const;
 
