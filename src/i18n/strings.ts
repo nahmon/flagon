@@ -207,6 +207,16 @@ const strings = {
     buddyInviteError: '초대 전송에 실패했습니다',
     buddyBtn: '👥 같이 등산',
 
+    // Pack checklist
+    checklistBtn: '🎒 배낭 체크리스트',
+    checklistTitle: '🎒 배낭 체크리스트',
+    checklistReset: '초기화',
+    checklistResetTitle: '체크 초기화',
+    checklistResetBody: '모든 항목의 체크를 해제하시겠습니까?',
+    checklistAdd: '추가',
+    checklistAddPlaceholder: '새 항목 입력 (최대 60자)...',
+    checklistDeleteTitle: '항목 삭제',
+
     bookmarkAdded: '버킷리스트에 추가됨',
     bookmarkRemoved: '버킷리스트에서 제거됨',
     bookmark: '버킷리스트',
@@ -651,6 +661,16 @@ const strings = {
     buddyInviteError: 'Failed to send invite',
     buddyBtn: '👥 Invite Buddy',
 
+    // Pack checklist
+    checklistBtn: '🎒 Pack Checklist',
+    checklistTitle: '🎒 Pack Checklist',
+    checklistReset: 'Reset',
+    checklistResetTitle: 'Reset Checklist',
+    checklistResetBody: 'Uncheck all items?',
+    checklistAdd: 'Add',
+    checklistAddPlaceholder: 'New item (max 60 chars)...',
+    checklistDeleteTitle: 'Delete Item',
+
     bookmarkAdded: 'Added to bucket list',
     bookmarkRemoved: 'Removed from bucket list',
     bookmark: 'Bucket List',
@@ -1094,6 +1114,16 @@ const strings = {
     buddyNoFollowingSub: '他のハイカーをフォローして一緒に登山しましょう',
     buddyInviteError: '招待の送信に失敗しました',
     buddyBtn: '👥 一緒に登山',
+
+    // Pack checklist
+    checklistBtn: '🎒 ザックチェックリスト',
+    checklistTitle: '🎒 ザックチェックリスト',
+    checklistReset: 'リセット',
+    checklistResetTitle: 'チェックをリセット',
+    checklistResetBody: 'すべてのチェックを外しますか？',
+    checklistAdd: '追加',
+    checklistAddPlaceholder: '新しい項目を入力（最大60文字）...',
+    checklistDeleteTitle: '項目を削除',
 
     bookmarkAdded: 'バケットリストに追加',
     bookmarkRemoved: 'バケットリストから削除',
