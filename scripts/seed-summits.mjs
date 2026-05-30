@@ -1,0 +1,184 @@
+#!/usr/bin/env node
+/**
+ * seed-summits.mjs
+ * Fetches named mountain peaks from Wikidata SPARQL for KR/JP/US/CA
+ * and outputs a SQL migration file for Supabase.
+ *
+ * Usage: node scripts/seed-summits.mjs
+ * Output: supabase/migrations/011_summit_seed.sql
+ */
+
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const OUT_FILE = path.join(__dirname, '../supabase/migrations/011_summit_seed.sql');
+const SPARQL_URL = 'https://query.wikidata.org/sparql';
+const SLEEP_MS = 2000;
+
+const REGIONS = [
+  { country: 'KR', label: '한국',  wd: 'Q884',  minElevation: 300 },
+  { country: 'JP', label: '일본',  wd: 'Q17',   minElevation: 500 },
+  { country: 'US', label: '미국',  wd: 'Q30',   minElevation: 500 },
+  { country: 'CA', label: '캐나다', wd: 'Q16',  minElevation: 500 },
+];
+
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+function sparqlQuery(countryQid, minElev) {
+  return `
+SELECT DISTINCT ?item ?nameEn ?nameKo ?nameJa ?lat ?lng ?elevation ?rangeName WHERE {
+  ?item wdt:P17 wd:${countryQid} .
+  ?item wdt:P31/wdt:P279* wd:Q8502 .
+  ?item wdt:P625 ?coord .
+  ?item wdt:P2044 ?elevation .
+  BIND(geof:latitude(?coord) AS ?lat)
+  BIND(geof:longitude(?coord) AS ?lng)
+  OPTIONAL { ?item rdfs:label ?nameEn FILTER (LANG(?nameEn) = "en") }
+  OPTIONAL { ?item rdfs:label ?nameKo FILTER (LANG(?nameKo) = "ko") }
+  OPTIONAL { ?item rdfs:label ?nameJa FILTER (LANG(?nameJa) = "ja") }
+  OPTIONAL {
+    ?item wdt:P4552 ?range .
+    ?range rdfs:label ?rangeName FILTER (LANG(?rangeName) = "en")
+  }
+  FILTER(?elevation >= ${minElev})
+}
+ORDER BY DESC(?elevation)
+LIMIT 2000
+`.trim();
+}
+
+async function fetchPeaks(region) {
+  const query = sparqlQuery(region.wd, region.minElevation);
+  const url = `${SPARQL_URL}?query=${encodeURIComponent(query)}&format=json`;
+
+  console.log(`  Querying Wikidata for ${region.label} (${region.country})...`);
+  const res = await fetch(url, {
+    headers: {
+      'Accept': 'application/sparql-results+json',
+      'User-Agent': 'FlagOn-SeedScript/1.0 (https://github.com/flagon)',
+    },
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Wikidata HTTP ${res.status}: ${text.slice(0, 200)}`);
+  }
+
+  const json = await res.json();
+  return json.results?.bindings ?? [];
+}
+
+function val(binding, key) {
+  return binding[key]?.value ?? null;
+}
+
+function parseElevation(raw) {
+  if (!raw) return null;
+  const n = parseFloat(raw);
+  return isNaN(n) ? null : Math.round(n);
+}
+
+function escape(str) {
+  if (!str) return 'NULL';
+  return `'${String(str).replace(/'/g, "''").slice(0, 200)}'`;
+}
+
+function buildRow(b, country) {
+  const lat = parseFloat(val(b, 'lat'));
+  const lng = parseFloat(val(b, 'lng'));
+  const ele = parseElevation(val(b, 'elevation'));
+
+  if (!lat || !lng || !ele) return null;
+  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return null;
+
+  const nameEn = val(b, 'nameEn');
+  const nameKo = val(b, 'nameKo');
+  const nameJa = val(b, 'nameJa');
+  const rangeName = val(b, 'rangeName');
+
+  const primary = nameKo ?? nameEn ?? nameJa;
+  if (!primary) return null;
+
+  return {
+    name_ko: nameKo ?? primary,
+    name_en: nameEn,
+    name_ja: nameJa,
+    lat, lng, elevation_m: ele, country,
+    mountain_group: rangeName,
+  };
+}
+
+function toSqlValues(r) {
+  const loc = `ST_Point(${r.lng}, ${r.lat})::geography`;
+  return `(${escape(r.name_ko)}, ${escape(r.name_en)}, ${escape(r.name_ja)}, ${loc}, ${r.elevation_m}, '${r.country}', ${escape(r.mountain_group)}, false)`;
+}
+
+async function main() {
+  const allRows = [];
+
+  for (let i = 0; i < REGIONS.length; i++) {
+    const region = REGIONS[i];
+    try {
+      const bindings = await fetchPeaks(region);
+      console.log(`  Raw results: ${bindings.length}`);
+
+      const rows = bindings
+        .map((b) => buildRow(b, region.country))
+        .filter(Boolean);
+
+      // Deduplicate by proximity (~500m) — Wikidata can have duplicates
+      const deduped = [];
+      for (const row of rows) {
+        const tooClose = deduped.some((existing) => {
+          const dlat = (row.lat - existing.lat) * 111000;
+          const dlng = (row.lng - existing.lng) * 111000 * Math.cos((row.lat * Math.PI) / 180);
+          return Math.sqrt(dlat * dlat + dlng * dlng) < 500;
+        });
+        if (!tooClose) deduped.push(row);
+      }
+
+      console.log(`  After dedup: ${deduped.length} peaks`);
+      allRows.push(...deduped);
+    } catch (e) {
+      console.error(`  Error fetching ${region.label}:`, e.message);
+    }
+
+    if (i < REGIONS.length - 1) {
+      console.log(`  Sleeping ${SLEEP_MS}ms...`);
+      await sleep(SLEEP_MS);
+    }
+  }
+
+  if (allRows.length === 0) {
+    console.error('No rows collected — aborting.');
+    process.exit(1);
+  }
+
+  console.log(`\nTotal peaks: ${allRows.length}`);
+
+  const header = `-- AUTO-GENERATED by scripts/seed-summits.mjs
+-- ${new Date().toISOString()}
+-- ${allRows.length} peaks across KR/JP/US/CA (via Wikidata)
+
+DELETE FROM public.summits WHERE is_featured = false;
+
+INSERT INTO public.summits (name_ko, name_en, name_ja, location, elevation_m, country, mountain_group, is_featured)
+VALUES
+`;
+
+  const values = allRows.map(toSqlValues).join(',\n');
+  const footer = '\nON CONFLICT DO NOTHING;\n';
+
+  fs.writeFileSync(OUT_FILE, header + values + footer, 'utf8');
+  console.log(`Written → ${OUT_FILE}`);
+
+  for (const c of ['KR', 'JP', 'US', 'CA']) {
+    console.log(`  ${c}: ${allRows.filter((r) => r.country === c).length}`);
+  }
+}
+
+main().catch((e) => { console.error(e); process.exit(1); });

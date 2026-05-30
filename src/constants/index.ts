@@ -35,7 +35,7 @@ export const Fonts = {
 // GPS verification config
 export const GPS = {
   SUMMIT_RADIUS_M: 150,         // 정상 인증 반경 (미터)
-  MIN_STAY_MINUTES: 20,          // 최소 체류 시간
+  MIN_STAY_MINUTES: 10,          // 최소 체류 시간
   TRACK_INTERVAL_MS: 30_000,    // GPS 기록 간격 (30초)
   NEAR_SUMMIT_RADIUS_M: 500,    // "가까워지고 있음" 알림 반경
 } as const;

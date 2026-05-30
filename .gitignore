@@ -46,3 +46,4 @@ ios/build/
 ios/*.xcworkspace/xcuserdata/
 ios/*.xcodeproj/xcuserdata/
 ios/.xcode.env.local
+.gstack/
