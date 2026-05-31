@@ -5,7 +5,7 @@ import { fetchStreak, StreakInfo } from '../services/streaks';
 import { useLang } from '../contexts/LangContext';
 import { t } from '../i18n/strings';
 
-function WeekDot({ hiked, isCurrentWeek }: { hiked: boolean; isCurrentWeek: boolean }) {
+function WeekDot({ hiked, isCurrentWeek }: { hiked: boolean; isCurrentWeek: boolean; key?: string }) {
   return (
     <View style={[
       styles.dot,

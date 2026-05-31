@@ -1,3 +1,5 @@
+declare const process: { env: Record<string, string | undefined> };
+
 // Design tokens — AllTrails + Strava hybrid
 export const Colors = {
   // Brand

@@ -87,7 +87,7 @@ export default function MapScreen() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const heatmapGeojson = useMemo<{ type: 'FeatureCollection'; features: any[] }>(() => ({
     type: 'FeatureCollection',
-    features: summits.map((s) => ({
+    features: summits.map((s: SummitWithFlag) => ({
       type: 'Feature',
       id: s.id,
       geometry: { type: 'Point', coordinates: s.location.coordinates },
@@ -387,7 +387,7 @@ export default function MapScreen() {
 
       <TouchableOpacity
         style={[styles.heatmapBtn, heatmapOn && styles.heatmapBtnActive]}
-        onPress={() => setHeatmapOn((v) => !v)}
+        onPress={() => setHeatmapOn((v: boolean) => !v)}
         activeOpacity={0.8}
       >
         <Text style={styles.heatmapBtnIcon}>🔥</Text>

@@ -65,7 +65,7 @@ export default function FollowingListModal({ visible, userId, onClose }: Props) 
           ) : (
             <FlatList
               data={entries}
-              keyExtractor={(item) => item.userId}
+              keyExtractor={(item: FollowEntry) => item.userId}
               contentContainerStyle={styles.list}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
               renderItem={({ item }: { item: FollowEntry }) => {

@@ -290,6 +290,17 @@ const strings = {
     weeklyDaysLeft: (n: number) => `${n}일 남음`,
     weeklyUnavailable: '주간 챌린지를 불러올 수 없습니다',
 
+    // Monthly bingo
+    bingo: '이번 달 빙고',
+    bingoLines: (n: number) => `${n}줄 완성`,
+    bingoLineBonus: (xp: number) => `줄당 +${xp} XP`,
+    bingoAllDone: '빙고 완성! 🎊',
+    bingoFullBonus: (xp: number) => `풀보드 +${xp} XP 추가`,
+    bingoDaysLeft: (n: number) => `${n}일 남음`,
+    bingoUnavailable: '월간 빙고를 불러올 수 없습니다',
+    bingoHint: '같은 달 줄을 완성하면 XP 보너스를 획득합니다',
+    bingoTotalXp: (xp: number) => `총 +${xp} XP 획득`,
+
     // Hiker profile modal
     hikerProfile: '등산인 프로필',
     uniqueSummits: '정상 수',
@@ -776,6 +787,17 @@ const strings = {
     weeklyDaysLeft: (n: number) => `${n}d left`,
     weeklyUnavailable: 'Weekly challenge unavailable',
 
+    // Monthly bingo
+    bingo: 'Monthly Bingo',
+    bingoLines: (n: number) => `${n} line${n !== 1 ? 's' : ''} complete`,
+    bingoLineBonus: (xp: number) => `+${xp} XP / line`,
+    bingoAllDone: 'Bingo complete! 🎊',
+    bingoFullBonus: (xp: number) => `Full board +${xp} XP bonus`,
+    bingoDaysLeft: (n: number) => `${n}d left`,
+    bingoUnavailable: 'Monthly bingo unavailable',
+    bingoHint: 'Complete a row, column, or diagonal to earn bonus XP',
+    bingoTotalXp: (xp: number) => `+${xp} XP earned`,
+
     // Hiker profile modal
     hikerProfile: 'Hiker Profile',
     uniqueSummits: 'Summits',
@@ -1261,6 +1283,17 @@ const strings = {
     weeklyHint: '今週3つの山頂をすべて制覇してボーナスXPを獲得しよう',
     weeklyDaysLeft: (n: number) => `残り${n}日`,
     weeklyUnavailable: 'ウィークリーチャレンジを読み込めません',
+
+    // Monthly bingo
+    bingo: '月間ビンゴ',
+    bingoLines: (n: number) => `${n}ライン達成`,
+    bingoLineBonus: (xp: number) => `1ライン +${xp} XP`,
+    bingoAllDone: 'ビンゴ達成！🎊',
+    bingoFullBonus: (xp: number) => `フルボード +${xp} XP ボーナス`,
+    bingoDaysLeft: (n: number) => `残り${n}日`,
+    bingoUnavailable: '月間ビンゴを読み込めません',
+    bingoHint: '列を完成させてボーナスXPを獲得しよう',
+    bingoTotalXp: (xp: number) => `合計 +${xp} XP 獲得`,
 
     // Hiker profile modal
     hikerProfile: '登山者プロフィール',

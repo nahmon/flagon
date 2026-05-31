@@ -36,7 +36,7 @@ export default function FeedCommentModal({ visible, flagId, onClose }: Props) {
   const listRef = useRef<FlatList<FeedComment>>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setMyUserId(data.user?.id ?? null));
+    supabase.auth.getUser().then(({ data }: { data: { user: { id: string } | null } }) => setMyUserId(data.user?.id ?? null));
   }, []);
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function FeedCommentModal({ visible, flagId, onClose }: Props) {
         text: s.delete, style: 'destructive', onPress: async () => {
           try {
             await deleteComment(commentId);
-            setComments((prev) => prev.filter((c) => c.id !== commentId));
+            setComments((prev: FeedComment[]) => prev.filter((c: FeedComment) => c.id !== commentId));
           } catch { /* noop */ }
         },
       },
@@ -94,10 +94,10 @@ export default function FeedCommentModal({ visible, flagId, onClose }: Props) {
           <FlatList
             ref={listRef}
             data={comments}
-            keyExtractor={(c) => c.id}
+            keyExtractor={(c: FeedComment) => c.id}
             contentContainerStyle={styles.list}
             ListEmptyComponent={<Text style={styles.empty}>{s.commentsEmpty}</Text>}
-            renderItem={({ item }) => (
+            renderItem={({ item }: { item: FeedComment }) => (
               <View style={styles.commentRow}>
                 <View style={styles.commentMeta}>
                   <Text style={styles.commentAuthor}>{item.display_name ?? item.user_id.slice(0, 6)}</Text>

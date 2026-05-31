@@ -138,8 +138,8 @@ export async function scheduleAllFlagExpiryNotifications(
   const scheduled = await Notifications.getAllScheduledNotificationsAsync();
   await Promise.all(
     scheduled
-      .filter(n => n.identifier.startsWith(FLAG_EXPIRY_NOTIF_PREFIX))
-      .map(n => Notifications.cancelScheduledNotificationAsync(n.identifier)),
+      .filter((n: { identifier: string }) => n.identifier.startsWith(FLAG_EXPIRY_NOTIF_PREFIX))
+      .map((n: { identifier: string }) => Notifications.cancelScheduledNotificationAsync(n.identifier)),
   );
 
   const now = Date.now();

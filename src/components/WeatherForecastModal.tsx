@@ -67,7 +67,7 @@ export default function WeatherForecastModal({ visible, onClose, summit }: Props
           </View>
         ) : (
           <View style={styles.cards}>
-            {days.map((day, i) => (
+            {days.map((day: DayForecast, i: number) => (
               <View key={day.date} style={styles.dayCard}>
                 <View style={styles.dayHeader}>
                   <Text style={styles.dayLabel}>{dayLabel(i, s)}</Text>

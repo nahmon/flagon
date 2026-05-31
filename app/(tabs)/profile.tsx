@@ -18,6 +18,7 @@ import MountainGroupDetailModal from '../../src/components/MountainGroupDetailMo
 import LevelBadge from '../../src/components/LevelBadge';
 import PersonalRecordsCard from '../../src/components/PersonalRecordsCard';
 import WeeklyChallengeCard from '../../src/components/WeeklyChallengeCard';
+import SummitBingoCard from '../../src/components/SummitBingoCard';
 import FollowingListModal from '../../src/components/FollowingListModal';
 import PackChecklistModal from '../../src/components/PackChecklistModal';
 import { fetchUserConquests, type ConquestEntry } from '../../src/services/conquests';
@@ -427,6 +428,7 @@ export default function ProfileScreen() {
         )}
         {userId && <StreakCard userId={userId} />}
         {userId && <WeeklyChallengeCard userId={userId} />}
+        {userId && <SummitBingoCard userId={userId} />}
         {userId && <PersonalRecordsCard userId={userId} />}
         {userId && <MountainGroupProgress userId={userId} onGroupPress={setSelectedGroup} />}
         {userId && <AchievementGrid userId={userId} />}

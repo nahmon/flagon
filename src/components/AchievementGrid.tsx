@@ -4,7 +4,7 @@ import { Colors } from '../constants';
 import { fetchAchievementStats, computeBadges, Badge } from '../services/achievements';
 import BadgeDetailModal from './BadgeDetailModal';
 
-function BadgeCell({ badge, onPress }: { badge: Badge; onPress: () => void }) {
+function BadgeCell({ badge, onPress }: { badge: Badge; onPress: () => void; key?: string }) {
   return (
     <TouchableOpacity style={[styles.cell, !badge.earned && styles.cellLocked]} onPress={onPress} activeOpacity={0.75}>
       <Text style={[styles.icon, !badge.earned && styles.iconLocked]}>{badge.icon}</Text>

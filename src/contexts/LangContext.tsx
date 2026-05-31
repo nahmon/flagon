@@ -14,7 +14,7 @@ const LangContext = createContext<LangContextValue>({
   setLang: async () => {},
 });
 
-export function LangProvider({ children }: { children: ReactNode }) {
+export function LangProvider({ children }: { children?: ReactNode }) {
   const [lang, setLangState] = useState<Lang>('ko');
 
   useEffect(() => {

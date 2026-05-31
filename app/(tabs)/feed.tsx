@@ -40,7 +40,7 @@ async function fetchFeed(filter: FeedFilter, ctx: UserCtx | null): Promise<FeedI
       .order('planted_at', { ascending: false })
       .limit(40);
     if (error) throw error;
-    return (data ?? []).map((r) => toFeedItem(r as Record<string, unknown>));
+    return (data ?? []).map((r: Record<string, unknown>) => toFeedItem(r));
   }
   if (filter === 'crew') {
     if (!ctx?.crewId) return [];
@@ -51,7 +51,7 @@ async function fetchFeed(filter: FeedFilter, ctx: UserCtx | null): Promise<FeedI
       .order('planted_at', { ascending: false })
       .limit(40);
     if (error) throw error;
-    return (data ?? []).map((r) => toFeedItem(r as Record<string, unknown>));
+    return (data ?? []).map((r: Record<string, unknown>) => toFeedItem(r));
   }
   const { data, error } = await supabase.from('flags')
     .select(BASE_SELECT)
@@ -59,7 +59,7 @@ async function fetchFeed(filter: FeedFilter, ctx: UserCtx | null): Promise<FeedI
     .order('planted_at', { ascending: false })
     .limit(40);
   if (error) throw error;
-  return (data ?? []).map((r) => toFeedItem(r as Record<string, unknown>));
+  return (data ?? []).map((r: Record<string, unknown>) => toFeedItem(r));
 }
 
 async function loadUserCtx(): Promise<UserCtx | null> {

@@ -49,7 +49,7 @@ export default function MountainGroupDetailModal({ group, userId, onClose }: Pro
       .finally(() => setLoading(false));
   }, [group, userId]);
 
-  const conquered = summits.filter((s) => s.conquered).length;
+  const conquered = summits.filter((s: GroupSummit) => s.conquered).length;
   const total = summits.length;
 
   return (
@@ -72,7 +72,7 @@ export default function MountainGroupDetailModal({ group, userId, onClose }: Pro
         ) : (
           <FlatList
             data={summits}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item: GroupSummit) => item.id}
             renderItem={({ item }: ListRenderItemInfo<GroupSummit>) => (
               <SummitRow item={item} lang={lang} />
             )}
