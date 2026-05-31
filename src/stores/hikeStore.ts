@@ -19,6 +19,8 @@ export interface HikeState {
   stayStartedAt: number | null;    // Date.now() when entered summit radius
   stayElapsedMs: number;           // accumulated ms at summit
   verifiedAt: number | null;       // Date.now() when summit was verified
+  elevationGainM: number;          // cumulative positive elevation gain in metres
+  lastAltM: number | null;         // last recorded altitude for gain delta
 
   // Actions
   setLocation: (lat: number, lng: number, point: GpsPoint) => void;
@@ -43,14 +45,28 @@ export const useHikeStore = create<HikeState>((set: (partial: Partial<HikeState>
   stayStartedAt: null,
   stayElapsedMs: 0,
   verifiedAt: null,
+  elevationGainM: 0,
+  lastAltM: null,
 
   setLocation: (lat: number, lng: number, point: GpsPoint) =>
-    set((s: HikeState) => ({
-      currentLat: lat,
-      currentLng: lng,
-      phase: s.phase === 'idle' ? 'hiking' : s.phase,
-      track: [...s.track, point],
-    })),
+    set((s: HikeState) => {
+      let gainDelta = 0;
+      let newLastAlt = s.lastAltM;
+      if (point.alt !== undefined) {
+        if (s.lastAltM !== null && point.alt > s.lastAltM + 1.5) {
+          gainDelta = point.alt - s.lastAltM;
+        }
+        newLastAlt = point.alt;
+      }
+      return {
+        currentLat: lat,
+        currentLng: lng,
+        phase: s.phase === 'idle' ? 'hiking' : s.phase,
+        track: [...s.track, point],
+        elevationGainM: s.elevationGainM + gainDelta,
+        lastAltM: newLastAlt,
+      };
+    }),
 
   setSummitProximity: (summit: Summit | null, distanceM: number | null) =>
     set({ nearestSummit: summit, nearestDistanceM: distanceM }),
@@ -100,6 +116,8 @@ export const useHikeStore = create<HikeState>((set: (partial: Partial<HikeState>
       stayStartedAt: null,
       stayElapsedMs: 0,
       verifiedAt: null,
+      elevationGainM: 0,
+      lastAltM: null,
     }),
 }));
 

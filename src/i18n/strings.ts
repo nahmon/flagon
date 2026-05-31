@@ -434,6 +434,8 @@ const strings = {
     hikeStatsPace: '페이스',
     hikeStatsPaceUnit: 'min/km',
     hikeStatsKm: (n: string) => `${n} km`,
+    hikeStatsElev: '고도',
+    hikeStatsElevGain: (m: number) => `+${Math.round(m)}m`,
 
     // Flag expiry reminders
     flagExpiryNotifTitle: (name: string) => `${name} 깃발이 곧 만료됩니다 🚩`,
@@ -909,6 +911,8 @@ const strings = {
     hikeStatsPace: 'Pace',
     hikeStatsPaceUnit: 'min/km',
     hikeStatsKm: (n: string) => `${n} km`,
+    hikeStatsElev: 'Elev',
+    hikeStatsElevGain: (m: number) => `+${Math.round(m)}m`,
 
     // Flag expiry reminders
     flagExpiryNotifTitle: (name: string) => `${name} flag expiring soon 🚩`,
@@ -1384,6 +1388,8 @@ const strings = {
     hikeStatsPace: 'ペース',
     hikeStatsPaceUnit: 'min/km',
     hikeStatsKm: (n: string) => `${n} km`,
+    hikeStatsElev: '獲得標高',
+    hikeStatsElevGain: (m: number) => `+${Math.round(m)}m`,
 
     // Flag expiry reminders
     flagExpiryNotifTitle: (name: string) => `${name}の旗がまもなく失効します 🚩`,

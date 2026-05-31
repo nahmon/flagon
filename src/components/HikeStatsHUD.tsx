@@ -38,6 +38,7 @@ export default function HikeStatsHUD() {
   const s = t(lang);
   const phase = useHikeStore((st: HikeState) => st.phase);
   const track = useHikeStore((st: HikeState) => st.track);
+  const elevationGainM = useHikeStore((st: HikeState) => st.elevationGainM);
 
   const [elapsedMs, setElapsedMs] = useState(0);
   const startTsRef = useRef<number | null>(null);
@@ -85,6 +86,11 @@ export default function HikeStatsHUD() {
       <View style={styles.stat}>
         <Text style={styles.value}>{paceStr(distKm, elapsedMs)}</Text>
         <Text style={styles.label}>{`${s.hikeStatsPace} (${s.hikeStatsPaceUnit})`}</Text>
+      </View>
+      <View style={styles.divider} />
+      <View style={styles.stat}>
+        <Text style={styles.value}>{s.hikeStatsElevGain(elevationGainM)}</Text>
+        <Text style={styles.label}>{s.hikeStatsElev}</Text>
       </View>
     </View>
   );

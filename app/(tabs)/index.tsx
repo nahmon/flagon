@@ -98,6 +98,7 @@ export default function MapScreen() {
   const hike = useHiking(summits);
   const phase = useHikeStore((s: HikeState) => s.phase);
   const nearestSummit = useHikeStore((s: HikeState) => s.nearestSummit);
+  const elevationGainM = useHikeStore((s: HikeState) => s.elevationGainM);
   const stayStartedAt = useHikeStore((s: HikeState) => s.stayStartedAt);
   const stayElapsedMs = useHikeStore((s: HikeState) => s.stayElapsedMs);
 
@@ -493,6 +494,12 @@ export default function MapScreen() {
           <Text style={styles.successEmoji}>🏔️</Text>
           <Text style={styles.successTitle}>{s.summitConquered(summitName(nearestSummit, lang))}</Text>
           <Text style={styles.successSub}>{s.plantedForCrew}</Text>
+          {elevationGainM > 0 && (
+            <View style={styles.successStats}>
+              <Text style={styles.successStatVal}>{s.hikeStatsElevGain(elevationGainM)}</Text>
+              <Text style={styles.successStatLabel}>{s.hikeStatsElev}</Text>
+            </View>
+          )}
           <View style={styles.successActions}>
             <TouchableOpacity
               style={styles.successShare}
@@ -610,6 +617,28 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.white,
     opacity: 0.85,
+  },
+  successStats: {
+    marginTop: 8,
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 6,
+  },
+  successStatVal: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: Colors.white,
+    letterSpacing: -0.3,
+  },
+  successStatLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: Colors.white,
+    opacity: 0.75,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   successActions: {
     flexDirection: 'row',
