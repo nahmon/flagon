@@ -8,6 +8,7 @@ import { SummitWithFlag, SummitRating, SummitRatingAggregate } from '../types';
 import { fetchSummitFlagHistory, FlagHistoryEntry } from '../services/flags';
 import WeatherCard from './WeatherCard';
 import { isWishlisted, addToWishList, removeFromWishList } from '../services/wishlist';
+import { isPersonallyFlagged, addPersonalFlag, removePersonalFlag } from '../services/personalFlags';
 import { loadNote, SummitNote } from '../services/summitNotes';
 import SummitNoteModal from './SummitNoteModal';
 import SummitRatingModal from './SummitRatingModal';
@@ -45,6 +46,7 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
   const [history, setHistory] = useState<FlagHistoryEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
+  const [personallyFlagged, setPersonallyFlagged] = useState(false);
   const [note, setNote] = useState<SummitNote | null>(null);
   const [noteModalVisible, setNoteModalVisible] = useState(false);
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
@@ -73,7 +75,7 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
 
   useEffect(() => {
     if (!summit) {
-      setHistory([]); setBookmarked(false); setNote(null);
+      setHistory([]); setBookmarked(false); setPersonallyFlagged(false); setNote(null);
       setRatingAggregate(null); setMyRating(null); setTipCount(0);
       setConditionCount(0); setConditionIcon(null);
       setPhotoCount(0); setPhotoModalVisible(false);
@@ -85,6 +87,7 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
       .catch(console.error)
       .finally(() => setLoading(false));
     isWishlisted(summit.id).then(setBookmarked).catch(() => {});
+    isPersonallyFlagged(summit.id).then(setPersonallyFlagged).catch(() => {});
     loadNote(summit.id).then(setNote).catch(() => {});
     loadRatings(summit.id);
     loadTips(summit.id).then(tips => setTipCount(tips.length)).catch(() => {});
@@ -127,6 +130,28 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
       : `🏔 ${name} (${summit.elevation_m}m) — FlagOn`;
     await Share.share({ message });
   }, [summit, lang, s]);
+
+  const handlePersonalFlag = useCallback(async () => {
+    if (!summit) return;
+    const next = !personallyFlagged;
+    setPersonallyFlagged(next);
+    if (next) {
+      await addPersonalFlag({
+        id: summit.id,
+        name_ko: summit.name_ko,
+        name_en: summit.name_en ?? null,
+        name_ja: summit.name_ja ?? null,
+        elevation_m: summit.elevation_m,
+      });
+      if (Platform.OS === 'android') {
+        ToastAndroid.show(s.personalFlagPlanted, ToastAndroid.SHORT);
+      } else {
+        Alert.alert('', s.personalFlagPlanted);
+      }
+    } else {
+      await removePersonalFlag(summit.id);
+    }
+  }, [summit, personallyFlagged, s]);
 
   const flag = summit?.active_flag;
   const expiryDays = flag?.expires_at ? daysUntil(flag.expires_at) : null;
@@ -175,6 +200,13 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
               activeOpacity={0.7}
             >
               <Text style={styles.shareIcon}>↑</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.bookmarkBtn, personallyFlagged && styles.personalFlagBtnActive]}
+              onPress={handlePersonalFlag}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.noteIcon}>{personallyFlagged ? '🚩' : '🏳️'}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.bookmarkBtn, bookmarked && styles.bookmarkBtnActive]}
@@ -369,6 +401,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.zinc100, alignItems: 'center', justifyContent: 'center',
   },
   bookmarkBtnActive: { backgroundColor: Colors.orange },
+  personalFlagBtnActive: { backgroundColor: Colors.green },
   bookmarkIcon: { fontSize: 18, color: Colors.zinc500 },
   shareIcon: { fontSize: 18, fontWeight: '700', color: Colors.zinc500 },
   bookmarkIconActive: { color: Colors.white },

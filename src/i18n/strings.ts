@@ -221,6 +221,10 @@ const strings = {
     bookmarkRemoved: '버킷리스트에서 제거됨',
     bookmark: '버킷리스트',
 
+    // Personal flags
+    personalFlagPlanted: '🚩 방문 기록 완료!',
+    personalFlagCount: (n: number) => `🚩 방문 ${n}개`,
+
     // Streak
     streakTitle: '연속 등산',
     streakWeeks: (n: number) => `${n}주 연속`,
@@ -692,6 +696,10 @@ const strings = {
     bookmarkRemoved: 'Removed from bucket list',
     bookmark: 'Bucket List',
 
+    // Personal flags
+    personalFlagPlanted: '🚩 Visit recorded!',
+    personalFlagCount: (n: number) => `🚩 ${n} visit${n !== 1 ? 's' : ''}`,
+
     // Streak
     streakTitle: 'Hiking Streak',
     streakWeeks: (n: number) => `${n}-week streak`,
@@ -1162,6 +1170,10 @@ const strings = {
     bookmarkAdded: 'バケットリストに追加',
     bookmarkRemoved: 'バケットリストから削除',
     bookmark: 'バケットリスト',
+
+    // Personal flags
+    personalFlagPlanted: '🚩 訪問記録完了！',
+    personalFlagCount: (n: number) => `🚩 訪問${n}回`,
 
     // Streak
     streakTitle: '登山ストリーク',

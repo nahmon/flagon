@@ -23,6 +23,7 @@ import { fetchUserConquests, type ConquestEntry } from '../../src/services/conqu
 import { fetchStreak } from '../../src/services/streaks';
 import { xpForFlag, xpProgress, type XpProgress } from '../../src/services/xp';
 import { fetchFollowCounts, type FollowCounts } from '../../src/services/follows';
+import { getPersonalFlags } from '../../src/services/personalFlags';
 import { useLang } from '../../src/contexts/LangContext';
 import { t } from '../../src/i18n/strings';
 
@@ -185,6 +186,7 @@ export default function ProfileScreen() {
   const [xpData, setXpData] = useState<XpProgress | null>(null);
   const [highestSummit, setHighestSummit] = useState<ConquestEntry | null>(null);
   const [currentStreak, setCurrentStreak] = useState(0);
+  const [personalFlagCount, setPersonalFlagCount] = useState(0);
 
   const loadProfile = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -211,6 +213,8 @@ export default function ProfileScreen() {
       setCurrentStreak(streakInfo.current);
       const counts = await fetchFollowCounts(user.id);
       setFollowCounts(counts);
+      const pf = await getPersonalFlags();
+      setPersonalFlagCount(pf.length);
     } catch (e) {
       console.error('[profile]', e);
     } finally {
@@ -349,6 +353,11 @@ export default function ProfileScreen() {
             <View style={styles.statChip}>
               <Text style={styles.statChipText}>{s.flagCount(profile?.flag_count ?? 0)}</Text>
             </View>
+            {personalFlagCount > 0 && (
+              <View style={styles.statChip}>
+                <Text style={styles.statChipText}>{s.personalFlagCount(personalFlagCount)}</Text>
+              </View>
+            )}
             <TouchableOpacity style={styles.followChip} onPress={() => setShowFollowing(true)} activeOpacity={0.7}>
               <Text style={styles.followChipText}>{s.followingCount(followCounts.following)}</Text>
               <Text style={styles.followChipSep}>·</Text>
