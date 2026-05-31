@@ -281,6 +281,15 @@ const strings = {
     challengeHint: '지도에서 정상을 찾아 깃발을 꽂아보세요!',
     challengeUnavailable: '오늘의 도전을 불러올 수 없습니다',
 
+    // Weekly challenge
+    weeklyChallenge: '이번 주 챌린지',
+    weeklyProgress: (done: number, total: number) => `${done}/${total} 완료`,
+    weeklyBonus: (xp: number) => `보너스 +${xp} XP`,
+    weeklyAllDone: '이번 주 챌린지 완료! 🎉',
+    weeklyHint: '이번 주 세 정상을 모두 정복하면 보너스 XP를 획득합니다',
+    weeklyDaysLeft: (n: number) => `${n}일 남음`,
+    weeklyUnavailable: '주간 챌린지를 불러올 수 없습니다',
+
     // Hiker profile modal
     hikerProfile: '등산인 프로필',
     uniqueSummits: '정상 수',
@@ -758,6 +767,15 @@ const strings = {
     challengeHint: 'Find the summit on the map and plant your flag!',
     challengeUnavailable: "Today's challenge is unavailable",
 
+    // Weekly challenge
+    weeklyChallenge: 'Weekly Challenge',
+    weeklyProgress: (done: number, total: number) => `${done}/${total} done`,
+    weeklyBonus: (xp: number) => `Bonus +${xp} XP`,
+    weeklyAllDone: 'Weekly challenge complete! 🎉',
+    weeklyHint: 'Conquer all 3 summits this week to earn bonus XP',
+    weeklyDaysLeft: (n: number) => `${n}d left`,
+    weeklyUnavailable: 'Weekly challenge unavailable',
+
     // Hiker profile modal
     hikerProfile: 'Hiker Profile',
     uniqueSummits: 'Summits',
@@ -1234,6 +1252,15 @@ const strings = {
     conqueredToday: '本日の制覇',
     challengeHint: '地図で山頂を見つけて旗を立てよう！',
     challengeUnavailable: '本日のチャレンジを読み込めません',
+
+    // Weekly challenge
+    weeklyChallenge: 'ウィークリーチャレンジ',
+    weeklyProgress: (done: number, total: number) => `${done}/${total} 達成`,
+    weeklyBonus: (xp: number) => `ボーナス +${xp} XP`,
+    weeklyAllDone: '今週のチャレンジ達成！🎉',
+    weeklyHint: '今週3つの山頂をすべて制覇してボーナスXPを獲得しよう',
+    weeklyDaysLeft: (n: number) => `残り${n}日`,
+    weeklyUnavailable: 'ウィークリーチャレンジを読み込めません',
 
     // Hiker profile modal
     hikerProfile: '登山者プロフィール',
