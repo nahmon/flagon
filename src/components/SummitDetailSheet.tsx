@@ -21,6 +21,8 @@ import { loadConditions, dominantCondition, CONDITION_META } from '../services/c
 import { fetchSummitPhotos } from '../services/summitPhotos';
 import { useLang } from '../contexts/LangContext';
 import { t, summitName } from '../i18n/strings';
+import SummitFriendsRow from './SummitFriendsRow';
+import HikerProfileModal from './HikerProfileModal';
 
 function relativeTime(dateStr: string): string {
   const diffH = Math.floor((Date.now() - new Date(dateStr).getTime()) / 3_600_000);
@@ -59,6 +61,7 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
   const [conditionIcon, setConditionIcon] = useState<string | null>(null);
   const [photoModalVisible, setPhotoModalVisible] = useState(false);
   const [photoCount, setPhotoCount] = useState(0);
+  const [selectedHiker, setSelectedHiker] = useState<string | null>(null);
 
   const loadRatings = useCallback((id: string) => {
     fetchSummitRatingAggregate(id).then(setRatingAggregate).catch(() => {});
@@ -157,6 +160,7 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
   const expiryDays = flag?.expires_at ? daysUntil(flag.expires_at) : null;
 
   return (
+    <>
     <Modal
       visible={!!summit}
       animationType="slide"
@@ -254,6 +258,10 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
         </View>
 
         {summit ? <WeatherCard summit={summit} /> : null}
+
+        {summit && (
+          <SummitFriendsRow summitId={summit.id} onPressHiker={setSelectedHiker} />
+        )}
 
         <TouchableOpacity style={styles.tipsBar} onPress={() => setTipsModalVisible(true)} activeOpacity={0.7}>
           <Text style={styles.tipsBtnTxt}>{s.tipsBtn(tipCount)}</Text>
@@ -381,6 +389,8 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
         )}
       </View>
     </Modal>
+    <HikerProfileModal userId={selectedHiker} onClose={() => setSelectedHiker(null)} />
+    </>
   );
 }
 

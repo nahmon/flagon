@@ -515,6 +515,12 @@ const strings = {
     analyticsDayActivity: '요일별 활동',
     analyticsDays: ['일', '월', '화', '수', '목', '금', '토'],
     analyticsElevBands: '고도 분포',
+
+    // Friends on summit
+    friendsFlagged: (n: number) => `👥 친구 ${n}명이 이 정상에 깃발을 꽂았어요`,
+    friendsFlaggedOne: '👥 친구 1명이 이 정상에 깃발을 꽂았어요',
+    friendsFlaggedTitle: '친구들도 왔었어요',
+    friendsEmpty: '아직 팔로우하는 친구가 없어요',
   },
 
   en: {
@@ -1031,6 +1037,12 @@ const strings = {
     analyticsDayActivity: 'Activity by Day',
     analyticsDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     analyticsElevBands: 'Elevation Range',
+
+    // Friends on summit
+    friendsFlagged: (n: number) => `👥 ${n} friend${n === 1 ? '' : 's'} flagged this summit`,
+    friendsFlaggedOne: '👥 1 friend flagged this summit',
+    friendsFlaggedTitle: 'Friends Who\'ve Been Here',
+    friendsEmpty: 'None of your friends have flagged this yet',
   },
 
   ja: {
@@ -1547,6 +1559,12 @@ const strings = {
     analyticsDayActivity: '曜日別活動',
     analyticsDays: ['日', '月', '火', '水', '木', '金', '土'],
     analyticsElevBands: '標高分布',
+
+    // Friends on summit
+    friendsFlagged: (n: number) => `👥 フォロー中の${n}人がこの山頂に登りました`,
+    friendsFlaggedOne: '👥 フォロー中の1人がこの山頂に登りました',
+    friendsFlaggedTitle: '友達も来ました',
+    friendsEmpty: 'まだ友達がこの山頂に登っていません',
   },
 } as const;
 
