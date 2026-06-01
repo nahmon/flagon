@@ -496,6 +496,14 @@ const strings = {
     journalEmpty: '일지 없음',
     journalBtn: '📓 일지 쓰기',
     journalBtnDone: '📓 일지 작성됨',
+
+    // Elevation milestones
+    elevMilestonesTitle: '⬆️ 고도 업적',
+    elevMilestonesEmpty: '아직 정복 기록이 없습니다',
+    elevMilestonesProgress: (current: string, next: string, label: string) =>
+      `${current}m / ${next}m — ${label}까지`,
+    elevMilestonesBonus: (xp: number) => `+${xp} XP`,
+    elevMilestonesAllDone: '모든 고도 업적 달성! 🏆',
   },
 
   en: {
@@ -993,6 +1001,14 @@ const strings = {
     journalEmpty: 'No journal',
     journalBtn: '📓 Write Journal',
     journalBtnDone: '📓 Journal Written',
+
+    // Elevation milestones
+    elevMilestonesTitle: '⬆️ Elevation Milestones',
+    elevMilestonesEmpty: 'No conquests yet',
+    elevMilestonesProgress: (current: string, next: string, label: string) =>
+      `${current}m / ${next}m — toward ${label}`,
+    elevMilestonesBonus: (xp: number) => `+${xp} XP`,
+    elevMilestonesAllDone: 'All elevation milestones reached! 🏆',
   },
 
   ja: {
@@ -1490,6 +1506,14 @@ const strings = {
     journalEmpty: '日誌なし',
     journalBtn: '📓 日誌を書く',
     journalBtnDone: '📓 日誌作成済み',
+
+    // Elevation milestones
+    elevMilestonesTitle: '⬆️ 高度マイルストーン',
+    elevMilestonesEmpty: 'まだ征服記録がありません',
+    elevMilestonesProgress: (current: string, next: string, label: string) =>
+      `${current}m / ${next}m — ${label}まで`,
+    elevMilestonesBonus: (xp: number) => `+${xp} XP`,
+    elevMilestonesAllDone: '全高度マイルストーン達成！🏆',
   },
 } as const;
 
