@@ -521,6 +521,23 @@ const strings = {
     friendsFlaggedOne: '👥 친구 1명이 이 정상에 깃발을 꽂았어요',
     friendsFlaggedTitle: '친구들도 왔었어요',
     friendsEmpty: '아직 팔로우하는 친구가 없어요',
+
+    // Year in Review
+    yearReviewBtn: '🎊 연간 등산 리포트',
+    yearReviewTitle: '연간 등산 리포트',
+    yearHeroSub: '올해의 등산 기록',
+    yearTotalFlags: '총 깃발',
+    yearUniqueSummits: '정복 봉우리',
+    yearElevation: '총 누적 고도',
+    yearHikes: '총 하이킹',
+    yearHighestPeak: '최고봉',
+    yearBestMonth: '최다 등산 월',
+    yearFlags: '회',
+    yearTopCrew: '소속 크루',
+    yearFirstFlag: '첫 깃발',
+    yearShare: '공유하기',
+    yearEmpty: '이 해에 등산 기록이 없습니다.\n나가서 산을 정복하세요! 🏔️',
+    yearShareHeader: (y: number) => `🏔️ ${y}년 나의 등산 리포트 — FlagOn`,
   },
 
   en: {
@@ -1043,6 +1060,23 @@ const strings = {
     friendsFlaggedOne: '👥 1 friend flagged this summit',
     friendsFlaggedTitle: 'Friends Who\'ve Been Here',
     friendsEmpty: 'None of your friends have flagged this yet',
+
+    // Year in Review
+    yearReviewBtn: '🎊 Year in Review',
+    yearReviewTitle: 'Year in Review',
+    yearHeroSub: 'Your Hiking Year',
+    yearTotalFlags: 'Flags Planted',
+    yearUniqueSummits: 'Unique Summits',
+    yearElevation: 'Total Elevation',
+    yearHikes: 'Total Hikes',
+    yearHighestPeak: 'Highest Peak',
+    yearBestMonth: 'Best Month',
+    yearFlags: 'flags',
+    yearTopCrew: 'Top Crew',
+    yearFirstFlag: 'First Flag',
+    yearShare: 'Share Your Year',
+    yearEmpty: 'No hikes recorded this year.\nGet out there and conquer some peaks! 🏔️',
+    yearShareHeader: (y: number) => `🏔️ My ${y} Hiking Year in Review — FlagOn`,
   },
 
   ja: {
@@ -1565,6 +1599,23 @@ const strings = {
     friendsFlaggedOne: '👥 フォロー中の1人がこの山頂に登りました',
     friendsFlaggedTitle: '友達も来ました',
     friendsEmpty: 'まだ友達がこの山頂に登っていません',
+
+    // Year in Review
+    yearReviewBtn: '🎊 年間登山レポート',
+    yearReviewTitle: '年間登山レポート',
+    yearHeroSub: '今年の登山記録',
+    yearTotalFlags: '合計フラグ',
+    yearUniqueSummits: '制覇した山頂',
+    yearElevation: '累計標高',
+    yearHikes: '合計登山',
+    yearHighestPeak: '最高峰',
+    yearBestMonth: '最多登山月',
+    yearFlags: '回',
+    yearTopCrew: '所属クルー',
+    yearFirstFlag: '初フラグ',
+    yearShare: 'シェアする',
+    yearEmpty: '今年の登山記録がありません。\n山を制覇しに行こう！🏔️',
+    yearShareHeader: (y: number) => `🏔️ ${y}年の登山レポート — FlagOn`,
   },
 } as const;
 

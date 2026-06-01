@@ -23,6 +23,7 @@ import ElevationMilestonesCard from '../../src/components/ElevationMilestonesCar
 import FollowingListModal from '../../src/components/FollowingListModal';
 import PackChecklistModal from '../../src/components/PackChecklistModal';
 import HikeAnalyticsCard from '../../src/components/HikeAnalyticsCard';
+import YearReviewModal from '../../src/components/YearReviewModal';
 import { fetchUserConquests, type ConquestEntry } from '../../src/services/conquests';
 import { buildAnalytics, type AnalyticsSummary } from '../../src/services/analytics';
 import { fetchStreak } from '../../src/services/streaks';
@@ -183,6 +184,7 @@ export default function ProfileScreen() {
   const [showRivals, setShowRivals] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
   const [showChecklist, setShowChecklist] = useState(false);
+  const [showYearReview, setShowYearReview] = useState(false);
   const [followCounts, setFollowCounts] = useState<FollowCounts>({ followers: 0, following: 0 });
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [editingName, setEditingName] = useState(false);
@@ -487,6 +489,12 @@ export default function ProfileScreen() {
           <Text style={styles.wishListArrow}>→</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowYearReview(true)} activeOpacity={0.8}>
+          <Text style={styles.wishListIcon}>🎊</Text>
+          <Text style={styles.wishListLabel}>{s.yearReviewBtn}</Text>
+          <Text style={styles.wishListArrow}>→</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
           <Text style={styles.signOutText}>{s.logout}</Text>
         </TouchableOpacity>
@@ -522,6 +530,13 @@ export default function ProfileScreen() {
         />
       )}
       <PackChecklistModal visible={showChecklist} onClose={() => setShowChecklist(false)} />
+      {userId && (
+        <YearReviewModal
+          visible={showYearReview}
+          userId={userId}
+          onClose={() => setShowYearReview(false)}
+        />
+      )}
     </View>
   );
 }
