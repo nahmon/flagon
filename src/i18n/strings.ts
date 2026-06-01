@@ -504,6 +504,17 @@ const strings = {
       `${current}m / ${next}m — ${label}까지`,
     elevMilestonesBonus: (xp: number) => `+${xp} XP`,
     elevMilestonesAllDone: '모든 고도 업적 달성! 🏆',
+
+    // Hike analytics
+    analyticsTitle: '📊 나의 등산 분석',
+    analyticsMonthly: '월별 등정 횟수',
+    analyticsBestMonth: '최다 등정 달',
+    analyticsAvgElev: '평균 고도',
+    analyticsFlags: '회',
+    analyticsNone: '아직 등산 기록이 없습니다',
+    analyticsDayActivity: '요일별 활동',
+    analyticsDays: ['일', '월', '화', '수', '목', '금', '토'],
+    analyticsElevBands: '고도 분포',
   },
 
   en: {
@@ -1009,6 +1020,17 @@ const strings = {
       `${current}m / ${next}m — toward ${label}`,
     elevMilestonesBonus: (xp: number) => `+${xp} XP`,
     elevMilestonesAllDone: 'All elevation milestones reached! 🏆',
+
+    // Hike analytics
+    analyticsTitle: '📊 My Hike Analytics',
+    analyticsMonthly: 'Monthly Flags',
+    analyticsBestMonth: 'Best Month',
+    analyticsAvgElev: 'Avg Elevation',
+    analyticsFlags: ' flags',
+    analyticsNone: 'No hiking records yet',
+    analyticsDayActivity: 'Activity by Day',
+    analyticsDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    analyticsElevBands: 'Elevation Range',
   },
 
   ja: {
@@ -1514,6 +1536,17 @@ const strings = {
       `${current}m / ${next}m — ${label}まで`,
     elevMilestonesBonus: (xp: number) => `+${xp} XP`,
     elevMilestonesAllDone: '全高度マイルストーン達成！🏆',
+
+    // Hike analytics
+    analyticsTitle: '📊 登山分析',
+    analyticsMonthly: '月別登頂数',
+    analyticsBestMonth: '最多登頂月',
+    analyticsAvgElev: '平均標高',
+    analyticsFlags: '回',
+    analyticsNone: 'まだ登山記録がありません',
+    analyticsDayActivity: '曜日別活動',
+    analyticsDays: ['日', '月', '火', '水', '木', '金', '土'],
+    analyticsElevBands: '標高分布',
   },
 } as const;
 

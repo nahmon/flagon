@@ -5,18 +5,24 @@ import { fetchPersonalRecords } from '../services/personalRecords';
 import {
   computeElevationMilestones,
   ELEVATION_MILESTONES,
+  type ElevationMilestone,
   type ElevationMilestoneStatus,
 } from '../services/elevationMilestones';
 import { useLang } from '../contexts/LangContext';
-import { t } from '../i18n/strings';
+import { t, type Lang } from '../i18n/strings';
 
 interface Props {
   userId: string;
 }
 
+function mlabel(obj: { ko: string; en: string; ja: string }, l: Lang): string {
+  return obj[l];
+}
+
 export default function ElevationMilestonesCard({ userId }: Props) {
   const { lang } = useLang();
-  const s = t(lang);
+  const typedLang = lang as Lang;
+  const s = t(typedLang);
   const [status, setStatus] = useState<ElevationMilestoneStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(false);
@@ -36,7 +42,7 @@ export default function ElevationMilestonesCard({ userId }: Props) {
     <View style={styles.card}>
       <TouchableOpacity
         style={styles.header}
-        onPress={() => setExpanded((v) => !v)}
+        onPress={() => setExpanded((v: boolean) => !v)}
         activeOpacity={0.75}
       >
         <Text style={styles.title}>{s.elevMilestonesTitle}</Text>
@@ -52,12 +58,12 @@ export default function ElevationMilestonesCard({ userId }: Props) {
           {/* Badge row */}
           <View style={styles.badgeRow}>
             {ELEVATION_MILESTONES.map((m) => {
-              const earned = status.earned.some((e) => e.id === m.id);
+              const earned = status.earned.some((e: ElevationMilestone) => e.id === m.id);
               return (
                 <View key={m.id} style={styles.badgeWrap}>
                   <Text style={[styles.badgeIcon, !earned && styles.badgeIconDim]}>{m.icon}</Text>
                   <Text style={[styles.badgeLabel, !earned && styles.badgeLabelDim]}>
-                    {m.label[lang]}
+                    {mlabel(m.label, typedLang)}
                   </Text>
                 </View>
               );
@@ -72,7 +78,7 @@ export default function ElevationMilestonesCard({ userId }: Props) {
                   {s.elevMilestonesProgress(
                     status.totalElevationM.toLocaleString(),
                     status.next.thresholdM.toLocaleString(),
-                    status.next.label[lang],
+                    mlabel(status.next.label, typedLang),
                   )}
                 </Text>
                 <Text style={styles.progressXp}>{s.elevMilestonesBonus(status.next.bonusXp)}</Text>
@@ -92,15 +98,15 @@ export default function ElevationMilestonesCard({ userId }: Props) {
           {expanded && (
             <View style={styles.listSection}>
               {ELEVATION_MILESTONES.map((m) => {
-                const earned = status.earned.some((e) => e.id === m.id);
+                const earned = status.earned.some((e: ElevationMilestone) => e.id === m.id);
                 return (
                   <View key={m.id} style={styles.listRow}>
                     <Text style={[styles.listIcon, !earned && styles.listIconDim]}>{m.icon}</Text>
                     <View style={styles.listBody}>
                       <Text style={[styles.listName, !earned && styles.listNameDim]}>
-                        {m.label[lang]}
+                        {mlabel(m.label, typedLang)}
                       </Text>
-                      <Text style={styles.listDesc}>{m.desc[lang]}</Text>
+                      <Text style={styles.listDesc}>{mlabel(m.desc, typedLang)}</Text>
                     </View>
                     <Text style={earned ? styles.listXpEarned : styles.listXpPending}>
                       {earned ? `+${m.bonusXp} XP ✓` : `+${m.bonusXp} XP`}

@@ -22,7 +22,9 @@ import SummitBingoCard from '../../src/components/SummitBingoCard';
 import ElevationMilestonesCard from '../../src/components/ElevationMilestonesCard';
 import FollowingListModal from '../../src/components/FollowingListModal';
 import PackChecklistModal from '../../src/components/PackChecklistModal';
+import HikeAnalyticsCard from '../../src/components/HikeAnalyticsCard';
 import { fetchUserConquests, type ConquestEntry } from '../../src/services/conquests';
+import { buildAnalytics, type AnalyticsSummary } from '../../src/services/analytics';
 import { fetchStreak } from '../../src/services/streaks';
 import { xpForFlag, xpProgress, type XpProgress } from '../../src/services/xp';
 import { fetchFollowCounts, type FollowCounts } from '../../src/services/follows';
@@ -190,6 +192,7 @@ export default function ProfileScreen() {
   const [highestSummit, setHighestSummit] = useState<ConquestEntry | null>(null);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [personalFlagCount, setPersonalFlagCount] = useState(0);
+  const [analyticsSummary, setAnalyticsSummary] = useState<AnalyticsSummary | null>(null);
 
   const loadProfile = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -212,6 +215,7 @@ export default function ProfileScreen() {
         (max, c) => (!max || c.elevation_m > max.elevation_m ? c : max), null,
       );
       setHighestSummit(best);
+      setAnalyticsSummary(buildAnalytics(conquests, lang));
       const streakInfo = await fetchStreak(user.id);
       setCurrentStreak(streakInfo.current);
       const counts = await fetchFollowCounts(user.id);
@@ -432,6 +436,9 @@ export default function ProfileScreen() {
         {userId && <SummitBingoCard userId={userId} />}
         {userId && <PersonalRecordsCard userId={userId} />}
         {userId && <ElevationMilestonesCard userId={userId} />}
+        {analyticsSummary && analyticsSummary.totalFlags > 0 && (
+          <HikeAnalyticsCard summary={analyticsSummary} />
+        )}
         {userId && <MountainGroupProgress userId={userId} onGroupPress={setSelectedGroup} />}
         {userId && <AchievementGrid userId={userId} />}
         {userId && <RecentHikesList userId={userId} />}
