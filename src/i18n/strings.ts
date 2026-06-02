@@ -550,6 +550,11 @@ const strings = {
     trophyRoomEmpty: '아직 정복한 정상이 없습니다.\n첫 번째 정상을 정복하세요! ⛰️',
     trophyRoomConquered: '정복일',
     trophyRoomElevation: (m: number) => `${m.toLocaleString()}m`,
+
+    // Summit Passport
+    passportTitle: '🗺️ 정상 여권',
+    passportProgress: (earned: number, total: number) => `${earned} / ${total} 스탬프 획득`,
+    passportComplete: '🎉 모든 산 스탬프를 모았습니다!',
   },
 
   en: {
@@ -1101,6 +1106,11 @@ const strings = {
     trophyRoomEmpty: 'No summits conquered yet.\nGet out there and claim your first peak! ⛰️',
     trophyRoomConquered: 'Conquered',
     trophyRoomElevation: (m: number) => `${m.toLocaleString()}m`,
+
+    // Summit Passport
+    passportTitle: '🗺️ Summit Passport',
+    passportProgress: (earned: number, total: number) => `${earned} / ${total} stamps collected`,
+    passportComplete: '🎉 All mountain stamps collected!',
   },
 
   ja: {
@@ -1652,6 +1662,11 @@ const strings = {
     trophyRoomEmpty: 'まだ山頂を制覇していません。\n最初の山頂を目指しましょう！⛰️',
     trophyRoomConquered: '制覇日',
     trophyRoomElevation: (m: number) => `${m.toLocaleString()}m`,
+
+    // Summit Passport
+    passportTitle: '🗺️ 山頂パスポート',
+    passportProgress: (earned: number, total: number) => `${earned} / ${total} スタンプ取得`,
+    passportComplete: '🎉 全ての山スタンプを集めました！',
   },
 } as const;
 

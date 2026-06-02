@@ -25,6 +25,7 @@ import PackChecklistModal from '../../src/components/PackChecklistModal';
 import HikeAnalyticsCard from '../../src/components/HikeAnalyticsCard';
 import SummitHeatmapCard from '../../src/components/SummitHeatmapCard';
 import TrophyRoomCard from '../../src/components/TrophyRoomCard';
+import SummitPassportCard from '../../src/components/SummitPassportCard';
 import YearReviewModal from '../../src/components/YearReviewModal';
 import { fetchUserConquests, type ConquestEntry } from '../../src/services/conquests';
 import { buildAnalytics, type AnalyticsSummary } from '../../src/services/analytics';
@@ -449,6 +450,7 @@ export default function ProfileScreen() {
           <SummitHeatmapCard dates={conquestDates} />
         )}
         <TrophyRoomCard />
+        <SummitPassportCard />
         {userId && <MountainGroupProgress userId={userId} onGroupPress={setSelectedGroup} />}
         {userId && <AchievementGrid userId={userId} />}
         {userId && <RecentHikesList userId={userId} />}
