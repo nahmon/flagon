@@ -544,6 +544,12 @@ const strings = {
     yearShare: '공유하기',
     yearEmpty: '이 해에 등산 기록이 없습니다.\n나가서 산을 정복하세요! 🏔️',
     yearShareHeader: (y: number) => `🏔️ ${y}년 나의 등산 리포트 — FlagOn`,
+
+    // Trophy Room
+    trophyRoomTitle: '🏆 나의 트로피 룸',
+    trophyRoomEmpty: '아직 정복한 정상이 없습니다.\n첫 번째 정상을 정복하세요! ⛰️',
+    trophyRoomConquered: '정복일',
+    trophyRoomElevation: (m: number) => `${m.toLocaleString()}m`,
   },
 
   en: {
@@ -1089,6 +1095,12 @@ const strings = {
     yearShare: 'Share Your Year',
     yearEmpty: 'No hikes recorded this year.\nGet out there and conquer some peaks! 🏔️',
     yearShareHeader: (y: number) => `🏔️ My ${y} Hiking Year in Review — FlagOn`,
+
+    // Trophy Room
+    trophyRoomTitle: '🏆 My Trophy Room',
+    trophyRoomEmpty: 'No summits conquered yet.\nGet out there and claim your first peak! ⛰️',
+    trophyRoomConquered: 'Conquered',
+    trophyRoomElevation: (m: number) => `${m.toLocaleString()}m`,
   },
 
   ja: {
@@ -1634,6 +1646,12 @@ const strings = {
     yearShare: 'シェアする',
     yearEmpty: '今年の登山記録がありません。\n山を制覇しに行こう！🏔️',
     yearShareHeader: (y: number) => `🏔️ ${y}年の登山レポート — FlagOn`,
+
+    // Trophy Room
+    trophyRoomTitle: '🏆 マイ・トロフィールーム',
+    trophyRoomEmpty: 'まだ山頂を制覇していません。\n最初の山頂を目指しましょう！⛰️',
+    trophyRoomConquered: '制覇日',
+    trophyRoomElevation: (m: number) => `${m.toLocaleString()}m`,
   },
 } as const;
 

@@ -77,7 +77,7 @@ export default function SummitHeatmapCard({ dates }: Props) {
     <View style={styles.card}>
       <TouchableOpacity
         style={styles.header}
-        onPress={() => setCollapsed((v) => !v)}
+        onPress={() => setCollapsed((v: boolean) => !v)}
         activeOpacity={0.75}
       >
         <Text style={styles.title}>{s.heatmapTitle}</Text>

@@ -52,7 +52,7 @@ export default function YearReviewModal({ visible, userId, onClose }: Props) {
 
   async function handleShare() {
     if (!data) return;
-    const monthNames = MONTH_NAMES[lang];
+    const monthNames = MONTH_NAMES[lang as Lang];
     const peakName = data.highestPeak
       ? summitName(data.highestPeak, lang) + ` (${data.highestPeak.elevation_m.toLocaleString()}m)`
       : '–';
@@ -73,7 +73,7 @@ export default function YearReviewModal({ visible, userId, onClose }: Props) {
     await Share.share({ message: lines.join('\n') });
   }
 
-  const monthNames = MONTH_NAMES[lang];
+  const monthNames = MONTH_NAMES[lang as Lang];
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
