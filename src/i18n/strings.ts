@@ -522,6 +522,12 @@ const strings = {
     friendsFlaggedTitle: '친구들도 왔었어요',
     friendsEmpty: '아직 팔로우하는 친구가 없어요',
 
+    // Summit Heatmap
+    heatmapTitle: '📅 정상 달력',
+    heatmapActiveDays: (days: number, weeks: number) => `${weeks}주 중 ${days}일 활동`,
+    heatmapLess: '적음',
+    heatmapMore: '많음',
+
     // Year in Review
     yearReviewBtn: '🎊 연간 등산 리포트',
     yearReviewTitle: '연간 등산 리포트',
@@ -1061,6 +1067,12 @@ const strings = {
     friendsFlaggedTitle: 'Friends Who\'ve Been Here',
     friendsEmpty: 'None of your friends have flagged this yet',
 
+    // Summit Heatmap
+    heatmapTitle: '📅 Summit Calendar',
+    heatmapActiveDays: (days: number, weeks: number) => `${days} active day${days === 1 ? '' : 's'} in ${weeks} weeks`,
+    heatmapLess: 'Less',
+    heatmapMore: 'More',
+
     // Year in Review
     yearReviewBtn: '🎊 Year in Review',
     yearReviewTitle: 'Year in Review',
@@ -1599,6 +1611,12 @@ const strings = {
     friendsFlaggedOne: '👥 フォロー中の1人がこの山頂に登りました',
     friendsFlaggedTitle: '友達も来ました',
     friendsEmpty: 'まだ友達がこの山頂に登っていません',
+
+    // Summit Heatmap
+    heatmapTitle: '📅 登頂カレンダー',
+    heatmapActiveDays: (days: number, weeks: number) => `${weeks}週間で${days}日活動`,
+    heatmapLess: '少ない',
+    heatmapMore: '多い',
 
     // Year in Review
     yearReviewBtn: '🎊 年間登山レポート',

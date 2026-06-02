@@ -23,6 +23,7 @@ import ElevationMilestonesCard from '../../src/components/ElevationMilestonesCar
 import FollowingListModal from '../../src/components/FollowingListModal';
 import PackChecklistModal from '../../src/components/PackChecklistModal';
 import HikeAnalyticsCard from '../../src/components/HikeAnalyticsCard';
+import SummitHeatmapCard from '../../src/components/SummitHeatmapCard';
 import YearReviewModal from '../../src/components/YearReviewModal';
 import { fetchUserConquests, type ConquestEntry } from '../../src/services/conquests';
 import { buildAnalytics, type AnalyticsSummary } from '../../src/services/analytics';
@@ -195,6 +196,7 @@ export default function ProfileScreen() {
   const [currentStreak, setCurrentStreak] = useState(0);
   const [personalFlagCount, setPersonalFlagCount] = useState(0);
   const [analyticsSummary, setAnalyticsSummary] = useState<AnalyticsSummary | null>(null);
+  const [conquestDates, setConquestDates] = useState<string[]>([]);
 
   const loadProfile = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -218,6 +220,7 @@ export default function ProfileScreen() {
       );
       setHighestSummit(best);
       setAnalyticsSummary(buildAnalytics(conquests, lang));
+      setConquestDates(conquests.map((c) => c.planted_at));
       const streakInfo = await fetchStreak(user.id);
       setCurrentStreak(streakInfo.current);
       const counts = await fetchFollowCounts(user.id);
@@ -440,6 +443,9 @@ export default function ProfileScreen() {
         {userId && <ElevationMilestonesCard userId={userId} />}
         {analyticsSummary && analyticsSummary.totalFlags > 0 && (
           <HikeAnalyticsCard summary={analyticsSummary} />
+        )}
+        {conquestDates.length > 0 && (
+          <SummitHeatmapCard dates={conquestDates} />
         )}
         {userId && <MountainGroupProgress userId={userId} onGroupPress={setSelectedGroup} />}
         {userId && <AchievementGrid userId={userId} />}
