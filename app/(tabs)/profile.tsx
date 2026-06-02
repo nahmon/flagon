@@ -27,6 +27,8 @@ import SummitHeatmapCard from '../../src/components/SummitHeatmapCard';
 import TrophyRoomCard from '../../src/components/TrophyRoomCard';
 import SummitPassportCard from '../../src/components/SummitPassportCard';
 import YearReviewModal from '../../src/components/YearReviewModal';
+import NotificationInboxModal from '../../src/components/NotificationInboxModal';
+import { getUnreadCount } from '../../src/services/inboxNotifications';
 import { fetchUserConquests, type ConquestEntry } from '../../src/services/conquests';
 import { buildAnalytics, type AnalyticsSummary } from '../../src/services/analytics';
 import { fetchStreak } from '../../src/services/streaks';
@@ -199,6 +201,8 @@ export default function ProfileScreen() {
   const [personalFlagCount, setPersonalFlagCount] = useState(0);
   const [analyticsSummary, setAnalyticsSummary] = useState<AnalyticsSummary | null>(null);
   const [conquestDates, setConquestDates] = useState<string[]>([]);
+  const [showInbox, setShowInbox] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const loadProfile = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -229,6 +233,8 @@ export default function ProfileScreen() {
       setFollowCounts(counts);
       const pf = await getPersonalFlags();
       setPersonalFlagCount(pf.length);
+      const uc = await getUnreadCount(user.id);
+      setUnreadCount(uc);
     } catch (e) {
       console.error('[profile]', e);
     } finally {
@@ -332,6 +338,18 @@ export default function ProfileScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.bellBtn}
+          onPress={() => { setShowInbox(true); setUnreadCount(0); }}
+          activeOpacity={0.75}
+        >
+          <Text style={styles.bellIcon}>🔔</Text>
+          {unreadCount > 0 && (
+            <View style={styles.bellBadge}>
+              <Text style={styles.bellBadgeText}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
         <View style={[styles.avatar, { backgroundColor: profile?.crew_color_hex ?? 'rgba(255,255,255,0.22)' }]}>
           <Text style={styles.avatarText}>{(profile?.display_name ?? 'U').charAt(0).toUpperCase()}</Text>
         </View>
@@ -547,6 +565,12 @@ export default function ProfileScreen() {
           onClose={() => setShowYearReview(false)}
         />
       )}
+      {userId && (
+        <NotificationInboxModal
+          visible={showInbox}
+          onClose={() => setShowInbox(false)}
+        />
+      )}
     </View>
   );
 }
@@ -564,6 +588,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 16,
   },
+  bellBtn: {
+    position: 'absolute',
+    top: 56,
+    right: 20,
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+  },
+  bellIcon: { fontSize: 22 },
+  bellBadge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    backgroundColor: Colors.orange,
+    borderRadius: 8,
+    minWidth: 16,
+    height: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+    borderWidth: 1.5,
+    borderColor: Colors.green,
+  },
+  bellBadgeText: { fontSize: 9, fontWeight: '800', color: Colors.white },
   avatar: {
     width: 56,
     height: 56,

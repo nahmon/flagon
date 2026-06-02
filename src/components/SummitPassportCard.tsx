@@ -15,7 +15,7 @@ import { t } from '../i18n/strings';
 const TOTAL = PASSPORT_STAMP_DEFS.length;
 const STAMP_SIZE = 72;
 
-function StampBadge({ stamp, lang }: { stamp: PassportStamp; lang: string }) {
+function StampBadge({ stamp, lang }: { stamp: PassportStamp; lang: string; key?: string }) {
   return (
     <View style={styles.stampWrap}>
       <View style={[styles.stampCircle, stamp.earned ? styles.stampEarned : styles.stampLocked]}>
@@ -57,13 +57,13 @@ export default function SummitPassportCard() {
     })();
   }, []);
 
-  const earnedCount = stamps.filter((s) => s.earned).length;
+  const earnedCount = stamps.filter((s: PassportStamp) => s.earned).length;
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.header}
-        onPress={() => setCollapsed((prev) => !prev)}
+        onPress={() => setCollapsed((prev: boolean) => !prev)}
         activeOpacity={0.75}
       >
         <View>
@@ -91,7 +91,7 @@ export default function SummitPassportCard() {
               />
             </View>
             <View style={styles.grid}>
-              {stamps.map((stamp) => (
+              {stamps.map((stamp: PassportStamp) => (
                 <StampBadge key={stamp.group} stamp={stamp} lang={lang} />
               ))}
             </View>

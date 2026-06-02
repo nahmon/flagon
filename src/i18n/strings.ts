@@ -555,6 +555,20 @@ const strings = {
     passportTitle: '🗺️ 정상 여권',
     passportProgress: (earned: number, total: number) => `${earned} / ${total} 스탬프 획득`,
     passportComplete: '🎉 모든 산 스탬프를 모았습니다!',
+
+    // Notification inbox
+    inboxTitle: '🔔 알림함',
+    inboxEmpty: '새 알림이 없습니다',
+    inboxMarkAllRead: '모두 읽음',
+    inboxUnread: (n: number) => `읽지 않은 알림 ${n}개`,
+    notifFlagStolen: (summit: string) => `${summit}의 깃발을 빼앗겼습니다`,
+    notifFlagExpiry: (summit: string) => `${summit} 깃발이 곧 만료됩니다`,
+    notifCrewChallenge: (crew: string) => `${crew}이(가) 도전장을 보냈습니다`,
+    notifBuddyInvite: (user: string) => `${user}이(가) 등산 동행을 요청했습니다`,
+    notifKudos: (user: string) => `${user}이(가) 박수를 보냈습니다`,
+    notifFollow: (user: string) => `${user}이(가) 팔로우했습니다`,
+    notifAchievement: (label: string) => `업적 달성: ${label}`,
+    notifDefault: '새 알림이 있습니다',
   },
 
   en: {
@@ -1111,6 +1125,20 @@ const strings = {
     passportTitle: '🗺️ Summit Passport',
     passportProgress: (earned: number, total: number) => `${earned} / ${total} stamps collected`,
     passportComplete: '🎉 All mountain stamps collected!',
+
+    // Notification inbox
+    inboxTitle: '🔔 Notifications',
+    inboxEmpty: 'No notifications yet',
+    inboxMarkAllRead: 'Mark all read',
+    inboxUnread: (n: number) => `${n} unread`,
+    notifFlagStolen: (summit: string) => `Your flag at ${summit} was taken`,
+    notifFlagExpiry: (summit: string) => `Your flag at ${summit} expires soon`,
+    notifCrewChallenge: (crew: string) => `${crew} sent you a challenge`,
+    notifBuddyInvite: (user: string) => `${user} invited you on a hike`,
+    notifKudos: (user: string) => `${user} gave you kudos`,
+    notifFollow: (user: string) => `${user} followed you`,
+    notifAchievement: (label: string) => `Achievement unlocked: ${label}`,
+    notifDefault: 'You have a new notification',
   },
 
   ja: {
@@ -1667,6 +1695,20 @@ const strings = {
     passportTitle: '🗺️ 山頂パスポート',
     passportProgress: (earned: number, total: number) => `${earned} / ${total} スタンプ取得`,
     passportComplete: '🎉 全ての山スタンプを集めました！',
+
+    // Notification inbox
+    inboxTitle: '🔔 通知',
+    inboxEmpty: '新しい通知はありません',
+    inboxMarkAllRead: 'すべて既読',
+    inboxUnread: (n: number) => `未読 ${n}件`,
+    notifFlagStolen: (summit: string) => `${summit}の旗が奪われました`,
+    notifFlagExpiry: (summit: string) => `${summit}の旗が間もなく失効します`,
+    notifCrewChallenge: (crew: string) => `${crew}からチャレンジが届きました`,
+    notifBuddyInvite: (user: string) => `${user}がハイキングに誘っています`,
+    notifKudos: (user: string) => `${user}がエールを送りました`,
+    notifFollow: (user: string) => `${user}がフォローしました`,
+    notifAchievement: (label: string) => `実績解除: ${label}`,
+    notifDefault: '新しい通知があります',
   },
 } as const;
 
