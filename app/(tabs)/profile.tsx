@@ -28,6 +28,7 @@ import TrophyRoomCard from '../../src/components/TrophyRoomCard';
 import SummitPassportCard from '../../src/components/SummitPassportCard';
 import YearReviewModal from '../../src/components/YearReviewModal';
 import NotificationInboxModal from '../../src/components/NotificationInboxModal';
+import DuelModal from '../../src/components/DuelModal';
 import { getUnreadCount } from '../../src/services/inboxNotifications';
 import { fetchUserConquests, type ConquestEntry } from '../../src/services/conquests';
 import { buildAnalytics, type AnalyticsSummary } from '../../src/services/analytics';
@@ -187,6 +188,7 @@ export default function ProfileScreen() {
   const [showTerritory, setShowTerritory] = useState(false);
   const [showMyFlags, setShowMyFlags] = useState(false);
   const [showRivals, setShowRivals] = useState(false);
+  const [showDuels, setShowDuels] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
   const [showChecklist, setShowChecklist] = useState(false);
   const [showYearReview, setShowYearReview] = useState(false);
@@ -485,6 +487,12 @@ export default function ProfileScreen() {
           <Text style={styles.wishListArrow}>→</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowDuels(true)} activeOpacity={0.8}>
+          <Text style={styles.wishListIcon}>🥊</Text>
+          <Text style={styles.wishListLabel}>{s.duelBtn}</Text>
+          <Text style={styles.wishListArrow}>→</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowFollowing(true)} activeOpacity={0.8}>
           <Text style={styles.wishListIcon}>👥</Text>
           <Text style={styles.wishListLabel}>{s.followSection}</Text>
@@ -539,6 +547,7 @@ export default function ProfileScreen() {
       )}
       <MyFlagsModal visible={showMyFlags} onClose={() => setShowMyFlags(false)} />
       <RivalsModal visible={showRivals} onClose={() => setShowRivals(false)} />
+      <DuelModal visible={showDuels} onClose={() => setShowDuels(false)} />
       {userId && (
         <ConquestTimeline visible={showConquests} userId={userId} onClose={() => setShowConquests(false)} />
       )}
