@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import {
-  Modal, View, Text, FlatList, TouchableOpacity,
+  Modal, View, Text, FlatList, TouchableOpacity, ScrollView,
   StyleSheet, ActivityIndicator, ToastAndroid, Platform, Alert, Share,
 } from 'react-native';
 import { Colors } from '../constants';
@@ -23,6 +23,8 @@ import { useLang } from '../contexts/LangContext';
 import { t, summitName } from '../i18n/strings';
 import SummitFriendsRow from './SummitFriendsRow';
 import HikerProfileModal from './HikerProfileModal';
+import HikeBuddyModal from './HikeBuddyModal';
+import { getPlannedHike, setPlannedHike, cancelPlannedHike } from '../services/plannedHike';
 
 function relativeTime(dateStr: string): string {
   const diffH = Math.floor((Date.now() - new Date(dateStr).getTime()) / 3_600_000);
@@ -62,6 +64,9 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
   const [photoModalVisible, setPhotoModalVisible] = useState(false);
   const [photoCount, setPhotoCount] = useState(0);
   const [selectedHiker, setSelectedHiker] = useState<string | null>(null);
+  const [plannedDate, setPlannedDate] = useState<string | null>(null);
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const [buddyModalVisible, setBuddyModalVisible] = useState(false);
 
   const loadRatings = useCallback((id: string) => {
     fetchSummitRatingAggregate(id).then(setRatingAggregate).catch(() => {});
@@ -82,6 +87,7 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
       setRatingAggregate(null); setMyRating(null); setTipCount(0);
       setConditionCount(0); setConditionIcon(null);
       setPhotoCount(0); setPhotoModalVisible(false);
+      setPlannedDate(null);
       return;
     }
     setLoading(true);
@@ -96,6 +102,7 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
     loadTips(summit.id).then(tips => setTipCount(tips.length)).catch(() => {});
     loadConditionSummary(summit.id);
     fetchSummitPhotos(summit.id).then(p => setPhotoCount(p.length)).catch(() => {});
+    getPlannedHike(summit.id).then(h => setPlannedDate(h?.date ?? null)).catch(() => {});
   }, [summit?.id, loadRatings, loadConditionSummary]);
 
   const handleBookmark = useCallback(async () => {
@@ -155,6 +162,19 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
       await removePersonalFlag(summit.id);
     }
   }, [summit, personallyFlagged, s]);
+
+  const handleSelectDate = useCallback(async (date: string) => {
+    if (!summit) return;
+    setPlannedDate(date);
+    setDatePickerVisible(false);
+    await setPlannedHike(summit.id, summitName(summit, lang), date);
+  }, [summit, lang]);
+
+  const handleCancelPlan = useCallback(async () => {
+    if (!summit) return;
+    await cancelPlannedHike(summit.id);
+    setPlannedDate(null);
+  }, [summit]);
 
   const flag = summit?.active_flag;
   const expiryDays = flag?.expires_at ? daysUntil(flag.expires_at) : null;
@@ -280,6 +300,25 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
           <Text style={styles.tipsArrow}>›</Text>
         </TouchableOpacity>
 
+        {plannedDate ? (
+          <View style={styles.planRow}>
+            <View style={styles.planInfo}>
+              <Text style={styles.planLabel}>📅 {s.planHikeOn} {plannedDate}</Text>
+              <TouchableOpacity onPress={handleCancelPlan} activeOpacity={0.7}>
+                <Text style={styles.planCancel}>{s.cancelPlan}</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity style={styles.buddyBtn} onPress={() => setBuddyModalVisible(true)} activeOpacity={0.7}>
+              <Text style={styles.buddyBtnTxt}>{s.buddyBtn}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity style={styles.tipsBar} onPress={() => setDatePickerVisible(true)} activeOpacity={0.7}>
+            <Text style={styles.tipsBtnTxt}>📅 {s.planHikeOn}</Text>
+            <Text style={styles.tipsArrow}>›</Text>
+          </TouchableOpacity>
+        )}
+
         {summit && (
           <SummitPhotoGallery
             visible={photoModalVisible}
@@ -390,6 +429,45 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
       </View>
     </Modal>
     <HikerProfileModal userId={selectedHiker} onClose={() => setSelectedHiker(null)} />
+
+    {summit && (
+      <HikeBuddyModal
+        visible={buddyModalVisible}
+        summitId={summit.id}
+        summitName={summitName(summit, lang)}
+        plannedDate={plannedDate ?? ''}
+        onClose={() => setBuddyModalVisible(false)}
+      />
+    )}
+
+    <Modal visible={datePickerVisible} transparent animationType="fade" onRequestClose={() => setDatePickerVisible(false)}>
+      <TouchableOpacity style={styles.dateOverlay} activeOpacity={1} onPress={() => setDatePickerVisible(false)}>
+        <View style={styles.dateSheet}>
+          <Text style={styles.dateTitle}>📅 {s.planHikeOn}</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.dateChips}>
+            {Array.from({ length: 14 }, (_, i) => {
+              const d = new Date();
+              d.setDate(d.getDate() + i + 1);
+              const iso = d.toISOString().slice(0, 10);
+              const label = `${d.getMonth() + 1}/${d.getDate()}`;
+              const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+              const day = dayNames[d.getDay()];
+              return (
+                <TouchableOpacity
+                  key={iso}
+                  style={[styles.dateChip, plannedDate === iso && styles.dateChipActive]}
+                  onPress={() => handleSelectDate(iso)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[styles.dateChipDay, plannedDate === iso && styles.dateChipTxtActive]}>{day}</Text>
+                  <Text style={[styles.dateChipDate, plannedDate === iso && styles.dateChipTxtActive]}>{label}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      </TouchableOpacity>
+    </Modal>
     </>
   );
 }
@@ -473,4 +551,33 @@ const styles = StyleSheet.create({
   },
   tipsBtnTxt: { fontSize: 14, fontWeight: '600', color: Colors.zinc800 },
   tipsArrow: { fontSize: 18, color: Colors.zinc500, fontWeight: '300' },
+  planRow: {
+    marginHorizontal: 20, marginBottom: 8, paddingHorizontal: 16, paddingVertical: 12,
+    backgroundColor: '#EDF7F0', borderRadius: 12, borderLeftWidth: 3, borderLeftColor: Colors.green,
+    gap: 8,
+  },
+  planInfo: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  planLabel: { fontSize: 14, fontWeight: '600', color: Colors.zinc800, flex: 1 },
+  planCancel: { fontSize: 12, color: Colors.zinc500, textDecorationLine: 'underline' },
+  buddyBtn: {
+    backgroundColor: Colors.green, borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8,
+    alignSelf: 'flex-start',
+  },
+  buddyBtnTxt: { fontSize: 13, fontWeight: '700', color: Colors.white },
+  dateOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  dateSheet: {
+    backgroundColor: Colors.cream, borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    paddingTop: 20, paddingBottom: 40,
+  },
+  dateTitle: { fontSize: 16, fontWeight: '700', color: Colors.zinc950, paddingHorizontal: 20, marginBottom: 16 },
+  dateChips: { paddingHorizontal: 16, gap: 8 },
+  dateChip: {
+    width: 56, height: 64, borderRadius: 14, backgroundColor: Colors.white,
+    alignItems: 'center', justifyContent: 'center', gap: 4,
+    borderWidth: 1.5, borderColor: Colors.zinc200,
+  },
+  dateChipActive: { backgroundColor: Colors.green, borderColor: Colors.green },
+  dateChipDay: { fontSize: 11, fontWeight: '600', color: Colors.zinc500 },
+  dateChipDate: { fontSize: 15, fontWeight: '700', color: Colors.zinc950 },
+  dateChipTxtActive: { color: Colors.white },
 });
