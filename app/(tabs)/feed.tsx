@@ -8,8 +8,9 @@ import { t } from '../../src/i18n/strings';
 import DailyChallengeCard from '../../src/components/DailyChallengeCard';
 import HikerProfileModal from '../../src/components/HikerProfileModal';
 import FeedRow, { type FeedItem } from '../../src/components/FeedRow';
+import PhotoWallGrid from '../../src/components/PhotoWallGrid';
 
-type FeedFilter = 'all' | 'following' | 'crew';
+type FeedFilter = 'all' | 'following' | 'crew' | 'photos';
 
 interface UserCtx { id: string; crewId: string | null; followingIds: string[] }
 
@@ -88,6 +89,7 @@ export default function FeedScreen() {
   }, []);
 
   const load = useCallback(async () => {
+    if (filter === 'photos') { setLoading(false); setRefreshing(false); return; }
     try {
       const data = await fetchFeed(filter, userCtx);
       setItems(data);
@@ -115,6 +117,7 @@ export default function FeedScreen() {
     { key: 'all', label: s.feedAll },
     { key: 'following', label: s.feedFollowing },
     { key: 'crew', label: s.feedCrew },
+    { key: 'photos', label: s.feedPhotos },
   ];
 
   const emptyText = filter === 'following' ? s.feedEmptyFollowing
@@ -139,7 +142,9 @@ export default function FeedScreen() {
         </View>
       </View>
 
-      {loading ? (
+      {filter === 'photos' ? (
+        <PhotoWallGrid onAvatarPress={setSelectedHiker} />
+      ) : loading ? (
         <View style={styles.centered}><ActivityIndicator size="large" color={Colors.green} /></View>
       ) : (
         <FlatList

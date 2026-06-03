@@ -80,8 +80,11 @@ const strings = {
     feedAll: '전체',
     feedFollowing: '팔로잉',
     feedCrew: '내 크루',
+    feedPhotos: '📸 사진',
     feedEmptyFollowing: '팔로우한 산악인의 활동이 없습니다',
     feedEmptyCrew: '크루 활동이 없습니다',
+    photoWallEmpty: '아직 공유된 사진이 없습니다',
+    photoWallSub: '정상 정복 후 사진을 공유해 보세요!',
 
     // Leaderboard screen
     leaderboard: '리더보드',
@@ -650,8 +653,11 @@ const strings = {
     feedAll: 'All',
     feedFollowing: 'Following',
     feedCrew: 'My Crew',
+    feedPhotos: '📸 Photos',
     feedEmptyFollowing: 'No activity from hikers you follow',
     feedEmptyCrew: 'No crew activity yet',
+    photoWallEmpty: 'No photos shared yet',
+    photoWallSub: 'Conquer a summit and share your photo!',
 
     // Leaderboard screen
     leaderboard: 'Leaderboard',
@@ -1220,8 +1226,11 @@ const strings = {
     feedAll: 'すべて',
     feedFollowing: 'フォロー中',
     feedCrew: '自分のクルー',
+    feedPhotos: '📸 写真',
     feedEmptyFollowing: 'フォロー中の登山者の活動がありません',
     feedEmptyCrew: 'クルーの活動がありません',
+    photoWallEmpty: 'まだ写真が共有されていません',
+    photoWallSub: '山頂を制覇して写真をシェアしましょう！',
 
     // Leaderboard screen
     leaderboard: 'リーダーボード',
