@@ -6,6 +6,7 @@ import { distanceMeters } from '../services/gps';
 import { GpsPoint } from '../types';
 import { useLang } from '../contexts/LangContext';
 import { t } from '../i18n/strings';
+import LiveHikeBroadcastBadge from './LiveHikeBroadcastBadge';
 
 function totalDistanceKm(track: GpsPoint[]): number {
   if (track.length < 2) return 0;
@@ -73,25 +74,28 @@ export default function HikeStatsHUD() {
 
   return (
     <View style={styles.hud}>
-      <View style={styles.stat}>
-        <Text style={styles.value}>{distDisplay}</Text>
-        <Text style={styles.label}>{s.hikeStatsDistance}</Text>
+      <View style={styles.statsRow}>
+        <View style={styles.stat}>
+          <Text style={styles.value}>{distDisplay}</Text>
+          <Text style={styles.label}>{s.hikeStatsDistance}</Text>
+        </View>
+        <View style={styles.divider} />
+        <View style={styles.stat}>
+          <Text style={styles.value}>{formatElapsed(elapsedMs)}</Text>
+          <Text style={styles.label}>{s.hikeStatsTime}</Text>
+        </View>
+        <View style={styles.divider} />
+        <View style={styles.stat}>
+          <Text style={styles.value}>{paceStr(distKm, elapsedMs)}</Text>
+          <Text style={styles.label}>{`${s.hikeStatsPace} (${s.hikeStatsPaceUnit})`}</Text>
+        </View>
+        <View style={styles.divider} />
+        <View style={styles.stat}>
+          <Text style={styles.value}>{s.hikeStatsElevGain(elevationGainM)}</Text>
+          <Text style={styles.label}>{s.hikeStatsElev}</Text>
+        </View>
       </View>
-      <View style={styles.divider} />
-      <View style={styles.stat}>
-        <Text style={styles.value}>{formatElapsed(elapsedMs)}</Text>
-        <Text style={styles.label}>{s.hikeStatsTime}</Text>
-      </View>
-      <View style={styles.divider} />
-      <View style={styles.stat}>
-        <Text style={styles.value}>{paceStr(distKm, elapsedMs)}</Text>
-        <Text style={styles.label}>{`${s.hikeStatsPace} (${s.hikeStatsPaceUnit})`}</Text>
-      </View>
-      <View style={styles.divider} />
-      <View style={styles.stat}>
-        <Text style={styles.value}>{s.hikeStatsElevGain(elevationGainM)}</Text>
-        <Text style={styles.label}>{s.hikeStatsElev}</Text>
-      </View>
+      <LiveHikeBroadcastBadge />
     </View>
   );
 }
@@ -104,16 +108,19 @@ const styles = StyleSheet.create({
     right: 16,
     backgroundColor: Colors.green,
     borderRadius: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 16,
+    paddingBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.18,
     shadowRadius: 8,
     elevation: 6,
     zIndex: 15,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   stat: {
     flex: 1,

@@ -108,6 +108,11 @@ const strings = {
     duelVsYou: '나',
     duelExpiry: '만료',
 
+    // Live Hike Broadcast
+    liveBroadcastLive: '🔴 라이브',
+    liveBroadcastGoLive: '라이브 시작',
+    liveNow: (n: number) => `🔴 지금 라이브 ${n}명`,
+
     // Leaderboard screen
     leaderboard: '리더보드',
     byActiveFlagCount: '활성 깃발 수 기준',
@@ -703,6 +708,11 @@ const strings = {
     duelVsYou: 'You',
     duelExpiry: 'Expires',
 
+    // Live Hike Broadcast
+    liveBroadcastLive: '🔴 LIVE',
+    liveBroadcastGoLive: 'Go Live',
+    liveNow: (n: number) => `🔴 Live Now (${n})`,
+
     // Leaderboard screen
     leaderboard: 'Leaderboard',
     byActiveFlagCount: 'By active flags',
@@ -1297,6 +1307,11 @@ const strings = {
     duelNoSummits: '山頂が見つかりません',
     duelVsYou: '自分',
     duelExpiry: '期限',
+
+    // Live Hike Broadcast
+    liveBroadcastLive: '🔴 ライブ',
+    liveBroadcastGoLive: 'ライブ開始',
+    liveNow: (n: number) => `🔴 ライブ中 ${n}人`,
 
     // Leaderboard screen
     leaderboard: 'リーダーボード',

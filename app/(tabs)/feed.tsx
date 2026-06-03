@@ -9,6 +9,7 @@ import DailyChallengeCard from '../../src/components/DailyChallengeCard';
 import HikerProfileModal from '../../src/components/HikerProfileModal';
 import FeedRow, { type FeedItem } from '../../src/components/FeedRow';
 import PhotoWallGrid from '../../src/components/PhotoWallGrid';
+import LiveHikeSection from '../../src/components/LiveHikeSection';
 
 type FeedFilter = 'all' | 'following' | 'crew' | 'photos';
 
@@ -154,7 +155,12 @@ export default function FeedScreen() {
             <FeedRow item={item} onAvatarPress={setSelectedHiker} />
           )}
           contentContainerStyle={styles.list}
-          ListHeaderComponent={filter === 'all' ? <DailyChallengeCard /> : null}
+          ListHeaderComponent={filter === 'all' ? (
+            <>
+              <LiveHikeSection onAvatarPress={setSelectedHiker} />
+              <DailyChallengeCard />
+            </>
+          ) : null}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.green} />}
           ListEmptyComponent={
