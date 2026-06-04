@@ -619,6 +619,16 @@ const strings = {
     topConquerersBtn: '역대 정복 랭킹',
     topConquerersTitle: '역대 정복 랭킹',
     topConquerersEmpty: '아직 정복 기록이 없습니다',
+
+    // Summit Guestbook
+    guestbookBtn: '방명록',
+    guestbookTitle: '정상 방명록',
+    guestbookEmpty: '아직 메시지가 없습니다.\n첫 번째 방문자가 되어보세요! 🏔️',
+    guestbookPlaceholder: '이 정상에서 한마디 남겨보세요… (최대 200자)',
+    guestbookPost: '게시',
+    guestbookPostError: '메시지 게시에 실패했습니다',
+    guestbookDeleteTitle: '메시지 삭제',
+    guestbookDeleteMsg: '이 메시지를 삭제하시겠습니까?',
   },
 
   en: {
@@ -1239,6 +1249,16 @@ const strings = {
     topConquerersBtn: 'All-time Conquerors',
     topConquerersTitle: 'All-time Conquerors',
     topConquerersEmpty: 'No conquest records yet',
+
+    // Summit Guestbook
+    guestbookBtn: 'Guestbook',
+    guestbookTitle: 'Summit Guestbook',
+    guestbookEmpty: 'No messages yet.\nBe the first to sign the guestbook! 🏔️',
+    guestbookPlaceholder: 'Leave a message from the summit… (max 200 chars)',
+    guestbookPost: 'Post',
+    guestbookPostError: 'Failed to post message',
+    guestbookDeleteTitle: 'Delete Message',
+    guestbookDeleteMsg: 'Delete this message?',
   },
 
   ja: {
@@ -1859,6 +1879,16 @@ const strings = {
     topConquerersBtn: '歴代征服ランキング',
     topConquerersTitle: '歴代征服ランキング',
     topConquerersEmpty: 'まだ征服記録がありません',
+
+    // Summit Guestbook
+    guestbookBtn: '山頂ゲストブック',
+    guestbookTitle: '山頂ゲストブック',
+    guestbookEmpty: 'まだメッセージがありません。\n最初のメッセージを残しましょう！🏔️',
+    guestbookPlaceholder: '山頂からのメッセージを残してください…（最大200文字）',
+    guestbookPost: '投稿',
+    guestbookPostError: 'メッセージの投稿に失敗しました',
+    guestbookDeleteTitle: 'メッセージを削除',
+    guestbookDeleteMsg: 'このメッセージを削除しますか？',
   },
 } as const;
 

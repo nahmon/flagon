@@ -59,17 +59,17 @@ export default function FlagExpiryCard() {
   }, []);
 
   const liveItems: ExpiryItem[] = baseItems
-    .map((i) => ({ flag: i.flag, msLeft: new Date(i.flag.expires_at).getTime() - now }))
-    .filter((i) => i.msLeft > 0);
+    .map((i: ExpiryItem) => ({ flag: i.flag, msLeft: new Date(i.flag.expires_at).getTime() - now }))
+    .filter((i: ExpiryItem) => i.msLeft > 0);
 
   if (loading || liveItems.length === 0) return null;
 
-  const urgentCount = liveItems.filter((i) => i.msLeft < URGENT_MS).length;
-  const warnCount = liveItems.filter((i) => i.msLeft >= URGENT_MS && i.msLeft < WARN_MS).length;
+  const urgentCount = liveItems.filter((i: ExpiryItem) => i.msLeft < URGENT_MS).length;
+  const warnCount = liveItems.filter((i: ExpiryItem) => i.msLeft >= URGENT_MS && i.msLeft < WARN_MS).length;
 
   return (
     <View style={styles.card}>
-      <TouchableOpacity style={styles.header} onPress={() => setCollapsed((c) => !c)} activeOpacity={0.8}>
+      <TouchableOpacity style={styles.header} onPress={() => setCollapsed((c: boolean) => !c)} activeOpacity={0.8}>
         <View style={styles.headerLeft}>
           <View>
             <Text style={styles.title}>{s.expiryCardTitle}</Text>

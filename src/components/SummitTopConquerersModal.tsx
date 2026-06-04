@@ -65,11 +65,11 @@ export default function SummitTopConquerersModal({ visible, summitId, summitName
         ) : list.length === 0 ? (
           <Text style={styles.empty}>{s.topConquerersEmpty}</Text>
         ) : (
-          <FlatList
+          <FlatList<TopConquerer>
             data={list}
-            keyExtractor={(item) => item.userId}
+            keyExtractor={(item: TopConquerer) => item.userId}
             contentContainerStyle={styles.list}
-            renderItem={({ item, index }) => <RankRow item={item} rank={index} />}
+            renderItem={({ item, index }: { item: TopConquerer; index: number }) => <RankRow item={item} rank={index} />}
           />
         )}
       </View>
@@ -112,6 +112,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 20,
   },
-  flagCount: { fontSize: 13, fontWeight: '700', color: Colors.zinc700 ?? '#3F3F46' },
+  flagCount: { fontSize: 13, fontWeight: '700', color: Colors.zinc800 },
   empty: { textAlign: 'center', color: Colors.zinc500 ?? '#71717A', marginTop: 48, fontSize: 15 },
 });
