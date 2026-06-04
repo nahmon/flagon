@@ -629,6 +629,13 @@ const strings = {
     guestbookPostError: '메시지 게시에 실패했습니다',
     guestbookDeleteTitle: '메시지 삭제',
     guestbookDeleteMsg: '이 메시지를 삭제하시겠습니까?',
+
+    // Summit Speed Records
+    speedRecordsBtn: '정상 스피드 기록',
+    speedRecordsTitle: '정상 스피드 기록',
+    speedMyBest: '내 최고 기록',
+    speedRankOf: (rank: number, total: number) => `${total}명 중 ${rank}위`,
+    speedEmpty: '아직 스피드 기록이 없습니다',
   },
 
   en: {
@@ -1259,6 +1266,13 @@ const strings = {
     guestbookPostError: 'Failed to post message',
     guestbookDeleteTitle: 'Delete Message',
     guestbookDeleteMsg: 'Delete this message?',
+
+    // Summit Speed Records
+    speedRecordsBtn: 'Speed Records',
+    speedRecordsTitle: 'Summit Speed Records',
+    speedMyBest: 'My Best Time',
+    speedRankOf: (rank: number, total: number) => `#${rank} of ${total}`,
+    speedEmpty: 'No speed records yet',
   },
 
   ja: {
@@ -1889,6 +1903,13 @@ const strings = {
     guestbookPostError: 'メッセージの投稿に失敗しました',
     guestbookDeleteTitle: 'メッセージを削除',
     guestbookDeleteMsg: 'このメッセージを削除しますか？',
+
+    // Summit Speed Records
+    speedRecordsBtn: 'スピード記録',
+    speedRecordsTitle: '山頂スピード記録',
+    speedMyBest: '自己ベストタイム',
+    speedRankOf: (rank: number, total: number) => `${total}人中${rank}位`,
+    speedEmpty: 'まだスピード記録がありません',
   },
 } as const;
 
