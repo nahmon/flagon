@@ -25,6 +25,7 @@ import SummitFriendsRow from './SummitFriendsRow';
 import HikerProfileModal from './HikerProfileModal';
 import HikeBuddyModal from './HikeBuddyModal';
 import { getPlannedHike, setPlannedHike, cancelPlannedHike } from '../services/plannedHike';
+import SummitTopConquerersModal from './SummitTopConquerersModal';
 
 function relativeTime(dateStr: string): string {
   const diffH = Math.floor((Date.now() - new Date(dateStr).getTime()) / 3_600_000);
@@ -67,6 +68,7 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
   const [plannedDate, setPlannedDate] = useState<string | null>(null);
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [buddyModalVisible, setBuddyModalVisible] = useState(false);
+  const [topConquerersVisible, setTopConquerersVisible] = useState(false);
 
   const loadRatings = useCallback((id: string) => {
     fetchSummitRatingAggregate(id).then(setRatingAggregate).catch(() => {});
@@ -300,6 +302,11 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
           <Text style={styles.tipsArrow}>›</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.tipsBar} onPress={() => setTopConquerersVisible(true)} activeOpacity={0.7}>
+          <Text style={styles.tipsBtnTxt}>🏆 {s.topConquerersBtn}</Text>
+          <Text style={styles.tipsArrow}>›</Text>
+        </TouchableOpacity>
+
         {plannedDate ? (
           <View style={styles.planRow}>
             <View style={styles.planInfo}>
@@ -370,6 +377,15 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
             summitName={summitName(summit, lang)}
             onClose={() => setNoteModalVisible(false)}
             onSaved={setNote}
+          />
+        )}
+
+        {summit && (
+          <SummitTopConquerersModal
+            visible={topConquerersVisible}
+            summitId={summit.id}
+            summitName={summitName(summit, lang)}
+            onClose={() => setTopConquerersVisible(false)}
           />
         )}
 

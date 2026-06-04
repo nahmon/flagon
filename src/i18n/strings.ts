@@ -614,6 +614,11 @@ const strings = {
     expiryUrgent: (n: number) => `🔴 ${n}개 긴급`,
     expiryWarn: (n: number) => `🟡 ${n}개 24시간 내`,
     expiryTimeLeft: '남은 시간',
+
+    // Summit top conquerers
+    topConquerersBtn: '역대 정복 랭킹',
+    topConquerersTitle: '역대 정복 랭킹',
+    topConquerersEmpty: '아직 정복 기록이 없습니다',
   },
 
   en: {
@@ -1229,6 +1234,11 @@ const strings = {
     expiryUrgent: (n: number) => `🔴 ${n} critical`,
     expiryWarn: (n: number) => `🟡 ${n} within 24h`,
     expiryTimeLeft: 'Time left',
+
+    // Summit top conquerers
+    topConquerersBtn: 'All-time Conquerors',
+    topConquerersTitle: 'All-time Conquerors',
+    topConquerersEmpty: 'No conquest records yet',
   },
 
   ja: {
@@ -1844,6 +1854,11 @@ const strings = {
     expiryUrgent: (n: number) => `🔴 ${n}個が緊急`,
     expiryWarn: (n: number) => `🟡 ${n}個が24時間以内`,
     expiryTimeLeft: '残り時間',
+
+    // Summit top conquerers
+    topConquerersBtn: '歴代征服ランキング',
+    topConquerersTitle: '歴代征服ランキング',
+    topConquerersEmpty: 'まだ征服記録がありません',
   },
 } as const;
 
