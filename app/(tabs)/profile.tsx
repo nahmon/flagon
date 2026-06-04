@@ -13,6 +13,7 @@ import MountainGroupProgress from '../../src/components/MountainGroupProgress';
 import ConquestTimeline from '../../src/components/ConquestTimeline';
 import CrewTerritoryModal from '../../src/components/CrewTerritoryModal';
 import MyFlagsModal from '../../src/components/MyFlagsModal';
+import MyFlagMapModal from '../../src/components/MyFlagMapModal';
 import RivalsModal from '../../src/components/RivalsModal';
 import MountainGroupDetailModal from '../../src/components/MountainGroupDetailModal';
 import LevelBadge from '../../src/components/LevelBadge';
@@ -187,6 +188,7 @@ export default function ProfileScreen() {
   const [showConquests, setShowConquests] = useState(false);
   const [showTerritory, setShowTerritory] = useState(false);
   const [showMyFlags, setShowMyFlags] = useState(false);
+  const [showFlagMap, setShowFlagMap] = useState(false);
   const [showRivals, setShowRivals] = useState(false);
   const [showDuels, setShowDuels] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
@@ -481,6 +483,12 @@ export default function ProfileScreen() {
           <Text style={styles.wishListArrow}>→</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowFlagMap(true)} activeOpacity={0.8}>
+          <Text style={styles.wishListIcon}>🗺️</Text>
+          <Text style={styles.wishListLabel}>{s.flagMapBtn}</Text>
+          <Text style={styles.wishListArrow}>→</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowRivals(true)} activeOpacity={0.8}>
           <Text style={styles.wishListIcon}>⚔️</Text>
           <Text style={styles.wishListLabel}>{s.rivals}</Text>
@@ -546,6 +554,7 @@ export default function ProfileScreen() {
         />
       )}
       <MyFlagsModal visible={showMyFlags} onClose={() => setShowMyFlags(false)} />
+      <MyFlagMapModal visible={showFlagMap} onClose={() => setShowFlagMap(false)} />
       <RivalsModal visible={showRivals} onClose={() => setShowRivals(false)} />
       <DuelModal visible={showDuels} onClose={() => setShowDuels(false)} />
       {userId && (

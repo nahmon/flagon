@@ -357,6 +357,14 @@ const strings = {
     myFlagsEmptyDesc: '정상에 올라 깃발을 꽂아보세요!',
     plantedOn: (date: string) => `${date} 꽂음`,
 
+    // My Flag Map
+    flagMapBtn: '🗺️ 내 깃발 지도',
+    flagMapTitle: '🚩 내 깃발 지도',
+    flagMapCount: (n: number) => `활성 깃발 ${n}개`,
+    flagMapEmpty: '현재 지도에 표시할 깃발이 없습니다',
+    flagMapExpiresHours: (h: number) => `${h}시간 후 만료`,
+    flagMapExpiresDays: (d: number) => `${d}일 후 만료`,
+
     // Rivals
     rivals: '⚔️ 경쟁 현황',
     rivalsBtn: '⚔️ 경쟁 현황',
@@ -957,6 +965,14 @@ const strings = {
     myFlagsEmptyDesc: 'Hike to a summit and plant your flag!',
     plantedOn: (date: string) => `Planted ${date}`,
 
+    // My Flag Map
+    flagMapBtn: '🗺️ My Flag Map',
+    flagMapTitle: '🚩 My Flag Map',
+    flagMapCount: (n: number) => `${n} active flag${n !== 1 ? 's' : ''}`,
+    flagMapEmpty: 'No active flags to display on the map',
+    flagMapExpiresHours: (h: number) => `Expires in ${h}h`,
+    flagMapExpiresDays: (d: number) => `Expires in ${d}d`,
+
     // Rivals
     rivals: '⚔️ Rivals',
     rivalsBtn: '⚔️ Rivals',
@@ -1556,6 +1572,14 @@ const strings = {
     myFlagsEmpty: '現在保有している旗はありません',
     myFlagsEmptyDesc: '山頂に登って旗を立てよう！',
     plantedOn: (date: string) => `${date}に設置`,
+
+    // My Flag Map
+    flagMapBtn: '🗺️ マイ旗マップ',
+    flagMapTitle: '🚩 マイ旗マップ',
+    flagMapCount: (n: number) => `有効な旗${n}本`,
+    flagMapEmpty: '地図に表示する旗がありません',
+    flagMapExpiresHours: (h: number) => `${h}時間で期限切れ`,
+    flagMapExpiresDays: (d: number) => `${d}日で期限切れ`,
 
     // Rivals
     rivals: '⚔️ ライバル',
