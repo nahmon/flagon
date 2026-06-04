@@ -607,6 +607,13 @@ const strings = {
     notifFollow: (user: string) => `${user}이(가) 팔로우했습니다`,
     notifAchievement: (label: string) => `업적 달성: ${label}`,
     notifDefault: '새 알림이 있습니다',
+
+    // Flag expiry countdown card
+    expiryCardTitle: '⏳ 만료 임박 깃발',
+    expiryCardSub: (n: number) => `${n}개 깃발이 곧 만료됩니다`,
+    expiryUrgent: (n: number) => `🔴 ${n}개 긴급`,
+    expiryWarn: (n: number) => `🟡 ${n}개 24시간 내`,
+    expiryTimeLeft: '남은 시간',
   },
 
   en: {
@@ -1215,6 +1222,13 @@ const strings = {
     notifFollow: (user: string) => `${user} followed you`,
     notifAchievement: (label: string) => `Achievement unlocked: ${label}`,
     notifDefault: 'You have a new notification',
+
+    // Flag expiry countdown card
+    expiryCardTitle: '⏳ Flags Expiring Soon',
+    expiryCardSub: (n: number) => `${n} flag${n !== 1 ? 's' : ''} expiring soon`,
+    expiryUrgent: (n: number) => `🔴 ${n} critical`,
+    expiryWarn: (n: number) => `🟡 ${n} within 24h`,
+    expiryTimeLeft: 'Time left',
   },
 
   ja: {
@@ -1823,6 +1837,13 @@ const strings = {
     notifFollow: (user: string) => `${user}がフォローしました`,
     notifAchievement: (label: string) => `実績解除: ${label}`,
     notifDefault: '新しい通知があります',
+
+    // Flag expiry countdown card
+    expiryCardTitle: '⏳ まもなく失効するフラグ',
+    expiryCardSub: (n: number) => `${n}個のフラグがまもなく失効します`,
+    expiryUrgent: (n: number) => `🔴 ${n}個が緊急`,
+    expiryWarn: (n: number) => `🟡 ${n}個が24時間以内`,
+    expiryTimeLeft: '残り時間',
   },
 } as const;
 

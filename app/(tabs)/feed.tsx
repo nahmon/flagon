@@ -6,6 +6,7 @@ import { getUserCrewId } from '../../src/services/flags';
 import { useLang } from '../../src/contexts/LangContext';
 import { t } from '../../src/i18n/strings';
 import DailyChallengeCard from '../../src/components/DailyChallengeCard';
+import FlagExpiryCard from '../../src/components/FlagExpiryCard';
 import HikerProfileModal from '../../src/components/HikerProfileModal';
 import FeedRow, { type FeedItem } from '../../src/components/FeedRow';
 import PhotoWallGrid from '../../src/components/PhotoWallGrid';
@@ -157,6 +158,7 @@ export default function FeedScreen() {
           contentContainerStyle={styles.list}
           ListHeaderComponent={filter === 'all' ? (
             <>
+              <FlagExpiryCard />
               <LiveHikeSection onAvatarPress={setSelectedHiker} />
               <DailyChallengeCard />
             </>

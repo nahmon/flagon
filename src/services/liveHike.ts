@@ -95,7 +95,7 @@ export async function fetchLiveFollowing(): Promise<LiveBroadcast[]> {
 
   if (error) { console.error('[liveHike] fetch', error); return []; }
 
-  return ((data ?? []) as RawLive[]).map((r) => ({
+  return ((data ?? []) as unknown as RawLive[]).map((r) => ({
     id: r.id,
     user_id: r.user_id,
     display_name: r.user?.display_name ?? null,
