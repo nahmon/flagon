@@ -28,6 +28,7 @@ import { getPlannedHike, setPlannedHike, cancelPlannedHike } from '../services/p
 import SummitTopConquerersModal from './SummitTopConquerersModal';
 import SummitGuestbookModal from './SummitGuestbookModal';
 import SummitSpeedRecordsModal from './SummitSpeedRecordsModal';
+import SummitTagCloud from './SummitTagCloud';
 
 function relativeTime(dateStr: string): string {
   const diffH = Math.floor((Date.now() - new Date(dateStr).getTime()) / 3_600_000);
@@ -320,6 +321,8 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
           <Text style={styles.tipsBtnTxt}>⚡ {s.speedRecordsBtn}</Text>
           <Text style={styles.tipsArrow}>›</Text>
         </TouchableOpacity>
+
+        {summit && <SummitTagCloud summitId={summit.id} />}
 
         {plannedDate ? (
           <View style={styles.planRow}>

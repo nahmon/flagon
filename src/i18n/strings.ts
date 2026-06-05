@@ -637,6 +637,10 @@ const strings = {
     speedRankOf: (rank: number, total: number) => `${total}명 중 ${rank}위`,
     speedEmpty: '아직 스피드 기록이 없습니다',
 
+    // Summit Tag Cloud
+    tagCloudTitle: '정상 태그',
+    tagCloudSub: '탭해서 태그에 투표하세요',
+
     // Streak Leaderboard
     tabStreaks: '🔥 연속',
     streakLeaderboardTitle: '🔥 연속 등산 랭킹',
@@ -1292,6 +1296,10 @@ const strings = {
     speedRankOf: (rank: number, total: number) => `#${rank} of ${total}`,
     speedEmpty: 'No speed records yet',
 
+    // Summit Tag Cloud
+    tagCloudTitle: 'Summit Tags',
+    tagCloudSub: 'Tap to vote on community tags',
+
     // Streak Leaderboard
     tabStreaks: '🔥 Streaks',
     streakLeaderboardTitle: '🔥 Streak Leaderboard',
@@ -1946,6 +1954,10 @@ const strings = {
     speedMyBest: '自己ベストタイム',
     speedRankOf: (rank: number, total: number) => `${total}人中${rank}位`,
     speedEmpty: 'まだスピード記録がありません',
+
+    // Summit Tag Cloud
+    tagCloudTitle: '山頂タグ',
+    tagCloudSub: 'タップしてタグに投票',
 
     // Streak Leaderboard
     tabStreaks: '🔥 連続',
