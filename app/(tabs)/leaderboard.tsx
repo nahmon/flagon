@@ -4,6 +4,7 @@ import { Colors } from '../../src/constants';
 import { fetchLeaderboardByPeriod, fetchUserProfile, type LeaderboardPeriod } from '../../src/services/crews';
 import { fetchHotSummits, type HotSummit } from '../../src/services/summits';
 import { fetchTopHikers } from '../../src/services/stats';
+import { fetchStreakLeaderboard, type StreakLeaderboardEntry } from '../../src/services/streaks';
 import { supabase } from '../../src/services/supabase';
 import { CrewLeaderboardEntry, HikerLeaderboardEntry } from '../../src/types';
 import CrewDetailModal from '../../src/components/CrewDetailModal';
@@ -15,7 +16,7 @@ import { t, summitName, type Lang } from '../../src/i18n/strings';
 
 const RANK_COLORS = ['#D4B060', '#A0A8B0', '#C07840'];
 const PERIODS: LeaderboardPeriod[] = ['week', 'month', 'alltime'];
-type ViewMode = 'crews' | 'summits' | 'hikers';
+type ViewMode = 'crews' | 'summits' | 'hikers' | 'streaks';
 
 function RankNum({ rank }: { rank: number }) {
   const color = rank <= 3 ? RANK_COLORS[rank - 1] : Colors.zinc500;
@@ -24,14 +25,56 @@ function RankNum({ rank }: { rank: number }) {
 
 function ViewToggle({ mode, lang, onChange }: { mode: ViewMode; lang: Lang; onChange: (m: ViewMode) => void }) {
   const s = t(lang);
-  const labels: Record<ViewMode, string> = { crews: s.tabCrews, summits: s.tabSummits, hikers: s.tabHikers };
+  const labels: Record<ViewMode, string> = { crews: s.tabCrews, summits: s.tabSummits, hikers: s.tabHikers, streaks: s.tabStreaks };
   return (
     <View style={styles.viewToggleRow}>
-      {(['crews', 'summits', 'hikers'] as ViewMode[]).map((m) => (
+      {(['crews', 'summits', 'hikers', 'streaks'] as ViewMode[]).map((m) => (
         <TouchableOpacity key={m} style={[styles.viewBtn, mode === m && styles.viewBtnActive]} onPress={() => onChange(m)} activeOpacity={0.75}>
           <Text style={[styles.viewLabel, mode === m && styles.viewLabelActive]}>{labels[m]}</Text>
         </TouchableOpacity>
       ))}
+    </View>
+  );
+}
+
+function StreakRow({ entry, rank, lang, onPress }: { entry: StreakLeaderboardEntry; rank: number; lang: Lang; onPress: (uid: string) => void }) {
+  const s = t(lang);
+  const name = entry.display_name ?? `#${entry.user_id.slice(0, 6)}`;
+  const initial = name.charAt(0).toUpperCase();
+  const bg = entry.crew_color ?? avatarColor(entry.user_id);
+  const flameColor = entry.current_streak >= 8 ? '#FC4C02' : entry.current_streak >= 4 ? '#D4B060' : Colors.green;
+  return (
+    <TouchableOpacity style={styles.row} onPress={() => onPress(entry.user_id)} activeOpacity={0.75}>
+      <View style={styles.rankCell}><RankNum rank={rank} /></View>
+      <View style={[styles.crewCircle, { backgroundColor: bg }]}>
+        <Text style={styles.crewInitial}>{initial}</Text>
+      </View>
+      <View style={styles.rowBody}>
+        <Text style={styles.rowName}>{name}</Text>
+        <Text style={styles.rowSub}>{entry.crew_name ?? s.hikerSolo} · {s.streakLeaderboardBest(entry.best_streak)}</Text>
+      </View>
+      <View style={styles.streakCell}>
+        <Text style={[styles.streakCount, { color: flameColor }]}>{s.streakLeaderboardCurrent(entry.current_streak)}</Text>
+        <Text style={styles.streakFlame}>🔥</Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+function StreakHero({ top, lang }: { top: StreakLeaderboardEntry; lang: Lang }) {
+  const s = t(lang);
+  const name = top.display_name ?? `#${top.user_id.slice(0, 6)}`;
+  return (
+    <View style={[styles.heroCard, styles.heroCardStreak]}>
+      <View style={styles.heroLeft}>
+        <Text style={styles.heroLabel}>{s.streakLeaderboardHero}</Text>
+        <Text style={styles.heroName}>{name}</Text>
+        <Text style={styles.heroSub}>{top.crew_name ?? s.hikerSolo}</Text>
+      </View>
+      <View style={styles.heroRight}>
+        <Text style={styles.heroCount}>{top.current_streak}</Text>
+        <Text style={styles.heroFlagLabel}>{s.tabStreaks}</Text>
+      </View>
     </View>
   );
 }
@@ -187,6 +230,7 @@ export default function LeaderboardScreen() {
   const [entries, setEntries] = useState<CrewLeaderboardEntry[]>([]);
   const [hotSummits, setHotSummits] = useState<HotSummit[]>([]);
   const [topHikers, setTopHikers] = useState<HikerLeaderboardEntry[]>([]);
+  const [streakBoard, setStreakBoard] = useState<StreakLeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedCrew, setSelectedCrew] = useState<CrewLeaderboardEntry | null>(null);
@@ -251,11 +295,25 @@ export default function LeaderboardScreen() {
     }
   }, [hikerPeriod]);
 
+  const loadStreaks = useCallback(async (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true); else setLoading(true);
+    try {
+      const data = await fetchStreakLeaderboard(20);
+      setStreakBoard(data);
+    } catch (e) {
+      console.error('[leaderboard:streaks]', e);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (viewMode === 'crews') loadCrews();
     else if (viewMode === 'summits') loadSummits();
+    else if (viewMode === 'streaks') loadStreaks();
     else loadHikers();
-  }, [viewMode, loadCrews, loadSummits, loadHikers]);
+  }, [viewMode, loadCrews, loadSummits, loadHikers, loadStreaks]);
 
   useEffect(() => {
     const channel = supabase
@@ -263,17 +321,19 @@ export default function LeaderboardScreen() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'flags' }, () => {
         if (viewMode === 'crews') loadCrews();
         else if (viewMode === 'summits') loadSummits();
+        else if (viewMode === 'streaks') loadStreaks();
         else loadHikers();
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [viewMode, loadCrews, loadSummits, loadHikers]);
+  }, [viewMode, loadCrews, loadSummits, loadHikers, loadStreaks]);
 
   const handlePeriod = (p: LeaderboardPeriod) => { setPeriod(p); loadCrews(false, p); };
   const handleHikerPeriod = (p: LeaderboardPeriod) => { setHikerPeriod(p); loadHikers(false, p); };
   const handleRefresh = () => {
     if (viewMode === 'crews') return loadCrews(true);
     if (viewMode === 'summits') return loadSummits(true);
+    if (viewMode === 'streaks') return loadStreaks(true);
     return loadHikers(true);
   };
 
@@ -286,9 +346,11 @@ export default function LeaderboardScreen() {
         <ViewToggle mode={viewMode} lang={lang} onChange={setViewMode} />
         {viewMode === 'crews' && <PeriodToggle period={period} lang={lang} onChange={handlePeriod} />}
         {viewMode === 'hikers' && <PeriodToggle period={hikerPeriod} lang={lang} onChange={handleHikerPeriod} />}
+        {viewMode === 'streaks' && !loading && streakBoard.length > 0 && <Text style={styles.streakSub}>{s.streakLeaderboardSub}</Text>}
         {viewMode === 'crews' && !loading && entries.length > 0 && <HeroCard top={entries[0]} lang={lang} />}
         {viewMode === 'summits' && !loading && hotSummits.length > 0 && <HotSummitHero top={hotSummits[0]} lang={lang} />}
         {viewMode === 'hikers' && !loading && topHikers.length > 0 && <TopHikerHero top={topHikers[0]} lang={lang} />}
+        {viewMode === 'streaks' && !loading && streakBoard.length > 0 && <StreakHero top={streakBoard[0]} lang={lang} />}
       </SafeAreaView>
       {loading ? (
         <View style={styles.center}><ActivityIndicator color={Colors.green} /></View>
@@ -314,7 +376,7 @@ export default function LeaderboardScreen() {
           ListEmptyComponent={<View style={styles.center}><Text style={styles.empty}>{s.noHotSummits}</Text></View>}
           contentContainerStyle={hotSummits.length === 0 ? { flex: 1 } : { paddingBottom: 32 }}
         />
-      ) : (
+      ) : viewMode === 'hikers' ? (
         <FlatList
           data={topHikers}
           keyExtractor={(e: HikerLeaderboardEntry) => e.user_id}
@@ -325,6 +387,18 @@ export default function LeaderboardScreen() {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Colors.green} />}
           ListEmptyComponent={<View style={styles.center}><Text style={styles.empty}>{s.noHikers}</Text></View>}
           contentContainerStyle={topHikers.length === 0 ? { flex: 1 } : { paddingBottom: 32 }}
+        />
+      ) : (
+        <FlatList
+          data={streakBoard}
+          keyExtractor={(e: StreakLeaderboardEntry) => e.user_id}
+          renderItem={({ item, index }: { item: StreakLeaderboardEntry; index: number }) => (
+            <StreakRow entry={item} rank={index + 1} lang={lang} onPress={setSelectedHiker} />
+          )}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Colors.green} />}
+          ListEmptyComponent={<View style={styles.center}><Text style={styles.empty}>{s.streakLeaderboardEmpty}</Text></View>}
+          contentContainerStyle={streakBoard.length === 0 ? { flex: 1 } : { paddingBottom: 32 }}
         />
       )}
       <CrewDetailModal crew={selectedCrew} myCrew={myCrew} onClose={() => setSelectedCrew(null)} />
@@ -389,4 +463,9 @@ const styles = StyleSheet.create({
   separator: { height: 1, backgroundColor: Colors.zinc100 },
   empty: { fontSize: 15, color: Colors.zinc500 },
   chevron: { fontSize: 20, color: Colors.zinc200, marginLeft: 8 },
+  heroCardStreak: { backgroundColor: '#C0704A' },
+  streakCell: { alignItems: 'flex-end', gap: 2 },
+  streakCount: { fontSize: 15, fontWeight: '800', letterSpacing: -0.3 },
+  streakFlame: { fontSize: 16 },
+  streakSub: { fontSize: 12, color: Colors.zinc500, marginHorizontal: 16, marginBottom: 8, marginTop: -2 },
 });

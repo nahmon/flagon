@@ -636,6 +636,15 @@ const strings = {
     speedMyBest: '내 최고 기록',
     speedRankOf: (rank: number, total: number) => `${total}명 중 ${rank}위`,
     speedEmpty: '아직 스피드 기록이 없습니다',
+
+    // Streak Leaderboard
+    tabStreaks: '🔥 연속',
+    streakLeaderboardTitle: '🔥 연속 등산 랭킹',
+    streakLeaderboardSub: '최근 26주 기준 주간 연속 등산 순위',
+    streakLeaderboardCurrent: (n: number) => `${n}주 연속`,
+    streakLeaderboardBest: (n: number) => `최고 ${n}주`,
+    streakLeaderboardEmpty: '아직 연속 등산 데이터가 없습니다',
+    streakLeaderboardHero: '🔥 연속 등산 챔피언',
   },
 
   en: {
@@ -1273,6 +1282,15 @@ const strings = {
     speedMyBest: 'My Best Time',
     speedRankOf: (rank: number, total: number) => `#${rank} of ${total}`,
     speedEmpty: 'No speed records yet',
+
+    // Streak Leaderboard
+    tabStreaks: '🔥 Streaks',
+    streakLeaderboardTitle: '🔥 Streak Leaderboard',
+    streakLeaderboardSub: 'Consecutive active weeks (last 26 weeks)',
+    streakLeaderboardCurrent: (n: number) => `${n}-wk streak`,
+    streakLeaderboardBest: (n: number) => `Best: ${n}w`,
+    streakLeaderboardEmpty: 'No streak data yet',
+    streakLeaderboardHero: '🔥 Streak Champion',
   },
 
   ja: {
@@ -1910,6 +1928,15 @@ const strings = {
     speedMyBest: '自己ベストタイム',
     speedRankOf: (rank: number, total: number) => `${total}人中${rank}位`,
     speedEmpty: 'まだスピード記録がありません',
+
+    // Streak Leaderboard
+    tabStreaks: '🔥 連続',
+    streakLeaderboardTitle: '🔥 連続登山ランキング',
+    streakLeaderboardSub: '過去26週間の週間連続登山順位',
+    streakLeaderboardCurrent: (n: number) => `${n}週連続`,
+    streakLeaderboardBest: (n: number) => `最高${n}週`,
+    streakLeaderboardEmpty: 'まだ連続登山データがありません',
+    streakLeaderboardHero: '🔥 連続登山チャンピオン',
   },
 } as const;
 
