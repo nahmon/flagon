@@ -645,6 +645,15 @@ const strings = {
     streakLeaderboardBest: (n: number) => `최고 ${n}주`,
     streakLeaderboardEmpty: '아직 연속 등산 데이터가 없습니다',
     streakLeaderboardHero: '🔥 연속 등산 챔피언',
+
+    // Elevation Leaderboard
+    tabElevation: '⛰️ 고도',
+    elevLeaderboardTitle: '⛰️ 누적 고도 랭킹',
+    elevLeaderboardSub: '모든 깃발 식재 기준 총 누적 고도',
+    elevLeaderboardHero: '⛰️ 최고 등반가',
+    elevLeaderboardTotal: (m: number) => `${m.toLocaleString()}m 누적`,
+    elevLeaderboardFlags: (n: number) => `깃발 ${n}개`,
+    elevLeaderboardEmpty: '아직 고도 데이터가 없습니다',
   },
 
   en: {
@@ -1291,6 +1300,15 @@ const strings = {
     streakLeaderboardBest: (n: number) => `Best: ${n}w`,
     streakLeaderboardEmpty: 'No streak data yet',
     streakLeaderboardHero: '🔥 Streak Champion',
+
+    // Elevation Leaderboard
+    tabElevation: '⛰️ Elev',
+    elevLeaderboardTitle: '⛰️ Elevation Leaderboard',
+    elevLeaderboardSub: 'Total meters climbed across all flag plants',
+    elevLeaderboardHero: '⛰️ Top Climber',
+    elevLeaderboardTotal: (m: number) => `${m.toLocaleString()}m total`,
+    elevLeaderboardFlags: (n: number) => `${n} plants`,
+    elevLeaderboardEmpty: 'No elevation data yet',
   },
 
   ja: {
@@ -1937,6 +1955,15 @@ const strings = {
     streakLeaderboardBest: (n: number) => `最高${n}週`,
     streakLeaderboardEmpty: 'まだ連続登山データがありません',
     streakLeaderboardHero: '🔥 連続登山チャンピオン',
+
+    // Elevation Leaderboard
+    tabElevation: '⛰️ 標高',
+    elevLeaderboardTitle: '⛰️ 累計標高ランキング',
+    elevLeaderboardSub: '全フラグ植栽の累計標高合計',
+    elevLeaderboardHero: '⛰️ トップクライマー',
+    elevLeaderboardTotal: (m: number) => `累計 ${m.toLocaleString()}m`,
+    elevLeaderboardFlags: (n: number) => `${n}個植栽`,
+    elevLeaderboardEmpty: 'まだ標高データがありません',
   },
 } as const;
 

@@ -42,6 +42,60 @@ function periodStart(period: LeaderboardPeriod): string | null {
   return now.toISOString();
 }
 
+export interface ElevationLeaderboardEntry {
+  user_id: string;
+  display_name: string | null;
+  crew_name: string | null;
+  crew_color: string | null;
+  total_elevation_m: number;
+  flag_count: number;
+}
+
+export async function fetchElevationLeaderboard(limit = 20, period: LeaderboardPeriod = 'alltime'): Promise<ElevationLeaderboardEntry[]> {
+  let query = supabase
+    .from('flags')
+    .select('user_id, planted_at, summits(elevation_m), users(display_name), crews(name, name_ko, color_hex)');
+
+  const since = periodStart(period);
+  if (since) query = query.gte('planted_at', since);
+
+  const { data, error } = await query;
+  if (error) throw error;
+
+  type ElevRow = {
+    user_id: string;
+    planted_at: string;
+    summits: { elevation_m: number } | null;
+    users: { display_name: string | null } | null;
+    crews: { name: string | null; name_ko: string | null; color_hex: string } | null;
+  };
+
+  const rows = (data ?? []) as unknown as ElevRow[];
+  const map = new Map<string, ElevationLeaderboardEntry>();
+
+  for (const row of rows) {
+    const elev = row.summits?.elevation_m ?? 0;
+    const existing = map.get(row.user_id);
+    if (!existing) {
+      map.set(row.user_id, {
+        user_id: row.user_id,
+        display_name: row.users?.display_name ?? null,
+        crew_name: row.crews?.name ?? row.crews?.name_ko ?? null,
+        crew_color: row.crews?.color_hex ?? null,
+        total_elevation_m: elev,
+        flag_count: 1,
+      });
+    } else {
+      existing.total_elevation_m += elev;
+      existing.flag_count += 1;
+    }
+  }
+
+  return Array.from(map.values())
+    .sort((a, b) => b.total_elevation_m - a.total_elevation_m)
+    .slice(0, limit);
+}
+
 export async function fetchTopHikers(limit = 20, period: LeaderboardPeriod = 'alltime'): Promise<HikerLeaderboardEntry[]> {
   let query = supabase
     .from('flags')
