@@ -29,6 +29,8 @@ import SummitTopConquerersModal from './SummitTopConquerersModal';
 import SummitGuestbookModal from './SummitGuestbookModal';
 import SummitSpeedRecordsModal from './SummitSpeedRecordsModal';
 import SummitTagCloud from './SummitTagCloud';
+import GroupHikeEventsModal from './GroupHikeEventsModal';
+import { fetchEventsForSummit } from '../services/groupHikeEvents';
 
 function relativeTime(dateStr: string): string {
   const diffH = Math.floor((Date.now() - new Date(dateStr).getTime()) / 3_600_000);
@@ -74,6 +76,8 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
   const [topConquerersVisible, setTopConquerersVisible] = useState(false);
   const [guestbookVisible, setGuestbookVisible] = useState(false);
   const [speedRecordsVisible, setSpeedRecordsVisible] = useState(false);
+  const [groupHikeVisible, setGroupHikeVisible] = useState(false);
+  const [groupHikeCount, setGroupHikeCount] = useState(0);
 
   const loadRatings = useCallback((id: string) => {
     fetchSummitRatingAggregate(id).then(setRatingAggregate).catch(() => {});
@@ -110,6 +114,7 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
     loadConditionSummary(summit.id);
     fetchSummitPhotos(summit.id).then(p => setPhotoCount(p.length)).catch(() => {});
     getPlannedHike(summit.id).then(h => setPlannedDate(h?.date ?? null)).catch(() => {});
+    fetchEventsForSummit(summit.id).then(ev => setGroupHikeCount(ev.length)).catch(() => {});
   }, [summit?.id, loadRatings, loadConditionSummary]);
 
   const handleBookmark = useCallback(async () => {
@@ -322,6 +327,11 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
           <Text style={styles.tipsArrow}>›</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.tipsBar} onPress={() => setGroupHikeVisible(true)} activeOpacity={0.7}>
+          <Text style={styles.tipsBtnTxt}>{s.groupHikeTrayBtn(groupHikeCount)}</Text>
+          <Text style={styles.tipsArrow}>›</Text>
+        </TouchableOpacity>
+
         {summit && <SummitTagCloud summitId={summit.id} />}
 
         {plannedDate ? (
@@ -421,6 +431,14 @@ export default function SummitDetailSheet({ summit, onClose }: Props) {
             summitId={summit.id}
             summitName={summitName(summit, lang)}
             onClose={() => setSpeedRecordsVisible(false)}
+          />
+        )}
+
+        {summit && (
+          <GroupHikeEventsModal
+            visible={groupHikeVisible}
+            summit={summit}
+            onClose={() => { setGroupHikeVisible(false); fetchEventsForSummit(summit.id).then(ev => setGroupHikeCount(ev.length)).catch(() => {}); }}
           />
         )}
 

@@ -11,6 +11,7 @@ import HikerProfileModal from '../../src/components/HikerProfileModal';
 import FeedRow, { type FeedItem } from '../../src/components/FeedRow';
 import PhotoWallGrid from '../../src/components/PhotoWallGrid';
 import LiveHikeSection from '../../src/components/LiveHikeSection';
+import UpcomingGroupHikesSection from '../../src/components/UpcomingGroupHikesSection';
 
 type FeedFilter = 'all' | 'following' | 'crew' | 'photos';
 
@@ -160,6 +161,7 @@ export default function FeedScreen() {
             <>
               <FlagExpiryCard />
               <LiveHikeSection onAvatarPress={setSelectedHiker} />
+              <UpcomingGroupHikesSection />
               <DailyChallengeCard />
             </>
           ) : null}
