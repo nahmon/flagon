@@ -641,6 +641,11 @@ const strings = {
     tagCloudTitle: '정상 태그',
     tagCloudSub: '탭해서 태그에 투표하세요',
 
+    // Monthly Calendar
+    calendarTitle: '내 하이킹 달력',
+    calendarFlags: (n: number) => `이번 달 ${n}개 등정`,
+    calendarNoFlags: '이번 달 등정 없음',
+
     // Streak Leaderboard
     tabStreaks: '🔥 연속',
     streakLeaderboardTitle: '🔥 연속 등산 랭킹',
@@ -1300,6 +1305,11 @@ const strings = {
     tagCloudTitle: 'Summit Tags',
     tagCloudSub: 'Tap to vote on community tags',
 
+    // Monthly Calendar
+    calendarTitle: 'My Hiking Calendar',
+    calendarFlags: (n: number) => `${n} flag${n !== 1 ? 's' : ''} this month`,
+    calendarNoFlags: 'No flags this month',
+
     // Streak Leaderboard
     tabStreaks: '🔥 Streaks',
     streakLeaderboardTitle: '🔥 Streak Leaderboard',
@@ -1958,6 +1968,11 @@ const strings = {
     // Summit Tag Cloud
     tagCloudTitle: '山頂タグ',
     tagCloudSub: 'タップしてタグに投票',
+
+    // Monthly Calendar
+    calendarTitle: 'ハイキングカレンダー',
+    calendarFlags: (n: number) => `今月${n}回登頂`,
+    calendarNoFlags: '今月の登頂なし',
 
     // Streak Leaderboard
     tabStreaks: '🔥 連続',

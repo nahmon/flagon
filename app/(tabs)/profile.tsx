@@ -30,6 +30,7 @@ import SummitPassportCard from '../../src/components/SummitPassportCard';
 import YearReviewModal from '../../src/components/YearReviewModal';
 import NotificationInboxModal from '../../src/components/NotificationInboxModal';
 import DuelModal from '../../src/components/DuelModal';
+import MonthlyCalendarCard from '../../src/components/MonthlyCalendarCard';
 import { getUnreadCount } from '../../src/services/inboxNotifications';
 import { fetchUserConquests, type ConquestEntry } from '../../src/services/conquests';
 import { buildAnalytics, type AnalyticsSummary } from '../../src/services/analytics';
@@ -205,6 +206,7 @@ export default function ProfileScreen() {
   const [personalFlagCount, setPersonalFlagCount] = useState(0);
   const [analyticsSummary, setAnalyticsSummary] = useState<AnalyticsSummary | null>(null);
   const [conquestDates, setConquestDates] = useState<string[]>([]);
+  const [allConquests, setAllConquests] = useState<ConquestEntry[]>([]);
   const [showInbox, setShowInbox] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -231,6 +233,7 @@ export default function ProfileScreen() {
       setHighestSummit(best);
       setAnalyticsSummary(buildAnalytics(conquests, lang));
       setConquestDates(conquests.map((c) => c.planted_at));
+      setAllConquests(conquests);
       const streakInfo = await fetchStreak(user.id);
       setCurrentStreak(streakInfo.current);
       const counts = await fetchFollowCounts(user.id);
@@ -471,6 +474,7 @@ export default function ProfileScreen() {
         {conquestDates.length > 0 && (
           <SummitHeatmapCard dates={conquestDates} />
         )}
+        <MonthlyCalendarCard conquests={allConquests} />
         <TrophyRoomCard />
         <SummitPassportCard />
         {userId && <MountainGroupProgress userId={userId} onGroupPress={setSelectedGroup} />}
