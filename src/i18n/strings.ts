@@ -663,6 +663,16 @@ const strings = {
     elevLeaderboardTotal: (m: number) => `${m.toLocaleString()}m 누적`,
     elevLeaderboardFlags: (n: number) => `깃발 ${n}개`,
     elevLeaderboardEmpty: '아직 고도 데이터가 없습니다',
+
+    // Weekly Elevation Goal
+    weeklyGoalTitle: '⛰️ 이번 주 고도 목표',
+    weeklyGoalProgress: (cur: number, goal: number) => `${cur.toLocaleString()}m / ${goal.toLocaleString()}m`,
+    weeklyGoalAchieved: '🎉 목표 달성!',
+    weeklyGoalEmpty: '이번 주 아직 등산 기록이 없습니다',
+    weeklyGoalSetBtn: '목표 설정',
+    weeklyGoalPickTitle: '주간 고도 목표 선택',
+    weeklyGoalSummits: '이번 주 정상',
+    weeklyGoalNone: '기록 없음',
   },
 
   en: {
@@ -1327,6 +1337,16 @@ const strings = {
     elevLeaderboardTotal: (m: number) => `${m.toLocaleString()}m total`,
     elevLeaderboardFlags: (n: number) => `${n} plants`,
     elevLeaderboardEmpty: 'No elevation data yet',
+
+    // Weekly Elevation Goal
+    weeklyGoalTitle: '⛰️ Weekly Elevation Goal',
+    weeklyGoalProgress: (cur: number, goal: number) => `${cur.toLocaleString()}m / ${goal.toLocaleString()}m`,
+    weeklyGoalAchieved: '🎉 Goal achieved!',
+    weeklyGoalEmpty: 'No climbs recorded this week',
+    weeklyGoalSetBtn: 'Set Goal',
+    weeklyGoalPickTitle: 'Choose your weekly elevation goal',
+    weeklyGoalSummits: 'This week\'s summits',
+    weeklyGoalNone: 'None yet',
   },
 
   ja: {
@@ -1991,6 +2011,16 @@ const strings = {
     elevLeaderboardTotal: (m: number) => `累計 ${m.toLocaleString()}m`,
     elevLeaderboardFlags: (n: number) => `${n}個植栽`,
     elevLeaderboardEmpty: 'まだ標高データがありません',
+
+    // Weekly Elevation Goal
+    weeklyGoalTitle: '⛰️ 今週の標高目標',
+    weeklyGoalProgress: (cur: number, goal: number) => `${cur.toLocaleString()}m / ${goal.toLocaleString()}m`,
+    weeklyGoalAchieved: '🎉 目標達成！',
+    weeklyGoalEmpty: '今週の登山記録がありません',
+    weeklyGoalSetBtn: '目標を設定',
+    weeklyGoalPickTitle: '週間標高目標を選択',
+    weeklyGoalSummits: '今週の山頂',
+    weeklyGoalNone: '記録なし',
   },
 } as const;
 

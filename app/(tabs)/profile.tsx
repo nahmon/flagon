@@ -31,6 +31,7 @@ import YearReviewModal from '../../src/components/YearReviewModal';
 import NotificationInboxModal from '../../src/components/NotificationInboxModal';
 import DuelModal from '../../src/components/DuelModal';
 import MonthlyCalendarCard from '../../src/components/MonthlyCalendarCard';
+import ElevationGoalCard from '../../src/components/ElevationGoalCard';
 import { getUnreadCount } from '../../src/services/inboxNotifications';
 import { fetchUserConquests, type ConquestEntry } from '../../src/services/conquests';
 import { buildAnalytics, type AnalyticsSummary } from '../../src/services/analytics';
@@ -474,6 +475,7 @@ export default function ProfileScreen() {
         {conquestDates.length > 0 && (
           <SummitHeatmapCard dates={conquestDates} />
         )}
+        <ElevationGoalCard conquests={allConquests} />
         <MonthlyCalendarCard conquests={allConquests} />
         <TrophyRoomCard />
         <SummitPassportCard />
