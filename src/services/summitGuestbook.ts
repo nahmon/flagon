@@ -26,7 +26,7 @@ export async function fetchGuestbook(summitId: string, limit = 30): Promise<Gues
 
   if (error) throw error;
 
-  return (data ?? []).map((row: RawEntry) => ({
+  return ((data ?? []) as unknown as RawEntry[]).map((row) => ({
     id: row.id,
     userId: row.user_id,
     displayName: row.users?.display_name ?? '?',

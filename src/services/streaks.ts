@@ -118,7 +118,7 @@ export async function fetchStreakLeaderboard(limit = 20): Promise<StreakLeaderbo
     users: { display_name: string | null } | null;
     crews: { name_ko: string | null; color_hex: string | null } | null;
   };
-  const rows = (flagRows ?? []) as FlagRow[];
+  const rows = ((flagRows ?? []) as unknown) as FlagRow[];
 
   // Group planted weeks per user
   const userMeta: Map<string, { display_name: string | null; crew_name: string | null; crew_color: string | null; weeks: Set<string> }> = new Map();

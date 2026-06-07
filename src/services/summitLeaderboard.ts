@@ -25,7 +25,7 @@ export async function fetchTopConquerers(summitId: string, limit = 10): Promise<
   if (error) throw error;
 
   const byUser = new Map<string, { name: string; color: string | null; count: number; last: string }>();
-  for (const row of (data ?? []) as FlagRow[]) {
+  for (const row of ((data ?? []) as unknown) as FlagRow[]) {
     const uid = row.user_id;
     const existing = byUser.get(uid);
     if (existing) {

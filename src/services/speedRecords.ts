@@ -40,7 +40,7 @@ export async function fetchSummitSpeedRecords(summitId: string, limit = 10): Pro
     .limit(limit);
 
   if (error) throw error;
-  return (data ?? []).map((r: RawRecord) => mapRow(r));
+  return ((data ?? []) as unknown as RawRecord[]).map((r) => mapRow(r));
 }
 
 export async function fetchMySpeedRecord(summitId: string): Promise<SpeedRecord | null> {
@@ -58,5 +58,5 @@ export async function fetchMySpeedRecord(summitId: string): Promise<SpeedRecord 
 
   if (error) throw error;
   if (!data) return null;
-  return mapRow(data as RawRecord);
+  return mapRow(data as unknown as RawRecord);
 }

@@ -695,6 +695,9 @@ const strings = {
     groupHikeFeedTitle: '예정된 단체 등산',
     viewAll: '전체 보기',
 
+    // Hiking Stats Dashboard
+    hikingStatsBtn: '📊 하이킹 통계',
+
     // Seasonal Stickers
     seasonalStickers: '🌸 계절 스티커',
     seasonalStickersTitle: '계절 스티커 컬렉션',
@@ -1398,6 +1401,9 @@ const strings = {
     groupHikeFeedTitle: 'Upcoming Group Hikes',
     viewAll: 'View All',
 
+    // Hiking Stats Dashboard
+    hikingStatsBtn: '📊 Hiking Stats',
+
     // Seasonal Stickers
     seasonalStickers: '🌸 Seasonal Stickers',
     seasonalStickersTitle: 'Seasonal Sticker Collection',
@@ -2100,6 +2106,9 @@ const strings = {
     groupHikeTrayBtn: (n: number) => `👥 グループ登山 (${n})`,
     groupHikeFeedTitle: '予定グループ登山',
     viewAll: 'すべて見る',
+
+    // Hiking Stats Dashboard
+    hikingStatsBtn: '📊 ハイキング統計',
 
     // Seasonal Stickers
     seasonalStickers: '🌸 季節ステッカー',
