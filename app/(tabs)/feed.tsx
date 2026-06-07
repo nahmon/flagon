@@ -12,6 +12,7 @@ import FeedRow, { type FeedItem } from '../../src/components/FeedRow';
 import PhotoWallGrid from '../../src/components/PhotoWallGrid';
 import LiveHikeSection from '../../src/components/LiveHikeSection';
 import UpcomingGroupHikesSection from '../../src/components/UpcomingGroupHikesSection';
+import SummitOfTheDayCard from '../../src/components/SummitOfTheDayCard';
 
 type FeedFilter = 'all' | 'following' | 'crew' | 'photos';
 
@@ -159,6 +160,7 @@ export default function FeedScreen() {
           contentContainerStyle={styles.list}
           ListHeaderComponent={filter === 'all' ? (
             <>
+              <SummitOfTheDayCard />
               <FlagExpiryCard />
               <LiveHikeSection onAvatarPress={setSelectedHiker} />
               <UpcomingGroupHikesSection />

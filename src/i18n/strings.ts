@@ -717,6 +717,15 @@ const strings = {
     seasonalStickersComplete: '🏆 사계절 완성!',
     seasonalStickersEmpty: '아직 계절 스티커가 없어요',
     seasonalStickersEmptyDesc: '다양한 계절에 정상에 깃발을 꽂으면 스티커를 모을 수 있어요!',
+
+    // Summit of the Day
+    sotdLabel: '🏔️ 오늘의 정상',
+    sotdTotalFlags: '총 플래그',
+    sotdWeeklyFlags: '이번 주',
+    sotdPlanBtn: '🗓 등산 계획하기',
+    sotdPlannedBtn: '✓ 등산 예정',
+    sotdPlanned: '내일 등산 예정이 추가됐습니다!',
+    sotdPlanError: '계획 추가에 실패했습니다',
   },
 
   en: {
@@ -1435,6 +1444,15 @@ const strings = {
     seasonalStickersComplete: '🏆 Four Seasons!',
     seasonalStickersEmpty: 'No seasonal stickers yet',
     seasonalStickersEmptyDesc: 'Plant flags in different seasons to collect stickers!',
+
+    // Summit of the Day
+    sotdLabel: '🏔️ SUMMIT OF THE DAY',
+    sotdTotalFlags: 'total flags',
+    sotdWeeklyFlags: 'this week',
+    sotdPlanBtn: '🗓 Plan a Hike',
+    sotdPlannedBtn: '✓ Hike Planned',
+    sotdPlanned: 'Added to your planned hikes!',
+    sotdPlanError: 'Failed to plan hike',
   },
 
   ja: {
@@ -2153,6 +2171,15 @@ const strings = {
     seasonalStickersComplete: '🏆 四季制覇!',
     seasonalStickersEmpty: 'まだ季節ステッカーがありません',
     seasonalStickersEmptyDesc: '異なる季節に山頂へ旗を植えてステッカーを集めましょう！',
+
+    // Summit of the Day
+    sotdLabel: '🏔️ 本日の山頂',
+    sotdTotalFlags: '総フラグ数',
+    sotdWeeklyFlags: '今週のフラグ',
+    sotdPlanBtn: '🗓 登山を計画',
+    sotdPlannedBtn: '✓ 登山予定',
+    sotdPlanned: '明日の登山が予定に追加されました！',
+    sotdPlanError: '計画の追加に失敗しました',
   },
 } as const;
 
