@@ -694,6 +694,14 @@ const strings = {
     groupHikeTrayBtn: (n: number) => `👥 단체 등산 (${n})`,
     groupHikeFeedTitle: '예정된 단체 등산',
     viewAll: '전체 보기',
+
+    // Seasonal Stickers
+    seasonalStickers: '🌸 계절 스티커',
+    seasonalStickersTitle: '계절 스티커 컬렉션',
+    seasonalStickersSub: (done: number, total: number) => `${total}개 정상 중 ${done}개 사계절 완성`,
+    seasonalStickersComplete: '🏆 사계절 완성!',
+    seasonalStickersEmpty: '아직 계절 스티커가 없어요',
+    seasonalStickersEmptyDesc: '다양한 계절에 정상에 깃발을 꽂으면 스티커를 모을 수 있어요!',
   },
 
   en: {
@@ -1389,6 +1397,14 @@ const strings = {
     groupHikeTrayBtn: (n: number) => `👥 Group Hikes (${n})`,
     groupHikeFeedTitle: 'Upcoming Group Hikes',
     viewAll: 'View All',
+
+    // Seasonal Stickers
+    seasonalStickers: '🌸 Seasonal Stickers',
+    seasonalStickersTitle: 'Seasonal Sticker Collection',
+    seasonalStickersSub: (done: number, total: number) => `${done}/${total} summits with all 4 seasons`,
+    seasonalStickersComplete: '🏆 Four Seasons!',
+    seasonalStickersEmpty: 'No seasonal stickers yet',
+    seasonalStickersEmptyDesc: 'Plant flags in different seasons to collect stickers!',
   },
 
   ja: {
@@ -2084,6 +2100,14 @@ const strings = {
     groupHikeTrayBtn: (n: number) => `👥 グループ登山 (${n})`,
     groupHikeFeedTitle: '予定グループ登山',
     viewAll: 'すべて見る',
+
+    // Seasonal Stickers
+    seasonalStickers: '🌸 季節ステッカー',
+    seasonalStickersTitle: '季節ステッカーコレクション',
+    seasonalStickersSub: (done: number, total: number) => `${total}山中${done}山で四季制覇`,
+    seasonalStickersComplete: '🏆 四季制覇!',
+    seasonalStickersEmpty: 'まだ季節ステッカーがありません',
+    seasonalStickersEmptyDesc: '異なる季節に山頂へ旗を植えてステッカーを集めましょう！',
   },
 } as const;
 
