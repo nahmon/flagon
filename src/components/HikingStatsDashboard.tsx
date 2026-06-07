@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
 import { Colors } from '../constants';
-import { fetchHikingStats, HikingStatsDashboard as Stats } from '../services/hikingStats';
+import { fetchHikingStats, HikingStatsDashboard as Stats, DayOfWeekStat, MonthStat, ElevTierStat } from '../services/hikingStats';
 
 interface Props {
   visible: boolean;
@@ -67,9 +67,9 @@ export default function HikingStatsDashboardModal({ visible, onClose, userId, la
       .finally(() => setLoading(false));
   }, [visible, userId]);
 
-  const maxDow = stats ? Math.max(...stats.dayOfWeekStats.map(d => d.count), 1) : 1;
-  const maxMonth = stats ? Math.max(...stats.monthStats.map(m => m.count), 1) : 1;
-  const maxTier = stats ? Math.max(...stats.elevTierStats.map(e => e.count), 1) : 1;
+  const maxDow = stats ? Math.max(...stats.dayOfWeekStats.map((d: DayOfWeekStat) => d.count), 1) : 1;
+  const maxMonth = stats ? Math.max(...stats.monthStats.map((m: MonthStat) => m.count), 1) : 1;
+  const maxTier = stats ? Math.max(...stats.elevTierStats.map((e: ElevTierStat) => e.count), 1) : 1;
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
@@ -114,19 +114,19 @@ export default function HikingStatsDashboardModal({ visible, onClose, userId, la
 
                 <Text style={s.sectionTitle}>{t('elevTitle', lang)}</Text>
                 <BarChart
-                  items={stats.elevTierStats.map(e => ({ label: e.label, count: e.count, color: e.color }))}
+                  items={stats.elevTierStats.map((e: ElevTierStat) => ({ label: e.label, count: e.count, color: e.color }))}
                   maxCount={maxTier}
                 />
 
                 <Text style={s.sectionTitle}>{t('dowTitle', lang)}</Text>
                 <BarChart
-                  items={stats.dayOfWeekStats.map(d => ({ label: d.day, count: d.count }))}
+                  items={stats.dayOfWeekStats.map((d: DayOfWeekStat) => ({ label: d.day, count: d.count }))}
                   maxCount={maxDow}
                 />
 
                 <Text style={s.sectionTitle}>{t('monthTitle', lang)}</Text>
                 <BarChart
-                  items={stats.monthStats.map(m => ({ label: m.month, count: m.count }))}
+                  items={stats.monthStats.map((m: MonthStat) => ({ label: m.month, count: m.count }))}
                   maxCount={maxMonth}
                 />
               </>

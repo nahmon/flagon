@@ -698,6 +698,18 @@ const strings = {
     // Hiking Stats Dashboard
     hikingStatsBtn: '📊 하이킹 통계',
 
+    // Summit Recommendations
+    recBtn: '🧭 정상 추천',
+    recTitle: '🧭 정상 추천',
+    recSubtitle: '아직 정복하지 못한 정상을 발견하세요',
+    recTabTrending: '🔥 인기',
+    recTabFriends: '👥 친구',
+    recTabAltitude: '⛰️ 고지',
+    recBadgeTrending: (n: number) => `이번 주 ${n}회`,
+    recBadgeFriends: (n: number) => `친구 ${n}명 등반`,
+    recBadgeAltitude: (m: number) => `${m.toLocaleString()}m`,
+    recEmpty: '추천할 정상이 없습니다',
+
     // Seasonal Stickers
     seasonalStickers: '🌸 계절 스티커',
     seasonalStickersTitle: '계절 스티커 컬렉션',
@@ -1404,6 +1416,18 @@ const strings = {
     // Hiking Stats Dashboard
     hikingStatsBtn: '📊 Hiking Stats',
 
+    // Summit Recommendations
+    recBtn: '🧭 Discover Summits',
+    recTitle: '🧭 Discover Summits',
+    recSubtitle: 'Find summits you haven\'t conquered yet',
+    recTabTrending: '🔥 Trending',
+    recTabFriends: '👥 Friends',
+    recTabAltitude: '⛰️ Altitude',
+    recBadgeTrending: (n: number) => `${n} flags/week`,
+    recBadgeFriends: (n: number) => `${n} friend${n !== 1 ? 's' : ''}`,
+    recBadgeAltitude: (m: number) => `${m.toLocaleString()}m`,
+    recEmpty: 'No recommendations yet',
+
     // Seasonal Stickers
     seasonalStickers: '🌸 Seasonal Stickers',
     seasonalStickersTitle: 'Seasonal Sticker Collection',
@@ -2109,6 +2133,18 @@ const strings = {
 
     // Hiking Stats Dashboard
     hikingStatsBtn: '📊 ハイキング統計',
+
+    // Summit Recommendations
+    recBtn: '🧭 山頂発見',
+    recTitle: '🧭 山頂発見',
+    recSubtitle: 'まだ制覇していない山頂を見つけよう',
+    recTabTrending: '🔥 トレンド',
+    recTabFriends: '👥 フレンド',
+    recTabAltitude: '⛰️ 標高',
+    recBadgeTrending: (n: number) => `今週${n}回`,
+    recBadgeFriends: (n: number) => `友達${n}人登頂`,
+    recBadgeAltitude: (m: number) => `${m.toLocaleString()}m`,
+    recEmpty: 'おすすめの山頂がありません',
 
     // Seasonal Stickers
     seasonalStickers: '🌸 季節ステッカー',

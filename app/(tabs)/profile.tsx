@@ -32,6 +32,7 @@ import NotificationInboxModal from '../../src/components/NotificationInboxModal'
 import DuelModal from '../../src/components/DuelModal';
 import SeasonalStickerModal from '../../src/components/SeasonalStickerModal';
 import HikingStatsDashboardModal from '../../src/components/HikingStatsDashboard';
+import SummitRecommendationsModal from '../../src/components/SummitRecommendationsModal';
 import MonthlyCalendarCard from '../../src/components/MonthlyCalendarCard';
 import ElevationGoalCard from '../../src/components/ElevationGoalCard';
 import { getUnreadCount } from '../../src/services/inboxNotifications';
@@ -200,6 +201,7 @@ export default function ProfileScreen() {
   const [showYearReview, setShowYearReview] = useState(false);
   const [showSeasonalStickers, setShowSeasonalStickers] = useState(false);
   const [showHikingStats, setShowHikingStats] = useState(false);
+  const [showRecommendations, setShowRecommendations] = useState(false);
   const [followCounts, setFollowCounts] = useState<FollowCounts>({ followers: 0, following: 0 });
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [editingName, setEditingName] = useState(false);
@@ -561,6 +563,12 @@ export default function ProfileScreen() {
           <Text style={styles.wishListArrow}>→</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowRecommendations(true)} activeOpacity={0.8}>
+          <Text style={styles.wishListIcon}>🧭</Text>
+          <Text style={styles.wishListLabel}>{s.recBtn}</Text>
+          <Text style={styles.wishListArrow}>→</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
           <Text style={styles.signOutText}>{s.logout}</Text>
         </TouchableOpacity>
@@ -623,6 +631,10 @@ export default function ProfileScreen() {
           lang={lang}
         />
       )}
+      <SummitRecommendationsModal
+        visible={showRecommendations}
+        onClose={() => setShowRecommendations(false)}
+      />
     </View>
   );
 }
