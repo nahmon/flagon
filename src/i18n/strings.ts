@@ -726,6 +726,14 @@ const strings = {
     sotdPlannedBtn: '✓ 등산 예정',
     sotdPlanned: '내일 등산 예정이 추가됐습니다!',
     sotdPlanError: '계획 추가에 실패했습니다',
+
+    // Crew Chat
+    crewChatBtn: '💬 크루 채팅',
+    crewChatTitle: '크루 채팅',
+    crewChatPlaceholder: '메시지를 입력하세요...',
+    crewChatSend: '전송',
+    crewChatEmpty: '아직 메시지가 없어요. 첫 번째 메시지를 남겨보세요!',
+    crewChatDeleteConfirm: '이 메시지를 삭제하시겠습니까?',
   },
 
   en: {
@@ -1453,6 +1461,14 @@ const strings = {
     sotdPlannedBtn: '✓ Hike Planned',
     sotdPlanned: 'Added to your planned hikes!',
     sotdPlanError: 'Failed to plan hike',
+
+    // Crew Chat
+    crewChatBtn: '💬 Crew Chat',
+    crewChatTitle: 'Crew Chat',
+    crewChatPlaceholder: 'Write a message...',
+    crewChatSend: 'Send',
+    crewChatEmpty: 'No messages yet. Start the conversation!',
+    crewChatDeleteConfirm: 'Delete this message?',
   },
 
   ja: {
@@ -2180,6 +2196,14 @@ const strings = {
     sotdPlannedBtn: '✓ 登山予定',
     sotdPlanned: '明日の登山が予定に追加されました！',
     sotdPlanError: '計画の追加に失敗しました',
+
+    // Crew Chat
+    crewChatBtn: '💬 クルーチャット',
+    crewChatTitle: 'クルーチャット',
+    crewChatPlaceholder: 'メッセージを入力...',
+    crewChatSend: '送信',
+    crewChatEmpty: 'まだメッセージがありません。最初のメッセージを送りましょう！',
+    crewChatDeleteConfirm: 'このメッセージを削除しますか？',
   },
 } as const;
 
