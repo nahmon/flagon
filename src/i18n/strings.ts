@@ -762,6 +762,24 @@ const strings = {
     compareStatBestStreak: '최고 연속',
     compareStatWeek: '이번 주 플래그',
     compareWinnerHint: '초록색 수치가 더 높은 기록입니다',
+
+    // Summit Roulette
+    rouletteBtn: '🎯 정상 룰렛',
+    rouletteTitle: '🎯 정상 룰렛',
+    rouletteSub: '이번 주 도전할 정상을 뽑아보세요. 정복하면 보너스 XP!',
+    rouletteSpinsLeft: (n: number) => `남은 뽑기: ${n}회`,
+    rouletteSpin: '🎲 뽑기',
+    rouletteSpinAgain: '🔄 다시 뽑기',
+    rouletteSpinning: '정상 탐색 중…',
+    rouletteAccept: '✅ 이번 주 도전 수락',
+    rouletteAccepted: '🎯 위시리스트에 추가됐습니다!',
+    rouletteCommunityFlags: (n: number) => `커뮤니티 플래그 ${n}개`,
+    rouletteTapSpin: '뽑기 버튼을 눌러 정상을 뽑으세요',
+    rouletteWeeklyReset: '이번 주 뽑기를 모두 사용했습니다.\n다음 주에 다시 도전하세요!',
+    rouletteNoSpins: '뽑기 소진',
+    rouletteNoSpinsMsg: '이번 주 뽑기를 모두 사용했습니다.',
+    rouletteSpinError: '뽑기 중 오류가 발생했습니다.',
+    rouletteAcceptError: '도전 수락에 실패했습니다.',
   },
 
   en: {
@@ -1525,6 +1543,24 @@ const strings = {
     compareStatBestStreak: 'Best Streak',
     compareStatWeek: 'This Week',
     compareWinnerHint: 'Green = higher stat',
+
+    // Summit Roulette
+    rouletteBtn: '🎯 Summit Roulette',
+    rouletteTitle: '🎯 Summit Roulette',
+    rouletteSub: 'Spin to get a random summit challenge for this week. Conquer it for bonus XP!',
+    rouletteSpinsLeft: (n: number) => `${n} spin${n === 1 ? '' : 's'} left this week`,
+    rouletteSpin: '🎲 Spin',
+    rouletteSpinAgain: '🔄 Spin Again',
+    rouletteSpinning: 'Finding your summit…',
+    rouletteAccept: '✅ Accept This Week\'s Challenge',
+    rouletteAccepted: '🎯 Added to your Wish List!',
+    rouletteCommunityFlags: (n: number) => `${n} community flag${n === 1 ? '' : 's'}`,
+    rouletteTapSpin: 'Tap Spin to reveal your challenge summit',
+    rouletteWeeklyReset: 'You\'ve used all your spins this week.\nCome back next week!',
+    rouletteNoSpins: 'No Spins Left',
+    rouletteNoSpinsMsg: 'You\'ve used all your spins for this week.',
+    rouletteSpinError: 'Something went wrong while spinning.',
+    rouletteAcceptError: 'Failed to accept the challenge.',
   },
 
   ja: {
@@ -2288,6 +2324,24 @@ const strings = {
     compareStatBestStreak: '最高連続',
     compareStatWeek: '今週のフラグ',
     compareWinnerHint: '緑色 = より高い数値',
+
+    // Summit Roulette
+    rouletteBtn: '🎯 山頂ルーレット',
+    rouletteTitle: '🎯 山頂ルーレット',
+    rouletteSub: 'スピンして今週の挑戦山頂を決めよう。制覇でボーナスXP獲得！',
+    rouletteSpinsLeft: (n: number) => `今週の残りスピン: ${n}回`,
+    rouletteSpin: '🎲 スピン',
+    rouletteSpinAgain: '🔄 もう一度スピン',
+    rouletteSpinning: '山頂を探索中…',
+    rouletteAccept: '✅ 今週のチャレンジに挑戦する',
+    rouletteAccepted: '🎯 ウィッシュリストに追加されました！',
+    rouletteCommunityFlags: (n: number) => `コミュニティフラグ ${n}個`,
+    rouletteTapSpin: 'スピンボタンで山頂を選んでください',
+    rouletteWeeklyReset: '今週のスピンをすべて使いました。\n来週また挑戦しましょう！',
+    rouletteNoSpins: 'スピン残数なし',
+    rouletteNoSpinsMsg: '今週のスピンをすべて使いました。',
+    rouletteSpinError: 'スピン中にエラーが発生しました。',
+    rouletteAcceptError: 'チャレンジの受け入れに失敗しました。',
   },
 } as const;
 
