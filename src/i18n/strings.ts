@@ -746,6 +746,22 @@ const strings = {
     // Hike Journal
     hikeJournalBtn: '📔 등산 일지',
     hikeJournalEmpty: '아직 등산 기록이 없어요.\n첫 번째 정상을 정복하고 일지를 남겨보세요!',
+
+    // Hike Compare
+    compareBtn: '⚔️ 기록 비교',
+    compareTitle: '⚔️ 기록 비교',
+    comparePick: '비교할 하이커를 선택하세요',
+    compareNoFollowing: '팔로우한 하이커가 없습니다.\n다른 등산객을 팔로우해 기록을 비교해보세요!',
+    compareMe: '나',
+    compareBack: '다시 선택',
+    compareStatFlags: '총 플래그',
+    compareStatSummits: '정복한 정상',
+    compareStatHighest: '최고봉',
+    compareStatElevation: '누적 표고',
+    compareStatStreak: '현재 연속',
+    compareStatBestStreak: '최고 연속',
+    compareStatWeek: '이번 주 플래그',
+    compareWinnerHint: '초록색 수치가 더 높은 기록입니다',
   },
 
   en: {
@@ -1493,6 +1509,22 @@ const strings = {
     // Hike Journal
     hikeJournalBtn: '📔 Hike Journal',
     hikeJournalEmpty: 'No hikes yet.\nConquer your first summit and write a journal entry!',
+
+    // Hike Compare
+    compareBtn: '⚔️ Compare Stats',
+    compareTitle: '⚔️ Head-to-Head',
+    comparePick: 'Pick a hiker to compare against',
+    compareNoFollowing: 'You\'re not following anyone yet.\nFollow other hikers to compare records!',
+    compareMe: 'Me',
+    compareBack: 'Change',
+    compareStatFlags: 'Total Flags',
+    compareStatSummits: 'Summits',
+    compareStatHighest: 'Highest Peak',
+    compareStatElevation: 'Total Elevation',
+    compareStatStreak: 'Current Streak',
+    compareStatBestStreak: 'Best Streak',
+    compareStatWeek: 'This Week',
+    compareWinnerHint: 'Green = higher stat',
   },
 
   ja: {
@@ -2240,6 +2272,22 @@ const strings = {
     // Hike Journal
     hikeJournalBtn: '📔 ハイキング日誌',
     hikeJournalEmpty: 'まだ登山記録がありません。\n最初の山頂を制覇して日誌を書きましょう！',
+
+    // Hike Compare
+    compareBtn: '⚔️ 記録比較',
+    compareTitle: '⚔️ 記録比較',
+    comparePick: '比較する登山者を選択',
+    compareNoFollowing: 'まだ誰もフォローしていません。\n登山者をフォローして記録を比較しましょう！',
+    compareMe: '自分',
+    compareBack: '変更',
+    compareStatFlags: '総フラグ数',
+    compareStatSummits: '登頂数',
+    compareStatHighest: '最高峰',
+    compareStatElevation: '累計標高',
+    compareStatStreak: '現在の連続',
+    compareStatBestStreak: '最高連続',
+    compareStatWeek: '今週のフラグ',
+    compareWinnerHint: '緑色 = より高い数値',
   },
 } as const;
 

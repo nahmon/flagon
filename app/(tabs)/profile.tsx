@@ -35,6 +35,7 @@ import HikingStatsDashboardModal from '../../src/components/HikingStatsDashboard
 import SummitRecommendationsModal from '../../src/components/SummitRecommendationsModal';
 import CrewChatModal from '../../src/components/CrewChatModal';
 import HikeJournalListModal from '../../src/components/HikeJournalListModal';
+import HikeCompareModal from '../../src/components/HikeCompareModal';
 import MonthlyCalendarCard from '../../src/components/MonthlyCalendarCard';
 import ElevationGoalCard from '../../src/components/ElevationGoalCard';
 import { getUnreadCount } from '../../src/services/inboxNotifications';
@@ -206,6 +207,7 @@ export default function ProfileScreen() {
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [showCrewChat, setShowCrewChat] = useState(false);
   const [showHikeJournal, setShowHikeJournal] = useState(false);
+  const [showCompare, setShowCompare] = useState(false);
   const [followCounts, setFollowCounts] = useState<FollowCounts>({ followers: 0, following: 0 });
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [editingName, setEditingName] = useState(false);
@@ -587,6 +589,12 @@ export default function ProfileScreen() {
           <Text style={styles.wishListArrow}>→</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowCompare(true)} activeOpacity={0.8}>
+          <Text style={styles.wishListIcon}>⚔️</Text>
+          <Text style={styles.wishListLabel}>{s.compareBtn}</Text>
+          <Text style={styles.wishListArrow}>→</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
           <Text style={styles.signOutText}>{s.logout}</Text>
         </TouchableOpacity>
@@ -665,6 +673,10 @@ export default function ProfileScreen() {
         visible={showHikeJournal}
         conquests={allConquests}
         onClose={() => setShowHikeJournal(false)}
+      />
+      <HikeCompareModal
+        visible={showCompare}
+        onClose={() => setShowCompare(false)}
       />
     </View>
   );
