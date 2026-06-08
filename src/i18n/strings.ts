@@ -734,6 +734,10 @@ const strings = {
     crewChatSend: '전송',
     crewChatEmpty: '아직 메시지가 없어요. 첫 번째 메시지를 남겨보세요!',
     crewChatDeleteConfirm: '이 메시지를 삭제하시겠습니까?',
+
+    // Hike Journal
+    hikeJournalBtn: '📔 등산 일지',
+    hikeJournalEmpty: '아직 등산 기록이 없어요.\n첫 번째 정상을 정복하고 일지를 남겨보세요!',
   },
 
   en: {
@@ -1469,6 +1473,10 @@ const strings = {
     crewChatSend: 'Send',
     crewChatEmpty: 'No messages yet. Start the conversation!',
     crewChatDeleteConfirm: 'Delete this message?',
+
+    // Hike Journal
+    hikeJournalBtn: '📔 Hike Journal',
+    hikeJournalEmpty: 'No hikes yet.\nConquer your first summit and write a journal entry!',
   },
 
   ja: {
@@ -2204,6 +2212,10 @@ const strings = {
     crewChatSend: '送信',
     crewChatEmpty: 'まだメッセージがありません。最初のメッセージを送りましょう！',
     crewChatDeleteConfirm: 'このメッセージを削除しますか？',
+
+    // Hike Journal
+    hikeJournalBtn: '📔 ハイキング日誌',
+    hikeJournalEmpty: 'まだ登山記録がありません。\n最初の山頂を制覇して日誌を書きましょう！',
   },
 } as const;
 

@@ -34,6 +34,7 @@ import SeasonalStickerModal from '../../src/components/SeasonalStickerModal';
 import HikingStatsDashboardModal from '../../src/components/HikingStatsDashboard';
 import SummitRecommendationsModal from '../../src/components/SummitRecommendationsModal';
 import CrewChatModal from '../../src/components/CrewChatModal';
+import HikeJournalListModal from '../../src/components/HikeJournalListModal';
 import MonthlyCalendarCard from '../../src/components/MonthlyCalendarCard';
 import ElevationGoalCard from '../../src/components/ElevationGoalCard';
 import { getUnreadCount } from '../../src/services/inboxNotifications';
@@ -204,6 +205,7 @@ export default function ProfileScreen() {
   const [showHikingStats, setShowHikingStats] = useState(false);
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [showCrewChat, setShowCrewChat] = useState(false);
+  const [showHikeJournal, setShowHikeJournal] = useState(false);
   const [followCounts, setFollowCounts] = useState<FollowCounts>({ followers: 0, following: 0 });
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [editingName, setEditingName] = useState(false);
@@ -579,6 +581,12 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         )}
 
+        <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowHikeJournal(true)} activeOpacity={0.8}>
+          <Text style={styles.wishListIcon}>📔</Text>
+          <Text style={styles.wishListLabel}>{s.hikeJournalBtn}</Text>
+          <Text style={styles.wishListArrow}>→</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
           <Text style={styles.signOutText}>{s.logout}</Text>
         </TouchableOpacity>
@@ -653,6 +661,11 @@ export default function ProfileScreen() {
           onClose={() => setShowCrewChat(false)}
         />
       )}
+      <HikeJournalListModal
+        visible={showHikeJournal}
+        conquests={allConquests}
+        onClose={() => setShowHikeJournal(false)}
+      />
     </View>
   );
 }
