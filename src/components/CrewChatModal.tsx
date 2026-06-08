@@ -47,11 +47,12 @@ export default function CrewChatModal({ visible, crewId, crewName, onClose }: Pr
 
   useEffect(() => {
     if (!visible) return;
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then((res: { data: { user: { id: string } | null } }) => {
+      const user = res.data.user;
       if (!user) return;
       setUserId(user.id);
       supabase.from('users').select('display_name').eq('id', user.id).single()
-        .then(({ data }) => setDisplayName((data as { display_name?: string } | null)?.display_name ?? 'Hiker'));
+        .then((res2: { data: { display_name?: string } | null }) => setDisplayName(res2.data?.display_name ?? 'Hiker'));
     });
     load();
   }, [visible, load]);
@@ -67,7 +68,7 @@ export default function CrewChatModal({ visible, crewId, crewName, onClose }: Pr
     setSending(true);
     try {
       const msg = await sendMessage(crewId, userId, displayName || 'Hiker', text);
-      setMessages((prev) => [...prev, msg]);
+      setMessages((prev: ChatMessage[]) => [...prev, msg]);
       setText('');
       setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 100);
     } finally {
@@ -81,7 +82,7 @@ export default function CrewChatModal({ visible, crewId, crewName, onClose }: Pr
       {
         text: 'OK', style: 'destructive', onPress: async () => {
           await deleteMessage(crewId, msg.id);
-          setMessages((prev) => prev.filter((m) => m.id !== msg.id));
+          setMessages((prev: ChatMessage[]) => prev.filter((m: ChatMessage) => m.id !== msg.id));
         },
       },
     ]);
@@ -119,7 +120,7 @@ export default function CrewChatModal({ visible, crewId, crewName, onClose }: Pr
           <FlatList
             ref={listRef}
             data={messages}
-            keyExtractor={(m) => m.id}
+            keyExtractor={(m: ChatMessage) => m.id}
             renderItem={renderItem}
             contentContainerStyle={styles.list}
             ListEmptyComponent={<Text style={styles.empty}>{s.crewChatEmpty}</Text>}
@@ -130,7 +131,7 @@ export default function CrewChatModal({ visible, crewId, crewName, onClose }: Pr
             <TextInput
               style={styles.input}
               value={text}
-              onChangeText={(v) => setText(v.slice(0, 200))}
+              onChangeText={(v: string) => setText(v.slice(0, 200))}
               placeholder={s.crewChatPlaceholder}
               placeholderTextColor={Colors.zinc500}
               multiline

@@ -1,10 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
 import { Colors } from '../../src/constants';
 import { fetchLeaderboardByPeriod, fetchUserProfile, type LeaderboardPeriod } from '../../src/services/crews';
 import { fetchHotSummits, type HotSummit } from '../../src/services/summits';
 import { fetchTopHikers, fetchElevationLeaderboard, type ElevationLeaderboardEntry } from '../../src/services/stats';
 import { fetchStreakLeaderboard, type StreakLeaderboardEntry } from '../../src/services/streaks';
+import { fetchFriendsLeaderboard } from '../../src/services/follows';
 import { supabase } from '../../src/services/supabase';
 import { CrewLeaderboardEntry, HikerLeaderboardEntry } from '../../src/types';
 import CrewDetailModal from '../../src/components/CrewDetailModal';
@@ -16,7 +17,7 @@ import { t, summitName, type Lang } from '../../src/i18n/strings';
 
 const RANK_COLORS = ['#D4B060', '#A0A8B0', '#C07840'];
 const PERIODS: LeaderboardPeriod[] = ['week', 'month', 'alltime'];
-type ViewMode = 'crews' | 'summits' | 'hikers' | 'streaks' | 'elevation';
+type ViewMode = 'crews' | 'summits' | 'hikers' | 'streaks' | 'elevation' | 'friends';
 
 function RankNum({ rank }: { rank: number }) {
   const color = rank <= 3 ? RANK_COLORS[rank - 1] : Colors.zinc500;
@@ -25,15 +26,22 @@ function RankNum({ rank }: { rank: number }) {
 
 function ViewToggle({ mode, lang, onChange }: { mode: ViewMode; lang: Lang; onChange: (m: ViewMode) => void }) {
   const s = t(lang);
-  const labels: Record<ViewMode, string> = { crews: s.tabCrews, summits: s.tabSummits, hikers: s.tabHikers, streaks: s.tabStreaks, elevation: s.tabElevation };
+  const labels: Record<ViewMode, string> = {
+    crews: s.tabCrews,
+    summits: s.tabSummits,
+    hikers: s.tabHikers,
+    streaks: s.tabStreaks,
+    elevation: s.tabElevation,
+    friends: s.tabFriends,
+  };
   return (
-    <View style={styles.viewToggleRow}>
-      {(['crews', 'summits', 'hikers', 'streaks', 'elevation'] as ViewMode[]).map((m) => (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.viewToggleRow}>
+      {(['crews', 'summits', 'hikers', 'streaks', 'elevation', 'friends'] as ViewMode[]).map((m) => (
         <TouchableOpacity key={m} style={[styles.viewBtn, mode === m && styles.viewBtnActive]} onPress={() => onChange(m)} activeOpacity={0.75}>
           <Text style={[styles.viewLabel, mode === m && styles.viewLabelActive]}>{labels[m]}</Text>
         </TouchableOpacity>
       ))}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -172,6 +180,52 @@ function TopHikerHero({ top, lang }: { top: HikerLeaderboardEntry; lang: Lang })
   );
 }
 
+function FriendsRow({ entry, rank, lang, onPress }: { entry: HikerLeaderboardEntry; rank: number; lang: Lang; onPress: (uid: string) => void }) {
+  const s = t(lang);
+  const name = entry.display_name ?? `#${entry.user_id.slice(0, 6)}`;
+  const initial = name.charAt(0).toUpperCase();
+  const bg = entry.crew_color ?? avatarColor(entry.user_id);
+  const ago = entry.last_flag_at ? Math.floor((Date.now() - new Date(entry.last_flag_at).getTime()) / 3_600_000) : null;
+  const { current: levelInfo } = xpProgress(approximateXpFromFlagCount(entry.total_flags));
+  return (
+    <TouchableOpacity style={styles.row} onPress={() => onPress(entry.user_id)} activeOpacity={0.75}>
+      <View style={styles.rankCell}><RankNum rank={rank} /></View>
+      <View style={[styles.crewCircle, { backgroundColor: bg }]}>
+        <Text style={styles.crewInitial}>{initial}</Text>
+      </View>
+      <View style={styles.rowBody}>
+        <View style={styles.nameRow}>
+          <Text style={styles.rowName}>{name}</Text>
+          <LevelBadge info={levelInfo} lang={lang} variant="compact" size="sm" />
+        </View>
+        <Text style={styles.rowSub}>{entry.crew_name ?? s.hikerSolo}{ago !== null ? ` · ${ago < 1 ? s.justNow : s.hoursAgo(ago)}` : ''}</Text>
+      </View>
+      <View style={styles.flagCell}>
+        <Text style={styles.flagCount}>{entry.total_flags}</Text>
+        <Text style={styles.flagLabel}>{s.flags}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+function FriendsHero({ top, lang }: { top: HikerLeaderboardEntry; lang: Lang }) {
+  const s = t(lang);
+  const name = top.display_name ?? `#${top.user_id.slice(0, 6)}`;
+  return (
+    <View style={[styles.heroCard, styles.heroCardFriends]}>
+      <View style={styles.heroLeft}>
+        <Text style={styles.heroLabel}>{s.friendsLeaderboardHero}</Text>
+        <Text style={styles.heroName}>{name}</Text>
+        <Text style={styles.heroSub}>{top.crew_name ?? s.hikerSolo}</Text>
+      </View>
+      <View style={styles.heroRight}>
+        <Text style={styles.heroCount}>{top.total_flags}</Text>
+        <Text style={styles.heroFlagLabel}>{s.flags}</Text>
+      </View>
+    </View>
+  );
+}
+
 function PeriodToggle({ period, lang, onChange }: { period: LeaderboardPeriod; lang: Lang; onChange: (p: LeaderboardPeriod) => void }) {
   const s = t(lang);
   const labels: Record<LeaderboardPeriod, string> = { week: s.periodWeek, month: s.periodMonth, alltime: s.periodAlltime };
@@ -274,7 +328,9 @@ export default function LeaderboardScreen() {
   const [topHikers, setTopHikers] = useState<HikerLeaderboardEntry[]>([]);
   const [streakBoard, setStreakBoard] = useState<StreakLeaderboardEntry[]>([]);
   const [elevBoard, setElevBoard] = useState<ElevationLeaderboardEntry[]>([]);
+  const [friendsBoard, setFriendsBoard] = useState<HikerLeaderboardEntry[]>([]);
   const [elevPeriod, setElevPeriod] = useState<LeaderboardPeriod>('alltime');
+  const [friendsPeriod, setFriendsPeriod] = useState<LeaderboardPeriod>('alltime');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedCrew, setSelectedCrew] = useState<CrewLeaderboardEntry | null>(null);
@@ -365,13 +421,27 @@ export default function LeaderboardScreen() {
     }
   }, [elevPeriod]);
 
+  const loadFriends = useCallback(async (isRefresh = false, p?: LeaderboardPeriod) => {
+    if (isRefresh) setRefreshing(true); else setLoading(true);
+    try {
+      const data = await fetchFriendsLeaderboard(p ?? friendsPeriod);
+      setFriendsBoard(data);
+    } catch (e) {
+      console.error('[leaderboard:friends]', e);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [friendsPeriod]);
+
   useEffect(() => {
     if (viewMode === 'crews') loadCrews();
     else if (viewMode === 'summits') loadSummits();
     else if (viewMode === 'streaks') loadStreaks();
     else if (viewMode === 'elevation') loadElevation();
+    else if (viewMode === 'friends') loadFriends();
     else loadHikers();
-  }, [viewMode, loadCrews, loadSummits, loadHikers, loadStreaks, loadElevation]);
+  }, [viewMode, loadCrews, loadSummits, loadHikers, loadStreaks, loadElevation, loadFriends]);
 
   useEffect(() => {
     const channel = supabase
@@ -381,20 +451,23 @@ export default function LeaderboardScreen() {
         else if (viewMode === 'summits') loadSummits();
         else if (viewMode === 'streaks') loadStreaks();
         else if (viewMode === 'elevation') loadElevation();
+        else if (viewMode === 'friends') loadFriends();
         else loadHikers();
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [viewMode, loadCrews, loadSummits, loadHikers, loadStreaks]);
+  }, [viewMode, loadCrews, loadSummits, loadHikers, loadStreaks, loadFriends]);
 
   const handlePeriod = (p: LeaderboardPeriod) => { setPeriod(p); loadCrews(false, p); };
   const handleHikerPeriod = (p: LeaderboardPeriod) => { setHikerPeriod(p); loadHikers(false, p); };
   const handleElevPeriod = (p: LeaderboardPeriod) => { setElevPeriod(p); loadElevation(false, p); };
+  const handleFriendsPeriod = (p: LeaderboardPeriod) => { setFriendsPeriod(p); loadFriends(false, p); };
   const handleRefresh = () => {
     if (viewMode === 'crews') return loadCrews(true);
     if (viewMode === 'summits') return loadSummits(true);
     if (viewMode === 'streaks') return loadStreaks(true);
     if (viewMode === 'elevation') return loadElevation(true);
+    if (viewMode === 'friends') return loadFriends(true);
     return loadHikers(true);
   };
 
@@ -408,13 +481,16 @@ export default function LeaderboardScreen() {
         {viewMode === 'crews' && <PeriodToggle period={period} lang={lang} onChange={handlePeriod} />}
         {viewMode === 'hikers' && <PeriodToggle period={hikerPeriod} lang={lang} onChange={handleHikerPeriod} />}
         {viewMode === 'elevation' && <PeriodToggle period={elevPeriod} lang={lang} onChange={handleElevPeriod} />}
+        {viewMode === 'friends' && <PeriodToggle period={friendsPeriod} lang={lang} onChange={handleFriendsPeriod} />}
         {viewMode === 'streaks' && !loading && streakBoard.length > 0 && <Text style={styles.streakSub}>{s.streakLeaderboardSub}</Text>}
         {viewMode === 'elevation' && !loading && elevBoard.length > 0 && <Text style={styles.streakSub}>{s.elevLeaderboardSub}</Text>}
+        {viewMode === 'friends' && !loading && <Text style={styles.streakSub}>{s.friendsLeaderboardSub}</Text>}
         {viewMode === 'crews' && !loading && entries.length > 0 && <HeroCard top={entries[0]} lang={lang} />}
         {viewMode === 'summits' && !loading && hotSummits.length > 0 && <HotSummitHero top={hotSummits[0]} lang={lang} />}
         {viewMode === 'hikers' && !loading && topHikers.length > 0 && <TopHikerHero top={topHikers[0]} lang={lang} />}
         {viewMode === 'streaks' && !loading && streakBoard.length > 0 && <StreakHero top={streakBoard[0]} lang={lang} />}
         {viewMode === 'elevation' && !loading && elevBoard.length > 0 && <ElevHero top={elevBoard[0]} lang={lang} />}
+        {viewMode === 'friends' && !loading && friendsBoard.length > 0 && <FriendsHero top={friendsBoard[0]} lang={lang} />}
       </SafeAreaView>
       {loading ? (
         <View style={styles.center}><ActivityIndicator color={Colors.green} /></View>
@@ -464,6 +540,22 @@ export default function LeaderboardScreen() {
           ListEmptyComponent={<View style={styles.center}><Text style={styles.empty}>{s.streakLeaderboardEmpty}</Text></View>}
           contentContainerStyle={streakBoard.length === 0 ? { flex: 1 } : { paddingBottom: 32 }}
         />
+      ) : viewMode === 'friends' ? (
+        <FlatList
+          data={friendsBoard}
+          keyExtractor={(e: HikerLeaderboardEntry) => e.user_id}
+          renderItem={({ item, index }: { item: HikerLeaderboardEntry; index: number }) => (
+            <FriendsRow entry={item} rank={index + 1} lang={lang} onPress={setSelectedHiker} />
+          )}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Colors.green} />}
+          ListEmptyComponent={
+            <View style={styles.center}>
+              <Text style={styles.emptyFriends}>{s.friendsLeaderboardNoFollowing}</Text>
+            </View>
+          }
+          contentContainerStyle={friendsBoard.length === 0 ? { flex: 1 } : { paddingBottom: 32 }}
+        />
       ) : (
         <FlatList
           data={elevBoard}
@@ -491,18 +583,15 @@ const styles = StyleSheet.create({
   title: { fontSize: 26, fontWeight: '800', color: '#1F2421', letterSpacing: -0.6 },
   viewToggleRow: {
     flexDirection: 'row',
-    marginHorizontal: 16,
+    paddingHorizontal: 16,
     marginTop: 8,
     marginBottom: 6,
-    backgroundColor: Colors.zinc100,
-    borderRadius: 12,
-    padding: 3,
-    gap: 4,
+    gap: 6,
   },
-  viewBtn: { flex: 1, paddingVertical: 8, alignItems: 'center', borderRadius: 10 },
-  viewBtnActive: { backgroundColor: Colors.white, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 2, elevation: 1 },
-  viewLabel: { fontSize: 14, fontWeight: '600', color: Colors.zinc500 },
-  viewLabelActive: { color: Colors.zinc950 },
+  viewBtn: { paddingVertical: 8, paddingHorizontal: 14, alignItems: 'center', borderRadius: 20, backgroundColor: Colors.zinc100 },
+  viewBtnActive: { backgroundColor: Colors.green },
+  viewLabel: { fontSize: 13, fontWeight: '600', color: Colors.zinc500 },
+  viewLabelActive: { color: Colors.white },
   periodRow: { flexDirection: 'row', marginHorizontal: 16, marginBottom: 14, marginTop: 6, gap: 8 },
   periodBtn: { flex: 1, paddingVertical: 7, borderRadius: 20, alignItems: 'center', backgroundColor: Colors.zinc100 },
   periodBtnActive: { backgroundColor: Colors.green },
@@ -541,6 +630,8 @@ const styles = StyleSheet.create({
   chevron: { fontSize: 20, color: Colors.zinc200, marginLeft: 8 },
   heroCardStreak: { backgroundColor: '#C0704A' },
   heroCardElev: { backgroundColor: '#4A6FA5' },
+  heroCardFriends: { backgroundColor: '#6A5ACD' },
+  emptyFriends: { fontSize: 15, color: Colors.zinc500, textAlign: 'center', paddingHorizontal: 32, lineHeight: 22 },
   elevCell: { alignItems: 'flex-end', flexDirection: 'row', gap: 1, alignSelf: 'center' },
   elevTotal: { fontSize: 20, fontWeight: '800', letterSpacing: -0.5 },
   elevUnit: { fontSize: 13, fontWeight: '600', color: Colors.zinc500, alignSelf: 'flex-end', marginBottom: 1 },

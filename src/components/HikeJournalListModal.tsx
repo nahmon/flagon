@@ -29,7 +29,7 @@ export default function HikeJournalListModal({ visible, conquests, onClose }: Pr
   }, [visible, conquests]);
 
   const handleJournalSaved = (entry: ConquestEntry, journal: HikeJournal | null) => {
-    setJournals((prev) => {
+    setJournals((prev: Record<string, HikeJournal>) => {
       const next = { ...prev };
       if (journal) next[entry.id] = journal;
       else delete next[entry.id];
@@ -58,9 +58,9 @@ export default function HikeJournalListModal({ visible, conquests, onClose }: Pr
         ) : (
           <FlatList
             data={conquests}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item: ConquestEntry) => item.id}
             contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
-            renderItem={({ item }) => {
+            renderItem={({ item }: { item: ConquestEntry }) => {
               const journal = journals[item.id];
               return (
                 <TouchableOpacity

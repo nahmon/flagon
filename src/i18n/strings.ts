@@ -664,6 +664,14 @@ const strings = {
     elevLeaderboardFlags: (n: number) => `깃발 ${n}개`,
     elevLeaderboardEmpty: '아직 고도 데이터가 없습니다',
 
+    // Friends Leaderboard
+    tabFriends: '👥 친구',
+    friendsLeaderboardTitle: '👥 친구 랭킹',
+    friendsLeaderboardSub: '팔로우 중인 친구들의 깃발 순위',
+    friendsLeaderboardHero: '👥 친구 중 1위',
+    friendsLeaderboardEmpty: '팔로우 중인 친구가 없거나 깃발 기록이 없어요',
+    friendsLeaderboardNoFollowing: '아직 팔로우한 친구가 없어요.\n친구를 팔로우하면 여기서 비교할 수 있어요!',
+
     // Weekly Elevation Goal
     weeklyGoalTitle: '⛰️ 이번 주 고도 목표',
     weeklyGoalProgress: (cur: number, goal: number) => `${cur.toLocaleString()}m / ${goal.toLocaleString()}m`,
@@ -1403,6 +1411,14 @@ const strings = {
     elevLeaderboardFlags: (n: number) => `${n} plants`,
     elevLeaderboardEmpty: 'No elevation data yet',
 
+    // Friends Leaderboard
+    tabFriends: '👥 Friends',
+    friendsLeaderboardTitle: '👥 Friends Ranking',
+    friendsLeaderboardSub: 'Flag count ranking among people you follow',
+    friendsLeaderboardHero: '👥 Top Friend',
+    friendsLeaderboardEmpty: 'No flags from friends in this period',
+    friendsLeaderboardNoFollowing: 'You\'re not following anyone yet.\nFollow hikers to compare scores here!',
+
     // Weekly Elevation Goal
     weeklyGoalTitle: '⛰️ Weekly Elevation Goal',
     weeklyGoalProgress: (cur: number, goal: number) => `${cur.toLocaleString()}m / ${goal.toLocaleString()}m`,
@@ -2141,6 +2157,14 @@ const strings = {
     elevLeaderboardTotal: (m: number) => `累計 ${m.toLocaleString()}m`,
     elevLeaderboardFlags: (n: number) => `${n}個植栽`,
     elevLeaderboardEmpty: 'まだ標高データがありません',
+
+    // Friends Leaderboard
+    tabFriends: '👥 友達',
+    friendsLeaderboardTitle: '👥 友達ランキング',
+    friendsLeaderboardSub: 'フォロー中の仲間のフラグ数ランキング',
+    friendsLeaderboardHero: '👥 友達チャンピオン',
+    friendsLeaderboardEmpty: 'この期間の友達データがありません',
+    friendsLeaderboardNoFollowing: 'まだ誰もフォローしていません。\n登山者をフォローしてここで比較しましょう！',
 
     // Weekly Elevation Goal
     weeklyGoalTitle: '⛰️ 今週の標高目標',
