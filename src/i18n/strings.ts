@@ -780,6 +780,11 @@ const strings = {
     rouletteNoSpinsMsg: '이번 주 뽑기를 모두 사용했습니다.',
     rouletteSpinError: '뽑기 중 오류가 발생했습니다.',
     rouletteAcceptError: '도전 수락에 실패했습니다.',
+    myPhotosBtn: '📷 내 사진',
+    myPhotosTitle: '📷 내 사진',
+    myPhotosEmpty: '아직 업로드한 사진이 없습니다. 정상에서 사진을 찍어보세요!',
+    myPhotosSummit: (name: string, elev: number) => `${name} · ${elev}m`,
+    myPhotosCount: (n: number) => `사진 ${n}장`,
   },
 
   en: {
@@ -1561,6 +1566,11 @@ const strings = {
     rouletteNoSpinsMsg: 'You\'ve used all your spins for this week.',
     rouletteSpinError: 'Something went wrong while spinning.',
     rouletteAcceptError: 'Failed to accept the challenge.',
+    myPhotosBtn: '📷 My Photos',
+    myPhotosTitle: '📷 My Photos',
+    myPhotosEmpty: 'No photos yet. Take a shot at the summit!',
+    myPhotosSummit: (name: string, elev: number) => `${name} · ${elev}m`,
+    myPhotosCount: (n: number) => `${n} photo${n === 1 ? '' : 's'}`,
   },
 
   ja: {
@@ -2342,6 +2352,11 @@ const strings = {
     rouletteNoSpinsMsg: '今週のスピンをすべて使いました。',
     rouletteSpinError: 'スピン中にエラーが発生しました。',
     rouletteAcceptError: 'チャレンジの受け入れに失敗しました。',
+    myPhotosBtn: '📷 マイ写真',
+    myPhotosTitle: '📷 マイ写真',
+    myPhotosEmpty: 'まだ写真がありません。山頂で写真を撮りましょう！',
+    myPhotosSummit: (name: string, elev: number) => `${name} · ${elev}m`,
+    myPhotosCount: (n: number) => `写真 ${n}枚`,
   },
 } as const;
 

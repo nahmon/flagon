@@ -37,6 +37,7 @@ import CrewChatModal from '../../src/components/CrewChatModal';
 import HikeJournalListModal from '../../src/components/HikeJournalListModal';
 import HikeCompareModal from '../../src/components/HikeCompareModal';
 import SummitRouletteModal from '../../src/components/SummitRouletteModal';
+import MyPhotosModal from '../../src/components/MyPhotosModal';
 import MonthlyCalendarCard from '../../src/components/MonthlyCalendarCard';
 import ElevationGoalCard from '../../src/components/ElevationGoalCard';
 import { getUnreadCount } from '../../src/services/inboxNotifications';
@@ -210,6 +211,7 @@ export default function ProfileScreen() {
   const [showHikeJournal, setShowHikeJournal] = useState(false);
   const [showCompare, setShowCompare] = useState(false);
   const [showRoulette, setShowRoulette] = useState(false);
+  const [showMyPhotos, setShowMyPhotos] = useState(false);
   const [followCounts, setFollowCounts] = useState<FollowCounts>({ followers: 0, following: 0 });
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [editingName, setEditingName] = useState(false);
@@ -603,6 +605,12 @@ export default function ProfileScreen() {
           <Text style={styles.wishListArrow}>→</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowMyPhotos(true)} activeOpacity={0.8}>
+          <Text style={styles.wishListIcon}>📷</Text>
+          <Text style={styles.wishListLabel}>{s.myPhotosBtn}</Text>
+          <Text style={styles.wishListArrow}>→</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
           <Text style={styles.signOutText}>{s.logout}</Text>
         </TouchableOpacity>
@@ -689,6 +697,10 @@ export default function ProfileScreen() {
       <SummitRouletteModal
         visible={showRoulette}
         onClose={() => setShowRoulette(false)}
+      />
+      <MyPhotosModal
+        visible={showMyPhotos}
+        onClose={() => setShowMyPhotos(false)}
       />
     </View>
   );

@@ -102,3 +102,37 @@ export async function deleteSummitPhoto(photoId: string, storageKey: string): Pr
   const { error } = await supabase.from('summit_photos').delete().eq('id', photoId);
   if (error) throw error;
 }
+
+export interface MyPhoto {
+  id: string;
+  url: string;
+  storage_key: string;
+  created_at: string;
+  summit_id: string;
+  summit_name_ko: string;
+  summit_name_en: string | null;
+  summit_name_ja: string | null;
+  elevation_m: number;
+}
+
+export async function fetchMyPhotos(): Promise<MyPhoto[]> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+  const { data, error } = await supabase
+    .from('summit_photos')
+    .select('id, url, storage_key, created_at, summit_id, summits(name_ko, name_en, name_ja, elevation_m)')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((row: any) => ({
+    id: row.id,
+    url: row.url,
+    storage_key: row.storage_key,
+    created_at: row.created_at,
+    summit_id: row.summit_id,
+    summit_name_ko: row.summits?.name_ko ?? '',
+    summit_name_en: row.summits?.name_en ?? null,
+    summit_name_ja: row.summits?.name_ja ?? null,
+    elevation_m: row.summits?.elevation_m ?? 0,
+  }));
+}
