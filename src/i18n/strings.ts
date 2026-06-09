@@ -785,6 +785,15 @@ const strings = {
     myPhotosEmpty: '아직 업로드한 사진이 없습니다. 정상에서 사진을 찍어보세요!',
     myPhotosSummit: (name: string, elev: number) => `${name} · ${elev}m`,
     myPhotosCount: (n: number) => `사진 ${n}장`,
+
+    // Summit Collections
+    collectionsBtn: '🗂️ 컬렉션 챌린지',
+    collectionsTitle: '🗂️ 컬렉션 챌린지',
+    collectionsSub: '테마별 봉우리 컬렉션을 완성하세요',
+    collectionsComplete: '완등!',
+    collectionsEmpty: '아직 정복한 봉우리가 없습니다',
+    collectionsBack: '← 컬렉션으로',
+    collectionsProgress: (done: number, total: number) => `${done} / ${total}`,
   },
 
   en: {
@@ -1571,6 +1580,15 @@ const strings = {
     myPhotosEmpty: 'No photos yet. Take a shot at the summit!',
     myPhotosSummit: (name: string, elev: number) => `${name} · ${elev}m`,
     myPhotosCount: (n: number) => `${n} photo${n === 1 ? '' : 's'}`,
+
+    // Summit Collections
+    collectionsBtn: '🗂️ Peak Collections',
+    collectionsTitle: '🗂️ Peak Collections',
+    collectionsSub: 'Complete themed summit challenges',
+    collectionsComplete: 'COMPLETE',
+    collectionsEmpty: 'No summits conquered yet',
+    collectionsBack: '← Collections',
+    collectionsProgress: (done: number, total: number) => `${done} / ${total}`,
   },
 
   ja: {
@@ -2357,6 +2375,15 @@ const strings = {
     myPhotosEmpty: 'まだ写真がありません。山頂で写真を撮りましょう！',
     myPhotosSummit: (name: string, elev: number) => `${name} · ${elev}m`,
     myPhotosCount: (n: number) => `写真 ${n}枚`,
+
+    // Summit Collections
+    collectionsBtn: '🗂️ コレクション',
+    collectionsTitle: '🗂️ コレクション',
+    collectionsSub: 'テーマ別山頂コレクションを完成させよう',
+    collectionsComplete: '完登！',
+    collectionsEmpty: 'まだ制覇した山頂がありません',
+    collectionsBack: '← コレクションへ',
+    collectionsProgress: (done: number, total: number) => `${done} / ${total}`,
   },
 } as const;
 
