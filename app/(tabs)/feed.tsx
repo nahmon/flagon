@@ -13,6 +13,7 @@ import PhotoWallGrid from '../../src/components/PhotoWallGrid';
 import LiveHikeSection from '../../src/components/LiveHikeSection';
 import UpcomingGroupHikesSection from '../../src/components/UpcomingGroupHikesSection';
 import SummitOfTheDayCard from '../../src/components/SummitOfTheDayCard';
+import NearbyActivityModal from '../../src/components/NearbyActivityModal';
 
 type FeedFilter = 'all' | 'following' | 'crew' | 'photos';
 
@@ -87,6 +88,7 @@ export default function FeedScreen() {
   const [selectedHiker, setSelectedHiker] = useState<string | null>(null);
   const [filter, setFilter] = useState<FeedFilter>('all');
   const [userCtx, setUserCtx] = useState<UserCtx | null>(null);
+  const [showNearby, setShowNearby] = useState(false);
 
   useEffect(() => {
     loadUserCtx().then(setUserCtx).catch(() => setUserCtx(null));
@@ -131,7 +133,12 @@ export default function FeedScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <Text style={styles.header}>{s.activityFeed}</Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.header}>{s.activityFeed}</Text>
+          <TouchableOpacity style={styles.nearbyBtn} onPress={() => setShowNearby(true)} activeOpacity={0.75}>
+            <Text style={styles.nearbyBtnTxt}>{s.nearbyBtn}</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.filterRow}>
           {FILTERS.map((f) => (
             <TouchableOpacity
@@ -179,6 +186,7 @@ export default function FeedScreen() {
       )}
 
       <HikerProfileModal userId={selectedHiker} onClose={() => setSelectedHiker(null)} />
+      <NearbyActivityModal visible={showNearby} onClose={() => setShowNearby(false)} />
     </View>
   );
 }
@@ -193,12 +201,30 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 12,
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+  },
   header: {
     fontSize: 22,
     fontWeight: '700',
     color: Colors.zinc950,
-    paddingHorizontal: 20,
-    paddingBottom: 12,
+  },
+  nearbyBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: Colors.green + '18',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: Colors.green + '44',
+  },
+  nearbyBtnTxt: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.green,
   },
   filterRow: {
     flexDirection: 'row',

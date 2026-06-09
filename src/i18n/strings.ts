@@ -812,6 +812,20 @@ const strings = {
     safetyTimerDone: '완료',
     safetyTimerFor: (name: string) => `봉우리: ${name}`,
     safetyTimerStarted: (time: string) => `시작: ${time}`,
+
+    // Nearby Activity
+    nearbyBtn: '📡 주변 활동',
+    nearbyTitle: '📡 주변 활동',
+    nearbySubtitle: (km: number) => `반경 ${km}km 내 최근 24시간 깃발`,
+    nearbyRadius: '반경',
+    nearbyEmpty: '최근 24시간 내 주변에 심어진 깃발이 없습니다.',
+    nearbyEmptySub: '이 지역에서 첫 번째로 깃발을 심어보세요!',
+    nearbyAgo: (min: number) => min < 60 ? `${min}분 전` : `${Math.floor(min / 60)}시간 전`,
+    nearbyKm: (km: number) => `${km}km`,
+    nearbyLocating: '위치를 가져오는 중...',
+    nearbyLocError: '위치를 가져올 수 없습니다.',
+    nearbyLive: '실시간',
+    nearbyRetry: '다시 시도',
   },
 
   en: {
@@ -1625,6 +1639,20 @@ const strings = {
     safetyTimerDone: 'Done',
     safetyTimerFor: (name: string) => `Summit: ${name}`,
     safetyTimerStarted: (time: string) => `Started: ${time}`,
+
+    // Nearby Activity
+    nearbyBtn: '📡 Near You Now',
+    nearbyTitle: '📡 Near You Now',
+    nearbySubtitle: (km: number) => `Flags planted within ${km}km · last 24h`,
+    nearbyRadius: 'Radius',
+    nearbyEmpty: 'No flags planted nearby in the last 24 hours.',
+    nearbyEmptySub: 'Be the first to plant a flag in this area!',
+    nearbyAgo: (min: number) => min < 60 ? `${min}m ago` : `${Math.floor(min / 60)}h ago`,
+    nearbyKm: (km: number) => `${km}km`,
+    nearbyLocating: 'Getting your location...',
+    nearbyLocError: 'Could not get your location.',
+    nearbyLive: 'LIVE',
+    nearbyRetry: 'Retry',
   },
 
   ja: {
@@ -2438,6 +2466,20 @@ const strings = {
     safetyTimerDone: '完了',
     safetyTimerFor: (name: string) => `山頂: ${name}`,
     safetyTimerStarted: (time: string) => `開始: ${time}`,
+
+    // Nearby Activity
+    nearbyBtn: '📡 周辺の活動',
+    nearbyTitle: '📡 周辺の活動',
+    nearbySubtitle: (km: number) => `半径${km}km・過去24時間の旗`,
+    nearbyRadius: '半径',
+    nearbyEmpty: '過去24時間、近くに植えられた旗はありません。',
+    nearbyEmptySub: 'このエリアで最初に旗を植えましょう！',
+    nearbyAgo: (min: number) => min < 60 ? `${min}分前` : `${Math.floor(min / 60)}時間前`,
+    nearbyKm: (km: number) => `${km}km`,
+    nearbyLocating: '現在地を取得中...',
+    nearbyLocError: '現在地を取得できませんでした。',
+    nearbyLive: 'ライブ',
+    nearbyRetry: '再試行',
   },
 } as const;
 
