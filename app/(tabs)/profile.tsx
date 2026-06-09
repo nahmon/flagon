@@ -39,6 +39,7 @@ import HikeCompareModal from '../../src/components/HikeCompareModal';
 import SummitRouletteModal from '../../src/components/SummitRouletteModal';
 import MyPhotosModal from '../../src/components/MyPhotosModal';
 import SummitCollectionsModal from '../../src/components/SummitCollectionsModal';
+import SafetyTimerModal from '../../src/components/SafetyTimerModal';
 import MonthlyCalendarCard from '../../src/components/MonthlyCalendarCard';
 import ElevationGoalCard from '../../src/components/ElevationGoalCard';
 import { getUnreadCount } from '../../src/services/inboxNotifications';
@@ -214,6 +215,7 @@ export default function ProfileScreen() {
   const [showRoulette, setShowRoulette] = useState(false);
   const [showMyPhotos, setShowMyPhotos] = useState(false);
   const [showCollections, setShowCollections] = useState(false);
+  const [showSafetyTimer, setShowSafetyTimer] = useState(false);
   const [followCounts, setFollowCounts] = useState<FollowCounts>({ followers: 0, following: 0 });
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [editingName, setEditingName] = useState(false);
@@ -619,6 +621,12 @@ export default function ProfileScreen() {
           <Text style={styles.wishListArrow}>→</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowSafetyTimer(true)} activeOpacity={0.8}>
+          <Text style={styles.wishListIcon}>🆘</Text>
+          <Text style={styles.wishListLabel}>{s.safetyTimerBtn}</Text>
+          <Text style={styles.wishListArrow}>→</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
           <Text style={styles.signOutText}>{s.logout}</Text>
         </TouchableOpacity>
@@ -713,6 +721,10 @@ export default function ProfileScreen() {
       <SummitCollectionsModal
         visible={showCollections}
         onClose={() => setShowCollections(false)}
+      />
+      <SafetyTimerModal
+        visible={showSafetyTimer}
+        onClose={() => setShowSafetyTimer(false)}
       />
     </View>
   );

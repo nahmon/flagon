@@ -794,6 +794,24 @@ const strings = {
     collectionsEmpty: '아직 정복한 봉우리가 없습니다',
     collectionsBack: '← 컬렉션으로',
     collectionsProgress: (done: number, total: number) => `${done} / ${total}`,
+
+    // Safety Timer
+    safetyTimerBtn: '🆘 안전 귀환 타이머',
+    safetyTimerTitle: '🆘 안전 귀환 타이머',
+    safetyTimerSub: '등산 전 타이머를 설정하세요. 시간 내 체크인하지 않으면 알림을 보냅니다.',
+    safetyTimerSummitLabel: '등산 봉우리',
+    safetyTimerSummitHint: '봉우리 이름 입력',
+    safetyTimerDurationLabel: '예상 소요 시간',
+    safetyTimerStart: '⏱️ 타이머 시작',
+    safetyTimerCheckIn: '✅ 안전 귀환 확인',
+    safetyTimerCancel: '취소',
+    safetyTimerActive: '타이머 실행 중',
+    safetyTimerRemaining: (m: number) => `남은 시간: ${m}분`,
+    safetyTimerExpired: '⚠️ 타이머 만료! 체크인하세요.',
+    safetyTimerCheckedIn: '✅ 안전하게 귀환했습니다!',
+    safetyTimerDone: '완료',
+    safetyTimerFor: (name: string) => `봉우리: ${name}`,
+    safetyTimerStarted: (time: string) => `시작: ${time}`,
   },
 
   en: {
@@ -1589,6 +1607,24 @@ const strings = {
     collectionsEmpty: 'No summits conquered yet',
     collectionsBack: '← Collections',
     collectionsProgress: (done: number, total: number) => `${done} / ${total}`,
+
+    // Safety Timer
+    safetyTimerBtn: '🆘 Safety Timer',
+    safetyTimerTitle: '🆘 Safety Check-In Timer',
+    safetyTimerSub: 'Set a countdown before your hike. If you don\'t check in when it expires, you\'ll get an alert.',
+    safetyTimerSummitLabel: 'Summit',
+    safetyTimerSummitHint: 'Enter summit name',
+    safetyTimerDurationLabel: 'Expected duration',
+    safetyTimerStart: '⏱️ Start Timer',
+    safetyTimerCheckIn: '✅ I\'m Safe — Check In',
+    safetyTimerCancel: 'Cancel',
+    safetyTimerActive: 'Timer Running',
+    safetyTimerRemaining: (m: number) => `${m} minute${m === 1 ? '' : 's'} remaining`,
+    safetyTimerExpired: '⚠️ Timer Expired! Please check in.',
+    safetyTimerCheckedIn: '✅ Checked in safely!',
+    safetyTimerDone: 'Done',
+    safetyTimerFor: (name: string) => `Summit: ${name}`,
+    safetyTimerStarted: (time: string) => `Started: ${time}`,
   },
 
   ja: {
@@ -2384,6 +2420,24 @@ const strings = {
     collectionsEmpty: 'まだ制覇した山頂がありません',
     collectionsBack: '← コレクションへ',
     collectionsProgress: (done: number, total: number) => `${done} / ${total}`,
+
+    // Safety Timer
+    safetyTimerBtn: '🆘 安全帰還タイマー',
+    safetyTimerTitle: '🆘 安全帰還タイマー',
+    safetyTimerSub: '登山前にタイマーをセット。時間内にチェックインしないと通知が届きます。',
+    safetyTimerSummitLabel: '山頂',
+    safetyTimerSummitHint: '山頂名を入力',
+    safetyTimerDurationLabel: '予想所要時間',
+    safetyTimerStart: '⏱️ タイマー開始',
+    safetyTimerCheckIn: '✅ 安全帰還チェックイン',
+    safetyTimerCancel: 'キャンセル',
+    safetyTimerActive: 'タイマー実行中',
+    safetyTimerRemaining: (m: number) => `残り${m}分`,
+    safetyTimerExpired: '⚠️ タイマー終了！チェックインしてください。',
+    safetyTimerCheckedIn: '✅ 安全に帰還しました！',
+    safetyTimerDone: '完了',
+    safetyTimerFor: (name: string) => `山頂: ${name}`,
+    safetyTimerStarted: (time: string) => `開始: ${time}`,
   },
 } as const;
 
