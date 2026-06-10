@@ -826,6 +826,19 @@ const strings = {
     nearbyLocError: '위치를 가져올 수 없습니다.',
     nearbyLive: '실시간',
     nearbyRetry: '다시 시도',
+
+    // Summit Trivia
+    triviaBtn: '🧠 정상 퀴즈',
+    triviaTitle: '🧠 정상 퀴즈',
+    triviaProgress: (cur: number, total: number) => `문제 ${cur} / ${total}`,
+    triviaXpHint: (xp: number) => `정답 시 +${xp} XP`,
+    triviaCorrect: '✅ 정답입니다!',
+    triviaWrong: (ans: string) => `❌ 오답. 정답: ${ans}`,
+    triviaComplete: '오늘의 퀴즈 완료!',
+    triviaScore: (correct: number, total: number) => `${total}문제 중 ${correct}개 정답`,
+    triviaXp: (xp: number) => `+${xp} XP 획득`,
+    triviaReturnTomorrow: '내일 새로운 문제가 기다립니다 🏔️',
+    triviaClose: '닫기',
   },
 
   en: {
@@ -1653,6 +1666,19 @@ const strings = {
     nearbyLocError: 'Could not get your location.',
     nearbyLive: 'LIVE',
     nearbyRetry: 'Retry',
+
+    // Summit Trivia
+    triviaBtn: '🧠 Summit Quiz',
+    triviaTitle: '🧠 Summit Quiz',
+    triviaProgress: (cur: number, total: number) => `Question ${cur} of ${total}`,
+    triviaXpHint: (xp: number) => `+${xp} XP per correct answer`,
+    triviaCorrect: '✅ Correct!',
+    triviaWrong: (ans: string) => `❌ Wrong. Answer: ${ans}`,
+    triviaComplete: "Today's Quiz Complete!",
+    triviaScore: (correct: number, total: number) => `${correct} out of ${total} correct`,
+    triviaXp: (xp: number) => `+${xp} XP earned`,
+    triviaReturnTomorrow: 'New questions tomorrow 🏔️',
+    triviaClose: 'Close',
   },
 
   ja: {
@@ -2480,6 +2506,19 @@ const strings = {
     nearbyLocError: '現在地を取得できませんでした。',
     nearbyLive: 'ライブ',
     nearbyRetry: '再試行',
+
+    // Summit Trivia
+    triviaBtn: '🧠 山岳クイズ',
+    triviaTitle: '🧠 山岳クイズ',
+    triviaProgress: (cur: number, total: number) => `問題 ${cur} / ${total}`,
+    triviaXpHint: (xp: number) => `正解で+${xp} XP`,
+    triviaCorrect: '✅ 正解！',
+    triviaWrong: (ans: string) => `❌ 不正解。答え: ${ans}`,
+    triviaComplete: '本日のクイズ完了！',
+    triviaScore: (correct: number, total: number) => `${total}問中${correct}問正解`,
+    triviaXp: (xp: number) => `+${xp} XP 獲得`,
+    triviaReturnTomorrow: '明日も新しい問題が待っています 🏔️',
+    triviaClose: '閉じる',
   },
 } as const;
 
