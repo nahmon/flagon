@@ -41,6 +41,7 @@ import MyPhotosModal from '../../src/components/MyPhotosModal';
 import SummitCollectionsModal from '../../src/components/SummitCollectionsModal';
 import SafetyTimerModal from '../../src/components/SafetyTimerModal';
 import SummitTriviaModal from '../../src/components/SummitTriviaModal';
+import HikeMoodModal from '../../src/components/HikeMoodModal';
 import MonthlyCalendarCard from '../../src/components/MonthlyCalendarCard';
 import ElevationGoalCard from '../../src/components/ElevationGoalCard';
 import { getUnreadCount } from '../../src/services/inboxNotifications';
@@ -218,6 +219,7 @@ export default function ProfileScreen() {
   const [showCollections, setShowCollections] = useState(false);
   const [showSafetyTimer, setShowSafetyTimer] = useState(false);
   const [showTrivia, setShowTrivia] = useState(false);
+  const [showMood, setShowMood] = useState(false);
   const [followCounts, setFollowCounts] = useState<FollowCounts>({ followers: 0, following: 0 });
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [editingName, setEditingName] = useState(false);
@@ -635,6 +637,12 @@ export default function ProfileScreen() {
           <Text style={styles.wishListArrow}>→</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowMood(true)} activeOpacity={0.8}>
+          <Text style={styles.wishListIcon}>😊</Text>
+          <Text style={styles.wishListLabel}>{s.moodBtn}</Text>
+          <Text style={styles.wishListArrow}>→</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
           <Text style={styles.signOutText}>{s.logout}</Text>
         </TouchableOpacity>
@@ -737,6 +745,10 @@ export default function ProfileScreen() {
       <SummitTriviaModal
         visible={showTrivia}
         onClose={() => setShowTrivia(false)}
+      />
+      <HikeMoodModal
+        visible={showMood}
+        onClose={() => setShowMood(false)}
       />
     </View>
   );
