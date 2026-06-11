@@ -43,6 +43,7 @@ import SafetyTimerModal from '../../src/components/SafetyTimerModal';
 import SummitTriviaModal from '../../src/components/SummitTriviaModal';
 import HikeMoodModal from '../../src/components/HikeMoodModal';
 import HikePaceModal from '../../src/components/HikePaceModal';
+import MyTrailConditionsModal from '../../src/components/MyTrailConditionsModal';
 import MonthlyCalendarCard from '../../src/components/MonthlyCalendarCard';
 import ElevationGoalCard from '../../src/components/ElevationGoalCard';
 import { getUnreadCount } from '../../src/services/inboxNotifications';
@@ -222,6 +223,7 @@ export default function ProfileScreen() {
   const [showTrivia, setShowTrivia] = useState(false);
   const [showMood, setShowMood] = useState(false);
   const [showPace, setShowPace] = useState(false);
+  const [showMyConditions, setShowMyConditions] = useState(false);
   const [followCounts, setFollowCounts] = useState<FollowCounts>({ followers: 0, following: 0 });
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   const [editingName, setEditingName] = useState(false);
@@ -651,6 +653,12 @@ export default function ProfileScreen() {
           <Text style={styles.wishListArrow}>→</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.wishListBtn} onPress={() => setShowMyConditions(true)} activeOpacity={0.8}>
+          <Text style={styles.wishListIcon}>⛅</Text>
+          <Text style={styles.wishListLabel}>{s.myCondBtn}</Text>
+          <Text style={styles.wishListArrow}>→</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.signOutBtn} onPress={() => supabase.auth.signOut()}>
           <Text style={styles.signOutText}>{s.logout}</Text>
         </TouchableOpacity>
@@ -761,6 +769,10 @@ export default function ProfileScreen() {
       <HikePaceModal
         visible={showPace}
         onClose={() => setShowPace(false)}
+      />
+      <MyTrailConditionsModal
+        visible={showMyConditions}
+        onClose={() => setShowMyConditions(false)}
       />
     </View>
   );

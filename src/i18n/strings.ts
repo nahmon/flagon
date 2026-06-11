@@ -485,6 +485,10 @@ const strings = {
     condDeleteBody: '이 현황 신고를 삭제하시겠습니까?',
     condEmpty: '현황 신고 없음',
     condEmptyDesc: '최근 48시간 내 현황 신고가 없습니다.\n첫 번째 신고를 남겨보세요!',
+    myCondBtn: '⛅ 내 등산로 현황',
+    myCondTitle: '내 등산로 현황',
+    myCondSearch: '정상 이름 검색...',
+    myCondEmpty: '정복한 정상이 없습니다',
 
     // Live hike stats HUD
     hikeStatsDistance: '거리',
@@ -1374,6 +1378,10 @@ const strings = {
     condDeleteBody: 'Delete this conditions report?',
     condEmpty: 'No conditions reported',
     condEmptyDesc: 'No reports in the last 48 hours.\nBe the first to report!',
+    myCondBtn: '⛅ My Trail Conditions',
+    myCondTitle: 'My Trail Conditions',
+    myCondSearch: 'Search summits...',
+    myCondEmpty: 'No conquered summits yet',
 
     // Live hike stats HUD
     hikeStatsDistance: 'Distance',
@@ -2263,6 +2271,10 @@ const strings = {
     condDeleteBody: 'この状況報告を削除しますか？',
     condEmpty: '状況報告なし',
     condEmptyDesc: '過去48時間の報告がありません。\n最初の報告を残しましょう！',
+    myCondBtn: '⛅ マイトレイル状況',
+    myCondTitle: 'マイトレイル状況',
+    myCondSearch: '山頂を検索...',
+    myCondEmpty: '征服した山頂がありません',
 
     // Live hike stats HUD
     hikeStatsDistance: '距離',
